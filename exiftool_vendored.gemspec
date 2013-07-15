@@ -13,12 +13,13 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/mceachen/vendored_exiftool'
   spec.license       = 'MIT'
 
-  spec.files         = `git ls-files`.split($/)
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  spec.files         = `git ls-files lib bin`.split($/)
+
+  # We don't add any spec.executables, because it's for our eyes only.
+
   spec.require_paths = %w(lib)
 
-  spec.add_dependency 'exiftool'
+  spec.add_dependency 'exiftool', '>= 0.3.0'
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'yard'

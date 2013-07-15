@@ -24,7 +24,7 @@ task :update_exiftool do
 
   doc = Nokogiri::HTML(open('http://owl.phy.queensu.ca/~phil/exiftool/rss.xml'))
   latest = doc.xpath('//rss/channel/item/enclosure').first
-  fail "Can't parse the RSS" if latest.nil?
+  fail 'Failed to parse the exiftool/rss.xml' if latest.nil?
 
   latest_url = latest[:url]
   basename = latest_url.split('/').last
@@ -39,10 +39,12 @@ task :update_exiftool do
     end
   end
 
-  puts "Unpacking …"
+  puts 'Unpacking …'
   dest_dir = File.expand_path('../bin', __FILE__)
   FileUtils.remove_entry_secure(dest_dir) if File.exist?(dest_dir)
   FileUtils.mkdir(dest_dir)
   `tar xzf #{src_file} -C #{dest_dir}`
   `git add bin downloads`
+
+  puts 'Remember to update the version!'
 end
