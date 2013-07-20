@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = %w(matthew+github@mceachen.org)
   spec.description   = %q{Vendored version of exiftool}
   spec.summary       = %q{Vendored version of exiftool}
-  spec.homepage      = 'https://github.com/mceachen/vendored_exiftool'
+  spec.homepage      = 'https://github.com/mceachen/exiftool_vendored'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files lib bin`.split($/)
