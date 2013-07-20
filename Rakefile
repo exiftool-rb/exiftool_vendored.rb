@@ -17,34 +17,37 @@ end
 
 task :default => :test
 
+desc 'Update the vendored Exiftool to the latest version'
 task :update_exiftool do
-
   require 'open-uri'
   require 'nokogiri'
+  require 'pathname'
 
   doc = Nokogiri::HTML(open('http://owl.phy.queensu.ca/~phil/exiftool/rss.xml'))
-  latest = doc.xpath('//rss/channel/item/enclosure').first
+  latest = doc.xpath('//rss/channel/item/enclosure').select do |ea|
+    ea[:url] && ea[:url].end_with?('.tar.gz')
+  end.sort.first
   fail 'Failed to parse the exiftool/rss.xml' if latest.nil?
 
   latest_url = latest[:url]
   basename = latest_url.split('/').last
-  src_file = File.expand_path("../downloads/#{basename}", __FILE__)
 
-  unless File.exist?(src_file)
-    puts "Downloading #{latest_url}…"
-    File.open(src_file, "wb") do |io_out|
+  tgz = Pathname.new(File.expand_path("../downloads/#{basename}", __FILE__))
+  tgz.parent.mkpath
+
+  unless tgz.exist?
+    puts "Downloading #{latest_url} to #{tgz}…"
+    tgz.open('wb') do |io_out|
       open(latest_url, 'rb') do |io_in|
         io_out.write(io_in.read)
       end
     end
   end
 
-  puts 'Unpacking …'
   dest_dir = File.expand_path('../bin', __FILE__)
   FileUtils.remove_entry_secure(dest_dir) if File.exist?(dest_dir)
   FileUtils.mkdir(dest_dir)
-  `tar xzf #{src_file} -C #{dest_dir}`
-  `git add bin downloads`
-
-  puts 'Remember to update the version!'
+  `tar xzf #{tgz.realpath.to_s} -C #{dest_dir}`
+  puts "New rubygem version is #{ExiftoolVendored.version}!"
+  puts 'Remember to `git commit -a` and `rake release`…'
 end

@@ -1,6 +1,9 @@
 # ExiftoolVendored
 
-This is the ```exiftool``` ruby gem along with a vendored version of the perl ```exiftool``` library.
+This is
+* a vendored version of Phil Harvey's excellent [exiftool](http://www.sno.phy.queensu.ca/~phil/exiftool) library, and
+* a dependency on the [exiftool](https://github.com/mceachen/exiftool) rubygem, and
+* an autoload script that configures the Exiftool gem to use the vendored version of the exiftool library.
 
 ## Installation
 
@@ -8,19 +11,21 @@ Add this line to your application's Gemfile:
 
     gem 'exiftool_vendored'
 
-And then execute:
+## Example
 
-    $ bundle
+    $ exiftool
+    -bash: exiftool: command not found
 
-If you want to update, the ```rake update_exiftool``` task is what you want.
+```ruby
+irb(main):001:0> require 'exiftool_vendored'
+=> true
+irb(main):002:0> Exiftool.command
+=> "/Users/mrm/.rbenv/versions/1.9.3-p429/lib/ruby/gems/1.9.1/gems/exiftool_vendored-9.33/bin/Image-ExifTool-9.33/exiftool"
+irb(main):003:0> Exiftool.exiftool_version
+=> 9.33
+```
 
-## Usage
+## Versioning
 
+The version of this rubygem will match the exiftool library that it vendors.
 
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
