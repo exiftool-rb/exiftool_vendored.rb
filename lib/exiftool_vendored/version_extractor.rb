@@ -1,6 +1,7 @@
 module ExiftoolVendored
   PATCHLEVEL = 0
 
+  # This is only used by the rake 'update_exiftool' task.
   def self.extract_version
     require 'yaml'
     meta_yml = Dir[File.expand_path("../../../bin/*/META.yml", __FILE__)].first
