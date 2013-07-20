@@ -48,6 +48,18 @@ task :update_exiftool do
   FileUtils.remove_entry_secure(dest_dir) if File.exist?(dest_dir)
   FileUtils.mkdir(dest_dir)
   `tar xzf #{tgz.realpath.to_s} -C #{dest_dir}`
-  puts "New rubygem version is #{ExiftoolVendored.version}!"
+
+  require 'exiftool_vendored/version_extractor'
+  new_version = ExiftoolVendored.extract_version
+  puts "New rubygem version is #{new_version}!"
+
+  ver_rb = Pathname.new(File.expand_path("../lib/exiftool_vendored/version.rb", __FILE__))
+  ver_rb.open("w") do |io|
+    io.write <<-EOF
+module ExiftoolVendored
+  VERSION = Gem::Version.new('#{new_version}')
+end
+    EOF
+  end
   puts 'Remember to `git commit -a` and `rake release`…'
 end
