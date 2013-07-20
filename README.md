@@ -1,5 +1,7 @@
 # ExiftoolVendored
 
+[![Gem Version](https://badge.fury.io/rb/exiftool_vendored.png)](http://rubygems.org/gems/exiftool_vendored)
+
 This is
 * a vendored version of Phil Harvey's excellent [exiftool](http://www.sno.phy.queensu.ca/~phil/exiftool) library, and
 * a dependency on the [exiftool](https://github.com/mceachen/exiftool) rubygem, and
