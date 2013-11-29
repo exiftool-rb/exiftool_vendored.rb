@@ -30,5 +30,6 @@ irb(main):003:0> Exiftool.exiftool_version
 
 ## Versioning
 
-The version of this rubygem will match the exiftool library that it vendors.
+The version of this rubygem will match the major and minor versions of the exiftool library that it
+vendors.
 
