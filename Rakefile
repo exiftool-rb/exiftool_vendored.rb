@@ -9,8 +9,8 @@ end
 require 'rake/testtask'
 
 Rake::TestTask.new do |t|
-  t.libs.push "lib"
-  t.libs.push "test"
+  t.libs.push 'lib'
+  t.libs.push 'test'
   t.pattern = 'test/**/*_test.rb'
   t.verbose = true
 end
@@ -61,5 +61,6 @@ module ExiftoolVendored
 end
     EOF
   end
-  puts 'Remember to `git commit -a` and `rake release`…'
+  `git add #{dest_dir}`
+  puts "Added #{dest_dir}. Now `rake test`, `git commit` and `rake release`…"
 end

@@ -1,0 +1,75 @@
+---
+:file_name: FujiFilm.jpg
+:file_size: 1373 bytes
+:file_type: JPEG
+:mime_type: image/jpeg
+:exif_byte_order: Little-endian (Intel, II)
+:make: FUJIFILM
+:model: FinePix2400Zoom
+:orientation: Horizontal (normal)
+:x_resolution: 72
+:y_resolution: 72
+:resolution_unit: inches
+:software: Digital Camera FinePix2400Zoom Ver1.70
+:y_cb_cr_positioning: Co-sited
+:copyright: ''
+:f_number: 3.5
+:exposure_program: Program AE
+:iso: 100
+:exif_version: '0210'
+:components_configuration: Y, Cb, Cr, -
+:compressed_bits_per_pixel: 1.6
+:shutter_speed_value: !ruby/object:Rational
+  denominator: 64
+  numerator: 1
+:aperture_value: 3.5
+:brightness_value: 2
+:exposure_compensation: 0
+:max_aperture_value: 3.5
+:metering_mode: Multi-segment
+:flash: Fired
+:focal_length: 6.0 mm
+:version: '0130'
+:quality: 'NORMAL '
+:sharpness: Normal
+:white_balance: Auto
+:fuji_flash_mode: Red-eye reduction
+:flash_exposure_comp: 0
+:macro: 'Off'
+:focus_mode: Auto
+:slow_sync: 'Off'
+:picture_mode: Auto
+:auto_bracketing: 'Off'
+:blur_warning: None
+:focus_warning: Good
+:exposure_warning: Good
+:flashpix_version: '0100'
+:color_space: sRGB
+:exif_image_width: 1600
+:exif_image_height: 1200
+:interop_index: R98 - DCF basic file (sRGB)
+:interop_version: '0100'
+:focal_plane_x_resolution: 3053
+:focal_plane_y_resolution: 3053
+:focal_plane_resolution_unit: cm
+:sensing_method: One-chip color area
+:file_source: Digital Camera
+:scene_type: Directly photographed
+:compression: JPEG (old-style)
+:thumbnail_offset: 1096
+:thumbnail_length: 28
+:image_width: 8
+:image_height: 8
+:encoding_process: Baseline DCT, Huffman coding
+:bits_per_sample: 8
+:color_components: 3
+:y_cb_cr_sub_sampling: YCbCr4:2:0 (2 2)
+:aperture: 3.5
+:image_size: 8x8
+:shutter_speed: !ruby/object:Rational
+  denominator: 64
+  numerator: 1
+:thumbnail_image: (Binary data 28 bytes)
+:light_value: 9.6
+:scale_factor35efl: 6.6
+:focal_length35efl: '6.0 mm (35 mm equivalent: 39.6 mm)'

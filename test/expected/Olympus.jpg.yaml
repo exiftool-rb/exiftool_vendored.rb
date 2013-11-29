@@ -1,0 +1,68 @@
+---
+:file_name: Olympus.jpg
+:file_size: 1573 bytes
+:file_type: JPEG
+:mime_type: image/jpeg
+:exif_byte_order: Little-endian (Intel, II)
+:image_description: 'OLYMPUS DIGITAL CAMERA         '
+:make: OLYMPUS OPTICAL CO.,LTD
+:model: C2000Z
+:orientation: Horizontal (normal)
+:x_resolution: 72
+:y_resolution: 72
+:resolution_unit: inches
+:software: v951p-80
+:y_cb_cr_positioning: Co-sited
+:exposure_time: !ruby/object:Rational
+  denominator: 30
+  numerator: 1
+:f_number: 2.0
+:exposure_program: Program AE
+:iso: 100
+:exif_version: '0210'
+:components_configuration: Y, Cb, Cr, -
+:compressed_bits_per_pixel: 1
+:exposure_compensation: 0
+:max_aperture_value: 2.8
+:metering_mode: Multi-segment
+:light_source: Unknown
+:flash: Fired
+:focal_length: 7.0 mm
+:special_mode: 'Normal, Sequence: 0, Panorama: (none)'
+:quality: SQ (Low)
+:macro: 'Off'
+:bw_mode: 'Off'
+:digital_zoom: 0.0
+:focal_plane_diagonal: 7.8 mm
+:lens_distortion_params: -215 -388 -418 -185 -310 -314
+:resolution: 1
+:camera_type: C2000Z
+:camera_id: OLYMPUS DIGITAL CAMERA
+:data_dump: (Binary data 186 bytes)
+:user_comment: ''
+:flashpix_version: '0100'
+:color_space: sRGB
+:exif_image_width: 640
+:exif_image_height: 480
+:interop_index: R98 - DCF basic file (sRGB)
+:interop_version: '0100'
+:file_source: Digital Camera
+:scene_type: Directly photographed
+:compression: JPEG (old-style)
+:thumbnail_offset: 1296
+:thumbnail_length: 28
+:image_width: 8
+:image_height: 8
+:encoding_process: Baseline DCT, Huffman coding
+:bits_per_sample: 8
+:color_components: 3
+:y_cb_cr_sub_sampling: YCbCr4:2:0 (2 2)
+:aperture: 2.0
+:image_size: 8x8
+:shutter_speed: !ruby/object:Rational
+  denominator: 30
+  numerator: 1
+:thumbnail_image: (Binary data 28 bytes)
+:light_value: 6.9
+:scale_factor35efl: 5.5
+:focal_length35efl: '7.0 mm (35 mm equivalent: 38.8 mm)'

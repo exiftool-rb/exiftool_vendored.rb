@@ -1,0 +1,62 @@
+---
+:file_name: Sony.jpg
+:file_size: 2.7 kB
+:file_type: JPEG
+:mime_type: image/jpeg
+:exif_byte_order: Little-endian (Intel, II)
+:image_description: '                               '
+:make: SONY
+:model: DSC-F828
+:orientation: Horizontal (normal)
+:x_resolution: 72
+:y_resolution: 72
+:resolution_unit: inches
+:y_cb_cr_positioning: Co-sited
+:exposure_time: !ruby/object:Rational
+  denominator: 250
+  numerator: 1
+:f_number: 7.1
+:exposure_program: Program AE
+:iso: 64
+:exif_version: '0220'
+:components_configuration: Y, Cb, Cr, -
+:compressed_bits_per_pixel: 8
+:exposure_compensation: 0
+:max_aperture_value: 2.0
+:metering_mode: Multi-segment
+:light_source: Unknown
+:flash: Off, Did not fire
+:focal_length: 12.5 mm
+:flashpix_version: '0100'
+:color_space: sRGB
+:exif_image_width: 3264
+:exif_image_height: 2448
+:interop_index: R98 - DCF basic file (sRGB)
+:interop_version: '0100'
+:file_source: Digital Camera
+:scene_type: Directly photographed
+:custom_rendered: Normal
+:exposure_mode: Auto bracket
+:white_balance: Auto
+:scene_capture_type: Standard
+:contrast: Normal
+:saturation: Normal
+:sharpness: Normal
+:print_im_version: '0250'
+:compression: JPEG (old-style)
+:thumbnail_offset: 2502
+:thumbnail_length: 28
+:image_width: 8
+:image_height: 8
+:encoding_process: Baseline DCT, Huffman coding
+:bits_per_sample: 8
+:color_components: 3
+:y_cb_cr_sub_sampling: YCbCr4:2:0 (2 2)
+:aperture: 7.1
+:image_size: 8x8
+:shutter_speed: !ruby/object:Rational
+  denominator: 250
+  numerator: 1
+:thumbnail_image: (Binary data 28 bytes)
+:light_value: 14.3
+:focal_length35efl: 12.5 mm

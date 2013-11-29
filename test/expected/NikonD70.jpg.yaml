@@ -1,0 +1,146 @@
+---
+:file_name: NikonD70.jpg
+:file_size: 3.6 kB
+:file_type: JPEG
+:mime_type: image/jpeg
+:jfif_version: 1.01
+:exif_byte_order: Big-endian (Motorola, MM)
+:make: NIKON CORPORATION
+:model: NIKON D70
+:orientation: Horizontal (normal)
+:x_resolution: 300
+:y_resolution: 300
+:resolution_unit: inches
+:software: Ver.1.02
+:white_point: 0.313 0.329
+:primary_chromaticities: 0.64 0.33 0.21 0.71 0.15 0.06
+:y_cb_cr_coefficients: 0.299 0.587 0.114
+:y_cb_cr_positioning: Co-sited
+:exposure_time: !ruby/object:Rational
+  denominator: 60
+  numerator: 1
+:f_number: 5.0
+:exposure_program: Aperture-priority AE
+:exif_version: '0221'
+:components_configuration: Y, Cb, Cr, -
+:compressed_bits_per_pixel: 4
+:exposure_compensation: 0
+:max_aperture_value: 4.4
+:metering_mode: Multi-segment
+:flash: Auto, Fired, Return detected
+:focal_length: 56.0 mm
+:maker_note_version: 2.1
+:iso: 200
+:quality: Fine
+:white_balance: Auto
+:focus_mode: AF-S
+:flash_setting: Normal
+:flash_type: Built-in,TTL
+:white_balance_fine_tune: 0
+:program_shift: 0
+:exposure_difference: -4.9
+:compression: JPEG (old-style)
+:preview_image_start: 2466
+:preview_image_length: 26
+:flash_exposure_comp: -5/3
+:iso_setting: 200
+:image_boundary: 0 0 3008 2000
+:external_flash_exposure_comp: 0
+:flash_exposure_bracket_value: 0.0
+:exposure_bracket_value: 0
+:tone_comp: CS
+:lens_type: G
+:lens: 18-70mm f/3.5-4.5
+:flash_mode: Fired, TTL Mode
+:af_area_mode: Single Area
+:af_point: Center
+:af_points_in_focus: Center
+:shooting_mode: Continuous
+:color_hue: Mode2
+:light_source: Speedlight
+:shot_info_version: '0103'
+:hue_adjustment: 0
+:noise_reduction: 'Off'
+:wb_rgbg_levels: 597 256 361 256
+:lens_data_version: '0101'
+:exit_pupil_position: 89.0 mm
+:af_aperture: 4.6
+:focus_position: '0x21'
+:focus_distance: 0.63 m
+:lens_id_number: 127
+:lens_f_stops: 5.33
+:min_focal_length: 18.3 mm
+:max_focal_length: 71.3 mm
+:max_aperture_at_min_focal: 3.6
+:max_aperture_at_max_focal: 4.5
+:mcu_version: 132
+:effective_max_aperture: 4.5
+:sensor_pixel_size: 7.8 x 7.8 um
+:serial_number: No= 20025585
+:image_data_size: 2361498
+:shutter_count: 526
+:flash_info_version: '0100'
+:flash_source: None
+:external_flash_firmware: n/a
+:external_flash_flags: (none)
+:flash_commander_mode: 'Off'
+:flash_control_mode: 'Off'
+:flash_compensation: 0
+:flash_gn_distance: 0
+:flash_group_a_control_mode: 'Off'
+:flash_group_b_control_mode: 'Off'
+:flash_group_a_compensation: 0
+:flash_group_b_compensation: 0
+:image_optimization: Custom
+:vari_program: ''
+:user_comment: 'curve: fotogenics point and shoot'
+:sub_sec_time: 20
+:sub_sec_time_original: 20
+:sub_sec_time_digitized: 20
+:flashpix_version: '0100'
+:color_space: Uncalibrated
+:exif_image_width: 3008
+:exif_image_height: 2000
+:interop_index: R03 - DCF option file (Adobe RGB)
+:interop_version: '0100'
+:sensing_method: One-chip color area
+:file_source: Digital Camera
+:scene_type: Directly photographed
+:cfa_pattern: '[Blue,Green][Green,Red]'
+:custom_rendered: Custom
+:exposure_mode: Auto
+:digital_zoom_ratio: 1
+:focal_length_in35mm_format: 84 mm
+:scene_capture_type: Standard
+:gain_control: None
+:contrast: Normal
+:saturation: High
+:sharpness: Hard
+:subject_distance_range: Unknown
+:gamma: 2.2
+:thumbnail_offset: 2696
+:thumbnail_length: 28
+:image_width: 71
+:image_height: 47
+:encoding_process: Baseline DCT, Huffman coding
+:bits_per_sample: 8
+:color_components: 3
+:y_cb_cr_sub_sampling: YCbCr4:2:0 (2 2)
+:aperture: 5.0
+:image_size: 71x47
+:lens_id: AF-S DX Zoom-Nikkor 18-70mm f/3.5-4.5G IF-ED
+:lens_spec: 18-70mm f/3.5-4.5 G
+:preview_image: (Binary data 26 bytes)
+:shutter_speed: !ruby/object:Rational
+  denominator: 60
+  numerator: 1
+:sub_sec_create_date: 2005-01-14 08:57:59.000000000 +00:00
+:sub_sec_date_time_original: 2005-01-14 08:57:59.000000000 +00:00
+:sub_sec_modify_date: 2005-01-14 08:57:59.000000000 +00:00
+:thumbnail_image: (Binary data 28 bytes)
+:blue_balance: 1.410156
+:light_value: 9.6
+:red_balance: 2.332031
+:scale_factor35efl: 1.5
+:dof: 0.02 m (0.62 - 0.64)
+:focal_length35efl: '56.0 mm (35 mm equivalent: 84.0 mm)'
