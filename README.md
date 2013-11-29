@@ -1,5 +1,6 @@
 # ExiftoolVendored
 
+[![Build Status](https://secure.travis-ci.org/mceachen/exiftool_vendored.png?branch=master)](http://travis-ci.org/mceachen/exiftool_vendored)
 [![Gem Version](https://badge.fury.io/rb/exiftool_vendored.png)](http://rubygems.org/gems/exiftool_vendored)
 
 This is
