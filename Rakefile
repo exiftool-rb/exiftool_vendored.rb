@@ -35,7 +35,9 @@ task :update_exiftool do
   tgz = Pathname.new(File.expand_path("../downloads/#{basename}", __FILE__))
   tgz.parent.mkpath
 
-  unless tgz.exist?
+  if tgz.exist? && tgz.size > 0
+    puts "Assuming #{tgz} is valid…"
+  else
     puts "Downloading #{latest_url} to #{tgz}…"
     tgz.open('wb') do |io_out|
       open(latest_url, 'rb') do |io_in|
@@ -61,6 +63,6 @@ module ExiftoolVendored
 end
     EOF
   end
-  `git add #{dest_dir}`
-  puts "Added #{dest_dir}. Now `rake test`, `git commit` and `rake release`…"
+  `git add --all #{dest_dir}`
+  puts "Added #{dest_dir}. Now `rake test`, `git commit -a` and `rake release`…"
 end
