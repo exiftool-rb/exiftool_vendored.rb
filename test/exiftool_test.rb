@@ -42,23 +42,13 @@ describe ExiftoolVendored do
   end
 
   def validate_result(result, filename)
-  basename = File.basename(filename)
+    basename = File.basename(filename)
     yaml_file = "test/expected/#{basename}.yaml"
-    exif = result.to_hash.select{|k,v| !IGNORABLE_KEYS.include?(k) }
-    File.open(yaml_file, 'w') { |out| YAML.dump(exif, out) } if DUMP_RESULTS
-    e = File.open(yaml_file) { |f| YAML::load(f) }
-    bad_keys = exif.keys.select do |k|
-      next if ignorable_key?(k)
-      expected = e[k]
-      next if expected.nil? # older version of exiftool
-      actual = exif[k]
-      if expected.is_a?(String)
-        expected.downcase!
-        actual.downcase!
-      end
-      expected != actual
-    end
-    fail "#{filename}[#{bad_keys.join(',')}] didn't match" unless bad_keys.empty?
+    actual = result.to_hash.delete_if { |k, v| ignorable_key?(k) }
+    File.open(yaml_file, 'w') { |out| YAML.dump(actual, out) } if DUMP_RESULTS
+    expected = File.open(yaml_file) { |f| YAML::load(f) }
+    expected.delete_if { |k, v| ignorable_key?(k) }
+    expected.must_equal_hash(actual)
   end
 
   # These are expected to be different on travis, due to different paths, filesystems, or
@@ -67,16 +57,22 @@ describe ExiftoolVendored do
   IGNORABLE_KEYS = [
     :circle_of_confusion,
     :create_date,
+    :create_date_ymd,
     :date_time_original,
+    :date_time_original_ymd,
     :directory,
     :exif_tool_version,
     :file_access_date,
+    :file_access_date_ymd,
     :file_inode_change_date,
+    :file_inode_change_date_ymd,
     :file_modify_date,
+    :file_modify_date_ymd,
     :file_permissions,
     :fov,
     :hyperfocal_distance,
     :modify_date,
+    :modify_date_ymd,
     :nd_filter,
     :source_file
   ]

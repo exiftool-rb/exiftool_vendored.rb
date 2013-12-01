@@ -136,12 +136,9 @@
 :image_size: 8x8
 :lens: 18.0 - 55.0 mm
 :lens_id: Unknown 18-55mm
-:scale_factor35efl: 1.6
 :shooting_mode: Bulb
 :shutter_speed: 4
 :wb_rggb_levels: 1719 832 831 990
 :blue_balance: 1.190619
-:focal_length35efl: '34.0 mm (35 mm equivalent: 54.0 mm)'
-:lens35efl: '18.0 - 55.0 mm (35 mm equivalent: 28.6 - 87.4 mm)'
 :light_value: 5.6
 :red_balance: 2.067348
