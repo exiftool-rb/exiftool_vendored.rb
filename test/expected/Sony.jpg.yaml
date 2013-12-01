@@ -4,13 +4,15 @@
 :file_type: JPEG
 :mime_type: image/jpeg
 :exif_byte_order: Little-endian (Intel, II)
-:image_description: '                               '
+:image_description: ! '                               '
 :make: SONY
 :model: DSC-F828
 :orientation: Horizontal (normal)
 :x_resolution: 72
 :y_resolution: 72
 :resolution_unit: inches
+:modify_date: 2003:12:18 13:51:33
+:modify_date_civil: 2003-12-18
 :y_cb_cr_positioning: Co-sited
 :exposure_time: !ruby/object:Rational
   denominator: 250
@@ -19,6 +21,10 @@
 :exposure_program: Program AE
 :iso: 64
 :exif_version: '0220'
+:date_time_original: 2003:12:18 13:51:33
+:date_time_original_civil: 2003-12-18
+:create_date: 2003:12:18 13:51:33
+:create_date_civil: 2003-12-18
 :components_configuration: Y, Cb, Cr, -
 :compressed_bits_per_pixel: 8
 :exposure_compensation: 0

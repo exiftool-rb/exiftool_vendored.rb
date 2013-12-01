@@ -11,12 +11,18 @@
 :y_resolution: 72
 :resolution_unit: inches
 :software: Digital Camera FinePix2400Zoom Ver1.70
+:modify_date: 2001:05:19 18:36:41
+:modify_date_civil: 2001-05-19
 :y_cb_cr_positioning: Co-sited
 :copyright: ''
 :f_number: 3.5
 :exposure_program: Program AE
 :iso: 100
 :exif_version: '0210'
+:date_time_original: 2001:05:19 18:36:41
+:date_time_original_civil: 2001-05-19
+:create_date: 2001:05:19 18:36:41
+:create_date_civil: 2001-05-19
 :components_configuration: Y, Cb, Cr, -
 :compressed_bits_per_pixel: 1.6
 :shutter_speed_value: !ruby/object:Rational
@@ -30,7 +36,7 @@
 :flash: Fired
 :focal_length: 6.0 mm
 :version: '0130'
-:quality: 'NORMAL '
+:quality: ! 'NORMAL '
 :sharpness: Normal
 :white_balance: Auto
 :fuji_flash_mode: Red-eye reduction

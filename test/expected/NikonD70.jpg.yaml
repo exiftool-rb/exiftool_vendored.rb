@@ -12,6 +12,8 @@
 :y_resolution: 300
 :resolution_unit: inches
 :software: Ver.1.02
+:modify_date: 2005:01:14 08:57:59
+:modify_date_civil: 2005-01-14
 :white_point: 0.313 0.329
 :primary_chromaticities: 0.64 0.33 0.21 0.71 0.15 0.06
 :y_cb_cr_coefficients: 0.299 0.587 0.114
@@ -22,6 +24,10 @@
 :f_number: 5.0
 :exposure_program: Aperture-priority AE
 :exif_version: '0221'
+:date_time_original: 2005:01:14 08:57:59
+:date_time_original_civil: 2005-01-14
+:create_date: 2005:01:14 08:57:59
+:create_date_civil: 2005-01-14
 :components_configuration: Y, Cb, Cr, -
 :compressed_bits_per_pixel: 4
 :exposure_compensation: 0
@@ -69,8 +75,6 @@
 :focus_distance: 0.63 m
 :lens_id_number: 127
 :lens_f_stops: 5.33
-:min_focal_length: 18.3 mm
-:max_focal_length: 71.3 mm
 :max_aperture_at_min_focal: 3.6
 :max_aperture_at_max_focal: 4.5
 :mcu_version: 132
@@ -93,7 +97,7 @@
 :flash_group_b_compensation: 0
 :image_optimization: Custom
 :vari_program: ''
-:user_comment: 'curve: fotogenics point and shoot'
+:user_comment: ! 'curve: fotogenics point and shoot'
 :sub_sec_time: 20
 :sub_sec_time_original: 20
 :sub_sec_time_digitized: 20
@@ -106,7 +110,7 @@
 :sensing_method: One-chip color area
 :file_source: Digital Camera
 :scene_type: Directly photographed
-:cfa_pattern: '[Blue,Green][Green,Red]'
+:cfa_pattern: ! '[Blue,Green][Green,Red]'
 :custom_rendered: Custom
 :exposure_mode: Auto
 :digital_zoom_ratio: 1
@@ -135,11 +139,11 @@
   denominator: 60
   numerator: 1
 :sub_sec_create_date: 2005:01:14 08:57:59.20
-:sub_sec_create_date_ymd: 20050114
+:sub_sec_create_date_civil: 2005-01-14
 :sub_sec_date_time_original: 2005:01:14 08:57:59.20
-:sub_sec_date_time_original_ymd: 20050114
+:sub_sec_date_time_original_civil: 2005-01-14
 :sub_sec_modify_date: 2005:01:14 08:57:59.20
-:sub_sec_modify_date_ymd: 20050114
+:sub_sec_modify_date_civil: 2005-01-14
 :thumbnail_image: (Binary data 28 bytes)
 :blue_balance: 1.410156
 :light_value: 9.6

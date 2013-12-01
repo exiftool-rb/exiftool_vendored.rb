@@ -4,7 +4,7 @@
 :file_type: JPEG
 :mime_type: image/jpeg
 :exif_byte_order: Little-endian (Intel, II)
-:image_description: 'OLYMPUS DIGITAL CAMERA         '
+:image_description: ! 'OLYMPUS DIGITAL CAMERA         '
 :make: OLYMPUS OPTICAL CO.,LTD
 :model: C2000Z
 :orientation: Horizontal (normal)
@@ -12,6 +12,8 @@
 :y_resolution: 72
 :resolution_unit: inches
 :software: v951p-80
+:modify_date: 1999:12:06 16:38:40
+:modify_date_civil: 1999-12-06
 :y_cb_cr_positioning: Co-sited
 :exposure_time: !ruby/object:Rational
   denominator: 30
@@ -20,6 +22,10 @@
 :exposure_program: Program AE
 :iso: 100
 :exif_version: '0210'
+:date_time_original: 1999:12:06 16:38:40
+:date_time_original_civil: 1999-12-06
+:create_date: 1999:12:06 16:38:40
+:create_date_civil: 1999-12-06
 :components_configuration: Y, Cb, Cr, -
 :compressed_bits_per_pixel: 1
 :exposure_compensation: 0
@@ -28,7 +34,7 @@
 :light_source: Unknown
 :flash: Fired
 :focal_length: 7.0 mm
-:special_mode: 'Normal, Sequence: 0, Panorama: (none)'
+:special_mode: ! 'Normal, Sequence: 0, Panorama: (none)'
 :quality: SQ (Low)
 :macro: 'Off'
 :bw_mode: 'Off'

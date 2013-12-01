@@ -10,11 +10,17 @@
 :x_resolution: 180
 :y_resolution: 180
 :resolution_unit: inches
+:modify_date: 2003:12:04 06:46:52
+:modify_date_civil: 2003-12-04
 :y_cb_cr_positioning: Centered
 :exposure_time: 4
 :f_number: 14.0
 :iso: 100
 :exif_version: '0221'
+:date_time_original: 2003:12:04 06:46:52
+:date_time_original_civil: 2003-12-04
+:create_date: 2003:12:04 06:46:52
+:create_date_civil: 2003-12-04
 :components_configuration: Y, Cb, Cr, -
 :compressed_bits_per_pixel: 9
 :shutter_speed_value: 0
@@ -40,8 +46,6 @@
 :focus_range: Not Known
 :canon_exposure_mode: Manual
 :lens_type: Unknown (-1)
-:max_focal_length: 55 mm
-:min_focal_length: 18 mm
 :focal_units: 1/mm
 :max_aperture: 4
 :min_aperture: 27

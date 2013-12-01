@@ -56,24 +56,23 @@ describe ExiftoolVendored do
   # fov and hyperfocal_distance, for example, are different between v8 and v9.
   IGNORABLE_KEYS = [
     :circle_of_confusion,
-    :create_date,
-    :create_date_ymd,
-    :date_time_original,
-    :date_time_original_ymd,
     :directory,
     :exif_tool_version,
     :file_access_date,
-    :file_access_date_ymd,
+    :file_access_date_civil,
     :file_inode_change_date,
-    :file_inode_change_date_ymd,
+    :file_inode_change_date_civil,
     :file_modify_date,
-    :file_modify_date_ymd,
+    :file_modify_date_civil,
     :file_permissions,
     :fov,
     :hyperfocal_distance,
-    :modify_date,
-    :modify_date_ymd,
+    :intelligent_contrast,
+    :long_focal,
+    :max_focal_length,
+    :min_focal_length,
     :nd_filter,
+    :short_focal,
     :source_file
   ]
 
