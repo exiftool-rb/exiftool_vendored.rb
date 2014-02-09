@@ -75,5 +75,5 @@
 :shutter_speed: !ruby/object:Rational
   denominator: 64
   numerator: 1
-:thumbnail_image: (Binary data 28 bytes)
+:thumbnail_image: (Binary data 28 bytes, use -b option to extract)
 :light_value: 9.6

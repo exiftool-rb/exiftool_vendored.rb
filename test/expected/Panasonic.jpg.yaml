@@ -41,7 +41,7 @@
 :macro_mode: 'Off'
 :shooting_mode: Program
 :audio: 'No'
-:data_dump: (Binary data 5428 bytes)
+:data_dump: (Binary data 5428 bytes, use -b option to extract)
 :white_balance_bias: 0
 :flash_bias: 0
 :internal_serial_number: (S00) 2004:07:19 no. 0102
@@ -86,5 +86,5 @@
 :shutter_speed: !ruby/object:Rational
   denominator: 400
   numerator: 1
-:thumbnail_image: (Binary data 28 bytes)
+:thumbnail_image: (Binary data 28 bytes, use -b option to extract)
 :light_value: 13.0

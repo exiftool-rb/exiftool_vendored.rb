@@ -44,7 +44,7 @@
 :resolution: 1
 :camera_type: C2000Z
 :camera_id: OLYMPUS DIGITAL CAMERA
-:data_dump: (Binary data 186 bytes)
+:data_dump: (Binary data 186 bytes, use -b option to extract)
 :user_comment: ''
 :flashpix_version: '0100'
 :color_space: sRGB
@@ -68,5 +68,5 @@
 :shutter_speed: !ruby/object:Rational
   denominator: 30
   numerator: 1
-:thumbnail_image: (Binary data 28 bytes)
+:thumbnail_image: (Binary data 28 bytes, use -b option to extract)
 :light_value: 6.9
