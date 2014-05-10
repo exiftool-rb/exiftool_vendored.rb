@@ -1,0 +1,5524 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>QuickTime Tags</title>
+<link rel=stylesheet type='text/css' href='style.css' title='Style'>
+</head>
+<body>
+<h2 class=top>QuickTime Tags</h2>
+<p>The QuickTime format is used for many different types of audio, video and
+image files (most commonly, MOV and MP4 videos).  Exiftool extracts standard
+meta information a variety of audio, video and image parameters, as well as
+proprietary information written by many camera models.  Tags with a question
+mark after their name are not extracted unless the Unknown option is set.</p>
+
+<p>ExifTool has the ability to write/create XMP, and edit some date/time tags
+in QuickTime-format files.</p>
+
+<p>According to the specification, many QuickTime date/time tags should be
+stored as UTC.  Unfortunately, digital cameras often store local time values
+instead (presumably because they don&#39;t know the time zone).  For this
+reason, by default ExifTool does not assume a time zone for these values.
+However, if the QuickTimeUTC option is set via the API or the ExifTool
+configuration file, then ExifTool will assume these values are properly
+stored as UTC, and will convert them to local time when extracting.</p>
+
+<p>See
+<a href="http://developer.apple.com/mac/library/documentation/QuickTime/QTFF/QTFFChap1/qtff1.html">http://developer.apple.com/mac/library/documentation/QuickTime/QTFF/QTFFChap1/qtff1.html</a>
+for the official specification.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'PICT'</td>
+<td>PreviewPICT</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'_htc'</td>
+<td>HTCInfo</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#HTCInfo'>QuickTime HTCInfo Tags</a></td></tr>
+<tr>
+<td>'ardt'</td>
+<td>ARDroneFile</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'free'</td>
+<td>KodakFree
+  <br>Free?</td>
+<td class=c>-<br>N</td>
+<td>--&gt; <a href='Kodak.html#Free'>Kodak Free Tags</a></td></tr>
+<tr>
+<td>'ftyp'</td>
+<td>FileType</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#FileType'>QuickTime FileType Tags</a></td></tr>
+<tr class=b>
+<td>'junk'</td>
+<td>Junk?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'mdat'</td>
+<td>MovieData?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'mdat-offset'</td>
+<td>MovieDataOffset</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'mdat-size'</td>
+<td>MovieDataSize</td>
+<td class=c>N</td>
+<td><span class=s><span class=n>(not a real tag ID, this tag represents the size of the &#39;mdat&#39; data in bytes
+and is used in the AvgBitrate calculation)</span></span></td></tr>
+<tr class=b>
+<td>'moov'</td>
+<td>Movie</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Movie'>QuickTime Movie Tags</a></td></tr>
+<tr>
+<td>'pict'</td>
+<td>PreviewPICT</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'pnot'</td>
+<td>Preview</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Preview'>QuickTime Preview Tags</a></td></tr>
+<tr>
+<td>'prrt'</td>
+<td>ARDroneTelemetry</td>
+<td class=c>N</td>
+<td><span class=s><span class=n>(telemetry information for each video frame: status1, status2, time, pitch,
+roll, yaw, speed, altitude)</span></span></td></tr>
+<tr class=b>
+<td>'skip'</td>
+<td>CanonSkip
+  <br>Skip?</td>
+<td class=c>-<br>N</td>
+<td>--&gt; <a href='Canon.html#Skip'>Canon Skip Tags</a></td></tr>
+<tr>
+<td>'thum'</td>
+<td>ThumbnailImage</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'udta'</td>
+<td>UserData</td>
+<td class=c>-</td>
+<td>--&gt; <a href='FLIR.html#UserData'>FLIR UserData Tags</a></td></tr>
+<tr>
+<td>'uuid'</td>
+<td>UUID-XMP
+  <br>UUID-PROF
+  <br>UUID-Flip
+  <br>UUID-Unknown?</td>
+<td class=c>-<br>-<br>-<br>N</td>
+<td>--&gt; <a href='XMP.html'>XMP Tags</a>
+  <br>--&gt; <a href='QuickTime.html#Profile'>QuickTime Profile Tags</a>
+  <br>--&gt; <a href='QuickTime.html#Flip'>QuickTime Flip Tags</a></td></tr>
+<tr class=b>
+<td>'wide'</td>
+<td>Wide?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='HTCInfo'>QuickTime HTCInfo Tags</a></h2>
+<p>Tags written by some HTC camera phones.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'slmt'</td>
+<td>Unknown_slmt?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='FileType'>QuickTime FileType Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index4</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='0 = 0x0'>0</td>
+<td>MajorBrand</td>
+<td class=c>N</td>
+<td><span class=s>&#39;3g2a&#39; = 3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-0 V1.0
+  <br>&#39;3g2b&#39; = 3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-A V1.0.0
+  <br>&#39;3g2c&#39; = 3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-B v1.0
+  <br>&#39;3ge6&#39; = 3GPP (.3GP) Release 6 MBMS Extended Presentations
+  <br>&#39;3ge7&#39; = 3GPP (.3GP) Release 7 MBMS Extended Presentations
+  <br>&#39;3gg6&#39; = 3GPP Release 6 General Profile
+  <br>&#39;3gp1&#39; = 3GPP Media (.3GP) Release 1 (probably non-existent)
+  <br>&#39;3gp2&#39; = 3GPP Media (.3GP) Release 2 (probably non-existent)
+  <br>&#39;3gp3&#39; = 3GPP Media (.3GP) Release 3 (probably non-existent)
+  <br>&#39;3gp4&#39; = 3GPP Media (.3GP) Release 4
+  <br>&#39;3gp5&#39; = 3GPP Media (.3GP) Release 5
+  <br>&#39;3gp6&#39; = 3GPP Media (.3GP) Release 6 Streaming Servers
+  <br>&#39;3gs7&#39; = 3GPP Media (.3GP) Release 7 Streaming Servers
+  <br>&#39;CAEP&#39; = Canon Digital Camera
+  <br>&#39;CDes&#39; = Convergent Design
+  <br>&#39;F4A &#39; = Audio for Adobe Flash Player 9+ (.F4A)
+  <br>&#39;F4B &#39; = Audio Book for Adobe Flash Player 9+ (.F4B)
+  <br>&#39;F4P &#39; = Protected Video for Adobe Flash Player 9+ (.F4P)
+  <br>&#39;F4V &#39; = Video for Adobe Flash Player 9+ (.F4V)
+  <br>&#39;JP2 &#39; = JPEG 2000 Image (.JP2) [ISO 15444-1 ?]
+  <br>&#39;JP20&#39; = Unknown, from GPAC samples (prob non-existent)
+  <br>&#39;KDDI&#39; = 3GPP2 EZmovie for KDDI 3G cellphones
+  <br>&#39;M4A &#39; = Apple iTunes AAC-LC (.M4A) Audio
+  <br>&#39;M4B &#39; = Apple iTunes AAC-LC (.M4B) Audio Book
+  <br>&#39;M4P &#39; = Apple iTunes AAC-LC (.M4P) AES Protected Audio
+  <br>&#39;M4V &#39; = Apple iTunes Video (.M4V) Video
+  <br>&#39;M4VH&#39; = Apple TV (.M4V)
+  <br>&#39;M4VP&#39; = Apple iPhone (.M4V)
+  <br>&#39;MPPI&#39; = Photo Player, MAF [ISO/IEC 23000-3]
+  <br>&#39;MSNV&#39; = MPEG-4 (.MP4) for SonyPSP
+  <br>&#39;NDAS&#39; = MP4 v2 [ISO 14496-14] Nero Digital AAC Audio
+  <br>&#39;NDSC&#39; = MPEG-4 (.MP4) Nero Cinema Profile
+  <br>&#39;NDSH&#39; = MPEG-4 (.MP4) Nero HDTV Profile
+  <br>&#39;NDSM&#39; = MPEG-4 (.MP4) Nero Mobile Profile
+  <br>&#39;NDSP&#39; = MPEG-4 (.MP4) Nero Portable Profile
+  <br>&#39;NDSS&#39; = MPEG-4 (.MP4) Nero Standard Profile
+  <br>&#39;NDXC&#39; = H.264/MPEG-4 AVC (.MP4) Nero Cinema Profile
+  <br>&#39;NDXH&#39; = H.264/MPEG-4 AVC (.MP4) Nero HDTV Profile
+  <br>&#39;NDXM&#39; = H.264/MPEG-4 AVC (.MP4) Nero Mobile Profile
+  <br>&#39;NDXP&#39; = H.264/MPEG-4 AVC (.MP4) Nero Portable Profile
+  <br>&#39;NDXS&#39; = H.264/MPEG-4 AVC (.MP4) Nero Standard Profile
+  <br>&#39;ROSS&#39; = Ross Video
+  <br>&#39;avc1&#39; = MP4 Base w/ AVC ext [ISO 14496-12:2005]
+  <br>&#39;caqv&#39; = Casio Digital Camera
+  <br>&#39;da0a&#39; = DMB MAF w/ MPEG Layer II aud, MOT slides, DLS, JPG/PNG/MNG images
+  <br>&#39;da0b&#39; = DMB MAF, extending DA0A, with 3GPP timed text, DID, TVA, REL, IPMP
+  <br>&#39;da1a&#39; = DMB MAF audio with ER-BSAC audio, JPG/PNG/MNG images
+  <br>&#39;da1b&#39; = DMB MAF, extending da1a, with 3GPP timed text, DID, TVA, REL, IPMP
+  <br>&#39;da2a&#39; = DMB MAF aud w/ HE-AAC v2 aud, MOT slides, DLS, JPG/PNG/MNG images
+  <br>&#39;da2b&#39; = DMB MAF, extending da2a, with 3GPP timed text, DID, TVA, REL, IPMP
+  <br>&#39;da3a&#39; = DMB MAF aud with HE-AAC aud, JPG/PNG/MNG images
+  <br>&#39;da3b&#39; = DMB MAF, extending da3a w/ BIFS, 3GPP timed text, DID, TVA, REL, IPMP
+  <br>&#39;dmb1&#39; = DMB MAF supporting all the components defined in the specification
+  <br>&#39;dmpf&#39; = Digital Media Project
+  <br>&#39;drc1&#39; = Dirac (wavelet compression), encapsulated in ISO base media (MP4)
+  <br>&#39;dv1a&#39; = DMB MAF vid w/ AVC vid, ER-BSAC aud, BIFS, JPG/PNG/MNG images, TS
+  <br>&#39;dv1b&#39; = DMB MAF, extending dv1a, with 3GPP timed text, DID, TVA, REL, IPMP
+  <br>&#39;dv2a&#39; = DMB MAF vid w/ AVC vid, HE-AAC v2 aud, BIFS, JPG/PNG/MNG images, TS
+  <br>&#39;dv2b&#39; = DMB MAF, extending dv2a, with 3GPP timed text, DID, TVA, REL, IPMP
+  <br>&#39;dv3a&#39; = DMB MAF vid w/ AVC vid, HE-AAC aud, BIFS, JPG/PNG/MNG images, TS
+  <br>&#39;dv3b&#39; = DMB MAF, extending dv3a, with 3GPP timed text, DID, TVA, REL, IPMP
+  <br>&#39;dvr1&#39; = DVB (.DVB) over RTP
+  <br>&#39;dvt1&#39; = DVB (.DVB) over MPEG-2 Transport Stream
+  <br>&#39;isc2&#39; = ISMACryp 2.0 Encrypted File
+  <br>&#39;iso2&#39; = MP4 Base Media v2 [ISO 14496-12:2005]
+  <br>&#39;isom&#39; = MP4  Base Media v1 [IS0 14496-12:2003]
+  <br>&#39;jpm &#39; = JPEG 2000 Compound Image (.JPM) [ISO 15444-6]
+  <br>&#39;jpx &#39; = JPEG 2000 with extensions (.JPX) [ISO 15444-2]
+  <br>&#39;mj2s&#39; = Motion JPEG 2000 [ISO 15444-3] Simple Profile
+  <br>&#39;mjp2&#39; = Motion JPEG 2000 [ISO 15444-3] General Profile
+  <br>&#39;mmp4&#39; = MPEG-4/3GPP Mobile Profile (.MP4/3GP) (for NTT)
+  <br>&#39;mp21&#39; = MPEG-21 [ISO/IEC 21000-9]
+  <br>&#39;mp41&#39; = MP4 v1 [ISO 14496-1:ch13]
+  <br>&#39;mp42&#39; = MP4 v2 [ISO 14496-14]
+  <br>&#39;mp71&#39; = MP4 w/ MPEG-7 Metadata [per ISO 14496-12]
+  <br>&#39;mqt &#39; = Sony / Mobile QuickTime (.MQV) US Patent 7,477,830 (Sony Corp)
+  <br>&#39;odcf&#39; = OMA DCF DRM Format 2.0 (OMA-TS-DRM-DCF-V2_0-20060303-A)
+  <br>&#39;opf2&#39; = OMA PDCF DRM Format 2.1 (OMA-TS-DRM-DCF-V2_1-20070724-C)
+  <br>&#39;opx2&#39; = OMA PDCF DRM + XBS extensions (OMA-TS-DRM_XBS-V1_0-20070529-C)
+  <br>&#39;pana&#39; = Panasonic Digital Camera
+  <br>&#39;qt  &#39; = Apple QuickTime (.MOV/QT)
+  <br>&#39;sdv &#39; = SD Memory Card Video
+  <br>&#39;ssc1&#39; = Samsung stereoscopic, single stream
+  <br>&#39;ssc2&#39; = Samsung stereoscopic, dual stream</span></td></tr>
+<tr class=b>
+<td class=r title='1 = 0x1'>1</td>
+<td>MinorVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='2 = 0x2'>2</td>
+<td>CompatibleBrands</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='Movie'>QuickTime Movie Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'cmov'</td>
+<td>CompressedMovie</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#CMovie'>QuickTime CMovie Tags</a></td></tr>
+<tr class=b>
+<td>'htka'</td>
+<td>HTCTrack</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Track'>QuickTime Track Tags</a></td></tr>
+<tr>
+<td>'iods'</td>
+<td>InitialObjectDescriptor?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'meta'</td>
+<td>Meta</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Meta'>QuickTime Meta Tags</a></td></tr>
+<tr>
+<td>'mvhd'</td>
+<td>MovieHeader</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#MovieHeader'>QuickTime MovieHeader Tags</a></td></tr>
+<tr class=b>
+<td>'trak'</td>
+<td>Track</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Track'>QuickTime Track Tags</a></td></tr>
+<tr>
+<td>'udta'</td>
+<td>UserData</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#UserData'>QuickTime UserData Tags</a></td></tr>
+<tr class=b>
+<td>'uuid'</td>
+<td>UUID-USMT
+  <br>UUID-Canon
+  <br>UUID-Unknown?</td>
+<td class=c>-<br>-<br>N</td>
+<td>--&gt; <a href='QuickTime.html#UserMedia'>QuickTime UserMedia Tags</a>
+  <br>--&gt; <a href='Canon.html#uuid'>Canon uuid Tags</a></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='CMovie'>QuickTime CMovie Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'dcom'</td>
+<td>Compression</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='Track'>QuickTime Track Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'mdia'</td>
+<td>Media</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Media'>QuickTime Media Tags</a></td></tr>
+<tr class=b>
+<td>'meta'</td>
+<td>Meta</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Meta'>QuickTime Meta Tags</a></td></tr>
+<tr>
+<td>'tapt'</td>
+<td>TrackAperture</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#TrackAperture'>QuickTime TrackAperture Tags</a></td></tr>
+<tr class=b>
+<td>'tkhd'</td>
+<td>TrackHeader</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#TrackHeader'>QuickTime TrackHeader Tags</a></td></tr>
+<tr>
+<td>'tref'</td>
+<td>TrackRef</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#TrackRef'>QuickTime TrackRef Tags</a></td></tr>
+<tr class=b>
+<td>'udta'</td>
+<td>UserData</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#UserData'>QuickTime UserData Tags</a></td></tr>
+<tr>
+<td>'uuid'</td>
+<td>UUID-USMT
+  <br>UUID-Unknown?</td>
+<td class=c>-<br>N</td>
+<td>--&gt; <a href='QuickTime.html#UserMedia'>QuickTime UserMedia Tags</a></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='Media'>QuickTime Media Tags</a></h2>
+<p>MP4 media box.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'hdlr'</td>
+<td>Handler</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Handler'>QuickTime Handler Tags</a></td></tr>
+<tr class=b>
+<td>'mdhd'</td>
+<td>MediaHeader</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#MediaHeader'>QuickTime MediaHeader Tags</a></td></tr>
+<tr>
+<td>'minf'</td>
+<td>MediaInfo</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#MediaInfo'>QuickTime MediaInfo Tags</a></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='Handler'>QuickTime Handler Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index1</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='4 = 0x4'>4</td>
+<td>HandlerClass</td>
+<td class=c>N</td>
+<td><span class=s>&#39;dhlr&#39; = Data Handler
+  <br>&#39;mhlr&#39; = Media Handler</span></td></tr>
+<tr class=b>
+<td class=r title='8 = 0x8'>8</td>
+<td>HandlerType</td>
+<td class=c>N</td>
+<td><table class=cols><tr>
+  <td>&#39;alis&#39; = Alias Data
+  <br>&#39;crsm&#39; = Clock Reference
+  <br>&#39;hint&#39; = Hint Track
+  <br>&#39;ipsm&#39; = IPMP
+  <br>&#39;m7sm&#39; = MPEG-7 Stream
+  <br>&#39;mdir&#39; = Metadata
+  <br>&#39;mdta&#39; = Metadata Tags
+  <br>&#39;meta&#39; = NRT Metadata
+  <br>&#39;mjsm&#39; = MPEG-J
+  <br>&#39;ocsm&#39; = Object Content</td><td>&nbsp;&nbsp;</td>
+  <td>&#39;odsm&#39; = Object Descriptor
+  <br>&#39;priv&#39; = Private
+  <br>&#39;sdsm&#39; = Scene Description
+  <br>&#39;soun&#39; = Audio Track
+  <br>&#39;subp&#39; = Subpicture
+  <br>&#39;text&#39; = Text
+  <br>&#39;tmcd&#39; = Time Code
+  <br>&#39;url &#39; = URL
+  <br>&#39;vide&#39; = Video Track</td><td>&nbsp;&nbsp;</td></tr></table>
+</td></tr>
+<tr>
+<td class=r title='12 = 0xc'>12</td>
+<td>HandlerVendorID</td>
+<td class=c>N</td>
+<td>--&gt; <a href='QuickTime.html#VendorID'>QuickTime VendorID Values</a></td></tr>
+<tr class=b>
+<td class=r title='24 = 0x18'>24</td>
+<td>HandlerDescription</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='VendorID'>QuickTime VendorID Values</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class='inner sep' cellspacing=1>
+<tr class=h><th>Value</th><th>VendorID</th><th>Value</th><th>VendorID</th><th>Value</th><th>VendorID</th></tr>
+<tr><td>'AR.D'</td><td>= Parrot AR.Drone</td>
+<td class=b>'ZORA'</td><td class=b>= Zoran Corporation</td>
+<td>'niko'</td><td>= Nikon</td>
+</tr><tr><td>'FFMP'</td><td>= FFmpeg</td>
+<td class=b>'appl'</td><td class=b>= Apple</td>
+<td>'olym'</td><td>= Olympus</td>
+</tr><tr><td>'GIC '</td><td>= General Imaging Co.</td>
+<td class=b>'fe20'</td><td class=b>= Olympus (fe20)</td>
+<td>'pana'</td><td>= Panasonic</td>
+</tr><tr><td>'KMPI'</td><td>= Konica-Minolta</td>
+<td class=b>'kdak'</td><td class=b>= Kodak</td>
+<td>'pent'</td><td>= Pentax</td>
+</tr><tr><td>'NIKO'</td><td>= Nikon</td>
+<td class=b>'leic'</td><td class=b>= Leica</td>
+<td>'pr01'</td><td>= Olympus (pr01)</td>
+</tr><tr><td>'SMI '</td><td>= Sorenson Media Inc.</td>
+<td class=b>'mino'</td><td class=b>= Minolta</td>
+<td>'sany'</td><td>= Sanyo</td>
+</tr></table></td></tr></table></blockquote>
+
+<h2><a name='MediaHeader'>QuickTime MediaHeader Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index4</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='0 = 0x0'>0</td>
+<td>MediaHeaderVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='1 = 0x1'>1</td>
+<td>MediaCreateDate</td>
+<td class=c>int32u</td>
+<td><span class=s><span class=n>(converted from UTC to local time if the QuickTimeUTC option is set)</span></span></td></tr>
+<tr>
+<td class=r title='2 = 0x2'>2</td>
+<td>MediaModifyDate</td>
+<td class=c>int32u</td>
+<td><span class=s><span class=n>(converted from UTC to local time if the QuickTimeUTC option is set)</span></span></td></tr>
+<tr class=b>
+<td class=r title='3 = 0x3'>3</td>
+<td>MediaTimeScale</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='4 = 0x4'>4</td>
+<td>MediaDuration</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='5 = 0x5'>5</td>
+<td>MediaLanguageCode</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='MediaInfo'>QuickTime MediaInfo Tags</a></h2>
+<p>MP4 media info box.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'dinf'</td>
+<td>DataInfo</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#DataInfo'>QuickTime DataInfo Tags</a></td></tr>
+<tr class=b>
+<td>'gmhd'</td>
+<td>GenMediaHeader</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#GenMediaHeader'>QuickTime GenMediaHeader Tags</a></td></tr>
+<tr>
+<td>'hdlr'</td>
+<td>Handler</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Handler'>QuickTime Handler Tags</a></td></tr>
+<tr class=b>
+<td>'hmhd'</td>
+<td>HintHeader</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#HintHeader'>QuickTime HintHeader Tags</a></td></tr>
+<tr>
+<td>'nmhd'</td>
+<td>NullMediaHeader?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'smhd'</td>
+<td>AudioHeader</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#AudioHeader'>QuickTime AudioHeader Tags</a></td></tr>
+<tr>
+<td>'stbl'</td>
+<td>SampleTable</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#SampleTable'>QuickTime SampleTable Tags</a></td></tr>
+<tr class=b>
+<td>'vmhd'</td>
+<td>VideoHeader</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#VideoHeader'>QuickTime VideoHeader Tags</a></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='DataInfo'>QuickTime DataInfo Tags</a></h2>
+<p>MP4 data information box.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'dref'</td>
+<td>DataRef</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#DataRef'>QuickTime DataRef Tags</a></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='DataRef'>QuickTime DataRef Tags</a></h2>
+<p>MP4 data reference box.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'url '</td>
+<td>URL</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'urn '</td>
+<td>URN</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='GenMediaHeader'>QuickTime GenMediaHeader Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'gmin'</td>
+<td>GenMediaInfo</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#GenMediaInfo'>QuickTime GenMediaInfo Tags</a></td></tr>
+<tr class=b>
+<td>'text'</td>
+<td>Text?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'tmcd'</td>
+<td>TimeCode</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#TimeCode'>QuickTime TimeCode Tags</a></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='GenMediaInfo'>QuickTime GenMediaInfo Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index1</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='0 = 0x0'>0</td>
+<td>GenMediaVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='1 = 0x1'>1</td>
+<td>GenFlags</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='4 = 0x4'>4</td>
+<td>GenGraphicsMode</td>
+<td class=c>N</td>
+<td>--&gt; <a href='QuickTime.html#GraphicsMode'>QuickTime GraphicsMode Values</a></td></tr>
+<tr class=b>
+<td class=r title='6 = 0x6'>6</td>
+<td>GenOpColor</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='12 = 0xc'>12</td>
+<td>GenBalance</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='GraphicsMode'>QuickTime GraphicsMode Values</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class='inner sep' cellspacing=1>
+<tr class=h><th>Value</th><th>GraphicsMode</th><th>Value</th><th>GraphicsMode</th><th>Value</th><th>GraphicsMode</th></tr>
+<tr><td class=r>0x0</td><td>= srcCopy</td>
+<td class='r b'>0xb</td><td class=b>= patBic</td>
+<td class=r>0x26</td><td>= subOver</td>
+</tr><tr><td class=r>0x1</td><td>= srcOr</td>
+<td class='r b'>0xc</td><td class=b>= notPatCopy</td>
+<td class=r>0x27</td><td>= addMin</td>
+</tr><tr><td class=r>0x2</td><td>= srcXor</td>
+<td class='r b'>0xd</td><td class=b>= notPatOr</td>
+<td class=r>0x31</td><td>= grayishTextOr</td>
+</tr><tr><td class=r>0x3</td><td>= srcBic</td>
+<td class='r b'>0xe</td><td class=b>= notPatXor</td>
+<td class=r>0x32</td><td>= hilite</td>
+</tr><tr><td class=r>0x4</td><td>= notSrcCopy</td>
+<td class='r b'>0xf</td><td class=b>= notPatBic</td>
+<td class=r>0x40</td><td>= ditherCopy</td>
+</tr><tr><td class=r>0x5</td><td>= notSrcOr</td>
+<td class='r b'>0x20</td><td class=b>= blend</td>
+<td class=r>0x100</td><td>= Alpha</td>
+</tr><tr><td class=r>0x6</td><td>= notSrcXor</td>
+<td class='r b'>0x21</td><td class=b>= addPin</td>
+<td class=r>0x101</td><td>= White Alpha</td>
+</tr><tr><td class=r>0x7</td><td>= notSrcBic</td>
+<td class='r b'>0x22</td><td class=b>= addOver</td>
+<td class=r>0x102</td><td>= Pre-multiplied Black Alpha</td>
+</tr><tr><td class=r>0x8</td><td>= patCopy</td>
+<td class='r b'>0x23</td><td class=b>= subPin</td>
+<td class=r>0x110</td><td>= Component Alpha</td>
+</tr><tr><td class=r>0x9</td><td>= patOr</td>
+<td class='r b'>0x24</td><td class=b>= transparent</td>
+<td class=r>&nbsp;</td><td>&nbsp;</td>
+</tr><tr><td class=r>0xa</td><td>= patXor</td>
+<td class='r b'>0x25</td><td class=b>= addMax</td>
+<td class=r>&nbsp;</td><td>&nbsp;</td>
+</tr></table></td></tr></table></blockquote>
+
+<h2><a name='TimeCode'>QuickTime TimeCode Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'tcmi'</td>
+<td>TCMediaInfo</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#TCMediaInfo'>QuickTime TCMediaInfo Tags</a></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='TCMediaInfo'>QuickTime TCMediaInfo Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index1</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='4 = 0x4'>4</td>
+<td>TextFont</td>
+<td class=c>N</td>
+<td><span class=s>0 = System</span></td></tr>
+<tr class=b>
+<td class=r title='6 = 0x6'>6</td>
+<td>TextFace</td>
+<td class=c>N</td>
+<td><table class=cols><tr>
+  <td>0x0 = Plain
+  <br>Bit 0 = Bold
+  <br>Bit 1 = Italic
+  <br>Bit 2 = Underline</td><td>&nbsp;&nbsp;</td>
+  <td>Bit 3 = Outline
+  <br>Bit 4 = Shadow
+  <br>Bit 5 = Condense
+  <br>Bit 6 = Extend</td><td>&nbsp;&nbsp;</td></tr></table>
+</td></tr>
+<tr>
+<td class=r title='8 = 0x8'>8</td>
+<td>TextSize</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='12 = 0xc'>12</td>
+<td>TextColor</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='18 = 0x12'>18</td>
+<td>BackgroundColor</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='24 = 0x18'>24</td>
+<td>FontName</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='HintHeader'>QuickTime HintHeader Tags</a></h2>
+<p>MP4 hint media header.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index2</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='2 = 0x2'>2</td>
+<td>MaxPDUSize</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='3 = 0x3'>3</td>
+<td>AvgPDUSize</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='4 = 0x4'>4</td>
+<td>MaxBitrate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='6 = 0x6'>6</td>
+<td>AvgBitrate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='AudioHeader'>QuickTime AudioHeader Tags</a></h2>
+<p>MP4 audio media header.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index2</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='2 = 0x2'>2</td>
+<td>Balance</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='SampleTable'>QuickTime SampleTable Tags</a></h2>
+<p>MP4 sample table box.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'co64'</td>
+<td>ChunkOffset64?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'cslg'</td>
+<td>CompositionToDecodeTimelineMapping?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'ctts'</td>
+<td>CompositionTimeToSample?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'padb'</td>
+<td>SamplePaddingBits?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'sbgp'</td>
+<td>SampleToGroup?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'sdtp'</td>
+<td>IdependentAndDisposableSamples?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'sgpd'</td>
+<td>SampleGroupDescription?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'stco'</td>
+<td>ChunkOffset?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'stdp'</td>
+<td>SampleDegradationPriority?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'stps'</td>
+<td>PartialSyncSamples</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'stsc'</td>
+<td>SampleToChunk?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'stsd'</td>
+<td>AudioSampleDesc
+  <br>VideoSampleDesc
+  <br>HintSampleDesc
+  <br>OtherSampleDesc</td>
+<td class=c>-<br>-<br>-<br>-</td>
+<td>--&gt; <a href='QuickTime.html#AudioSampleDesc'>QuickTime AudioSampleDesc Tags</a>
+  <br>--&gt; <a href='QuickTime.html#ImageDesc'>QuickTime ImageDesc Tags</a>
+  <br>--&gt; <a href='QuickTime.html#HintSampleDesc'>QuickTime HintSampleDesc Tags</a>
+  <br>--&gt; <a href='QuickTime.html#OtherSampleDesc'>QuickTime OtherSampleDesc Tags</a></td></tr>
+<tr>
+<td>'stsh'</td>
+<td>ShadowSyncSampleTable?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'stss'</td>
+<td>SyncSampleTable?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'stsz'</td>
+<td>SampleSizes?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'stts'</td>
+<td>VideoFrameRate
+  <br>TimeToSampleTable?</td>
+<td class=c>N<br>N</td>
+<td><span class=s><span class=n>(average rate calculated from time-to-sample table for video media)</span></span></td></tr>
+<tr>
+<td>'stz2'</td>
+<td>CompactSampleSizes?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'subs'</td>
+<td>Sub-sampleInformation?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='AudioSampleDesc'>QuickTime AudioSampleDesc Tags</a></h2>
+<p>MP4 audio sample description.  This hybrid atom contains both data and child
+atoms.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>ID/Index</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='4 = 0x4'>4</td>
+<td>AudioFormat</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='20 = 0x14'>20</td>
+<td>AudioVendorID</td>
+<td class=c>N</td>
+<td>--&gt; <a href='QuickTime.html#VendorID'>QuickTime VendorID Values</a></td></tr>
+<tr>
+<td class=r title='24 = 0x18'>24</td>
+<td>AudioChannels</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='26 = 0x1a'>26</td>
+<td>AudioBitsPerSample</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='32 = 0x20'>32</td>
+<td>AudioSampleRate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'damr'</td>
+<td>DecodeConfig</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#DecodeConfig'>QuickTime DecodeConfig Tags</a></td></tr>
+<tr>
+<td>'pinf'</td>
+<td>PurchaseInfo</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#ProtectionInfo'>QuickTime ProtectionInfo Tags</a></td></tr>
+<tr class=b>
+<td>'sinf'</td>
+<td>ProtectionInfo</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#ProtectionInfo'>QuickTime ProtectionInfo Tags</a></td></tr>
+<tr>
+<td>'wave'</td>
+<td>Wave</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Wave'>QuickTime Wave Tags</a></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='DecodeConfig'>QuickTime DecodeConfig Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index1</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='0 = 0x0'>0</td>
+<td>EncoderVendor</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='4 = 0x4'>4</td>
+<td>EncoderVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='ProtectionInfo'>QuickTime ProtectionInfo Tags</a></h2>
+<p>Child atoms found in &quot;sinf&quot; and/or &quot;pinf&quot; atoms.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'frma'</td>
+<td>OriginalFormat</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'schi'</td>
+<td>SchemeInfo</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#SchemeInfo'>QuickTime SchemeInfo Tags</a></td></tr>
+<tr>
+<td>'schm'</td>
+<td>SchemeType</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#SchemeType'>QuickTime SchemeType Tags</a></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='SchemeInfo'>QuickTime SchemeInfo Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'cert'</td>
+<td>Certificate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'iviv'</td>
+<td>InitializationVector</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'key '</td>
+<td>KeyID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'name'</td>
+<td>UserName</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'righ'</td>
+<td>Rights</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Rights'>QuickTime Rights Tags</a></td></tr>
+<tr class=b>
+<td>'user'</td>
+<td>UserID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='Rights'>QuickTime Rights Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'aver'</td>
+<td>VersionRestrictions</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'medi'</td>
+<td>MediaFlags</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'mode'</td>
+<td>ModeFlags</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'plat'</td>
+<td>Platform</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'song'</td>
+<td>ItemID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'tool'</td>
+<td>ItemTool</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'tran'</td>
+<td>TransactionID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'veID'</td>
+<td>ItemVendorID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='SchemeType'>QuickTime SchemeType Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index1</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='4 = 0x4'>4</td>
+<td>SchemeType</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='8 = 0x8'>8</td>
+<td>SchemeVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='10 = 0xa'>10</td>
+<td>SchemeURL</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='Wave'>QuickTime Wave Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'frma'</td>
+<td>PurchaseFileFormat</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='ImageDesc'>QuickTime ImageDesc Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>ID/Index</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='2 = 0x2'>2</td>
+<td>CompressorID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='10 = 0xa'>10</td>
+<td>VendorID</td>
+<td class=c>N</td>
+<td>--&gt; <a href='QuickTime.html#VendorID'>QuickTime VendorID Values</a></td></tr>
+<tr>
+<td class=r title='16 = 0x10'>16</td>
+<td>SourceImageWidth</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='17 = 0x11'>17</td>
+<td>SourceImageHeight</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='18 = 0x12'>18</td>
+<td>XResolution</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='20 = 0x14'>20</td>
+<td>YResolution</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='25 = 0x19'>25</td>
+<td>CompressorName</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='41 = 0x29'>41</td>
+<td>BitDepth</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'btrt'</td>
+<td>BitrateInfo</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Bitrate'>QuickTime Bitrate Tags</a></td></tr>
+<tr class=b>
+<td>'clap'</td>
+<td>CleanAperture</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#CleanAperture'>QuickTime CleanAperture Tags</a></td></tr>
+<tr>
+<td>'colr'</td>
+<td>ColorRepresentation</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'fiel'</td>
+<td>VideoFieldOrder</td>
+<td class=c>N</td>
+<td><span class=s>[Value 0]
+  <br>1 = Progressive
+  <br>2 = 2:1 Interlaced</span></td></tr>
+<tr>
+<td>'gama'</td>
+<td>Gamma</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'pasp'</td>
+<td>PixelAspectRatio</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='Bitrate'>QuickTime Bitrate Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index4</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='0 = 0x0'>0</td>
+<td>BufferSize</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='1 = 0x1'>1</td>
+<td>MaxBitrate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='2 = 0x2'>2</td>
+<td>AverageBitrate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='CleanAperture'>QuickTime CleanAperture Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index8</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='0 = 0x0'>0</td>
+<td>CleanApertureWidth</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='1 = 0x1'>1</td>
+<td>CleanApertureHeight</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='2 = 0x2'>2</td>
+<td>CleanApertureOffsetX</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='3 = 0x3'>3</td>
+<td>CleanApertureOffsetY</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='HintSampleDesc'>QuickTime HintSampleDesc Tags</a></h2>
+<p>MP4 hint sample description.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>ID/Index</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='4 = 0x4'>4</td>
+<td>HintFormat</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='16 = 0x10'>16</td>
+<td>HintTrackVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='20 = 0x14'>20</td>
+<td>MaxPacketSize</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'snro'</td>
+<td>SequenceNumberRandomOffset</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'tims'</td>
+<td>RTPTimeScale</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'tsro'</td>
+<td>TimestampRandomOffset</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='OtherSampleDesc'>QuickTime OtherSampleDesc Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td title='0x0004 = 4'>0x0004</td>
+<td>OtherFormat</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='VideoHeader'>QuickTime VideoHeader Tags</a></h2>
+<p>MP4 video media header.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index2</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='2 = 0x2'>2</td>
+<td>GraphicsMode</td>
+<td class=c>N</td>
+<td>--&gt; <a href='QuickTime.html#GraphicsMode'>QuickTime GraphicsMode Values</a></td></tr>
+<tr class=b>
+<td class=r title='3 = 0x3'>3</td>
+<td>OpColor</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='Meta'>QuickTime Meta Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'bxml'</td>
+<td>BinaryXML?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'dinf'</td>
+<td>DataInformation?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'free'</td>
+<td>Free?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'hdlr'</td>
+<td>Handler</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Handler'>QuickTime Handler Tags</a></td></tr>
+<tr>
+<td>'iinf'</td>
+<td>ItemInformation?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'iloc'</td>
+<td>ItemLocation?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'ilst'</td>
+<td>ItemList</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#ItemList'>QuickTime ItemList Tags</a></td></tr>
+<tr class=b>
+<td>'ipmc'</td>
+<td>IPMPControl?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'ipro'</td>
+<td>ItemProtection?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'keys'</td>
+<td>Keys</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Keys'>QuickTime Keys Tags</a></td></tr>
+<tr>
+<td>'pitm'</td>
+<td>PrimaryItemReference?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'xml '</td>
+<td>XML</td>
+<td class=c>-</td>
+<td>--&gt; <a href='XMP.html'>XMP Tags</a></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='ItemList'>QuickTime ItemList Tags</a></h2>
+<p>As well as these tags, the &#39;mdta&#39; handler uses numerical tag ID&#39;s which are
+added dynamically to this table after processing the Meta Keys information.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'----'</td>
+<td>iTunesInfo</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#iTunesInfo'>QuickTime iTunesInfo Tags</a></td></tr>
+<tr class=b>
+<td>'aART'</td>
+<td>AlbumArtist</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'akID'</td>
+<td>AppleStoreAccountType</td>
+<td class=c>N</td>
+<td><span class=s>0 = iTunes
+  <br>1 = AOL</span></td></tr>
+<tr class=b>
+<td>'albm'</td>
+<td>Album</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'apID'</td>
+<td>AppleStoreAccount</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'atID'</td>
+<td>AlbumTitleID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'auth'</td>
+<td>Author</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'catg'</td>
+<td>Category</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'cnID'</td>
+<td>AppleStoreCatalogID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'covr'</td>
+<td>CoverArt</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'cpil'</td>
+<td>Compilation</td>
+<td class=c>N</td>
+<td><span class=s>0 = No
+  <br>1 = Yes</span></td></tr>
+<tr class=b>
+<td>'cprt'</td>
+<td>Copyright</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'desc'</td>
+<td>Description</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'disk'</td>
+<td>DiskNumber</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'dscp'</td>
+<td>Description</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'egid'</td>
+<td>EpisodeGlobalUniqueID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'geID'</td>
+<td>GenreID</td>
+<td class=c>N</td>
+<td><span class=s>2 = Music|Blues
+  <br>3 = Music|Comedy
+  <br>4 = Music|Children&#39;s Music
+  <br>5 = Music|Classical
+  <br>6 = Music|Country
+  <br>7 = Music|Electronic
+  <br>8 = Music|Holiday
+  <br>9 = Music|Opera
+  <br>10 = Music|Singer/Songwriter
+  <br>11 = Music|Jazz
+  <br>12 = Music|Latino
+  <br>13 = Music|New Age
+  <br>14 = Music|Pop
+  <br>15 = Music|R&amp;B/Soul
+  <br>16 = Music|Soundtrack
+  <br>17 = Music|Dance
+  <br>18 = Music|Hip-Hop/Rap
+  <br>19 = Music|World
+  <br>20 = Music|Alternative
+  <br>21 = Music|Rock
+  <br>22 = Music|Christian &amp; Gospel
+  <br>23 = Music|Vocal
+  <br>24 = Music|Reggae
+  <br>25 = Music|Easy Listening
+  <br>26 = Podcasts
+  <br>27 = Music|J-Pop
+  <br>28 = Music|Enka
+  <br>29 = Music|Anime
+  <br>30 = Music|Kayokyoku
+  <br>31 = Music Videos
+  <br>32 = TV Shows
+  <br>33 = Movies
+  <br>34 = Music
+  <br>35 = iPod Games
+  <br>36 = App Store
+  <br>37 = Tones
+  <br>38 = Books
+  <br>39 = Mac App Store
+  <br>40 = Textbooks
+  <br>50 = Music|Fitness &amp; Workout
+  <br>51 = Music|K-Pop
+  <br>52 = Music|Karaoke
+  <br>53 = Music|Instrumental
+  <br>74 = Audiobooks|News
+  <br>75 = Audiobooks|Programs &amp; Performances
+  <br>1001 = Music|Alternative|College Rock
+  <br>1002 = Music|Alternative|Goth Rock
+  <br>1003 = Music|Alternative|Grunge
+  <br>1004 = Music|Alternative|Indie Rock
+  <br>1005 = Music|Alternative|New Wave
+  <br>1006 = Music|Alternative|Punk
+  <br>1007 = Music|Blues|Chicago Blues
+  <br>1009 = Music|Blues|Classic Blues
+  <br>1010 = Music|Blues|Contemporary Blues
+  <br>1011 = Music|Blues|Country Blues
+  <br>1012 = Music|Blues|Delta Blues
+  <br>1013 = Music|Blues|Electric Blues
+  <br>1014 = Music|Children&#39;s Music|Lullabies
+  <br>1015 = Music|Children&#39;s Music|Sing-Along
+  <br>1016 = Music|Children&#39;s Music|Stories
+  <br>1017 = Music|Classical|Avant-Garde
+  <br>1018 = Music|Classical|Baroque
+  <br>1019 = Music|Classical|Chamber Music
+  <br>1020 = Music|Classical|Chant
+  <br>1021 = Music|Classical|Choral
+  <br>1022 = Music|Classical|Classical Crossover
+  <br>1023 = Music|Classical|Early Music
+  <br>1024 = Music|Classical|Impressionist
+  <br>1025 = Music|Classical|Medieval
+  <br>1026 = Music|Classical|Minimalism
+  <br>1027 = Music|Classical|Modern Composition
+  <br>1028 = Music|Classical|Opera
+  <br>1029 = Music|Classical|Orchestral
+  <br>1030 = Music|Classical|Renaissance
+  <br>1031 = Music|Classical|Romantic
+  <br>1032 = Music|Classical|Wedding Music
+  <br>1033 = Music|Country|Alternative Country
+  <br>1034 = Music|Country|Americana
+  <br>1035 = Music|Country|Bluegrass
+  <br>1036 = Music|Country|Contemporary Bluegrass
+  <br>1037 = Music|Country|Contemporary Country
+  <br>1038 = Music|Country|Country Gospel
+  <br>1039 = Music|Country|Honky Tonk
+  <br>1040 = Music|Country|Outlaw Country
+  <br>1041 = Music|Country|Traditional Bluegrass
+  <br>1042 = Music|Country|Traditional Country
+  <br>1043 = Music|Country|Urban Cowboy
+  <br>1044 = Music|Dance|Breakbeat
+  <br>1045 = Music|Dance|Exercise
+  <br>1046 = Music|Dance|Garage
+  <br>1047 = Music|Dance|Hardcore
+  <br>1048 = Music|Dance|House
+  <br>1049 = Music|Dance|Jungle/Drum&#39;n&#39;bass
+  <br>1050 = Music|Dance|Techno
+  <br>1051 = Music|Dance|Trance
+  <br>1052 = Music|Jazz|Big Band
+  <br>1053 = Music|Jazz|Bop
+  <br>1054 = Music|Easy Listening|Lounge
+  <br>1055 = Music|Easy Listening|Swing
+  <br>1056 = Music|Electronic|Ambient
+  <br>1057 = Music|Electronic|Downtempo
+  <br>1058 = Music|Electronic|Electronica
+  <br>1060 = Music|Electronic|IDM/Experimental
+  <br>1061 = Music|Electronic|Industrial
+  <br>1062 = Music|Singer/Songwriter|Alternative Folk
+  <br>1063 = Music|Singer/Songwriter|Contemporary Folk
+  <br>1064 = Music|Singer/Songwriter|Contemporary Singer/Songwriter
+  <br>1065 = Music|Singer/Songwriter|Folk-Rock
+  <br>1066 = Music|Singer/Songwriter|New Acoustic
+  <br>1067 = Music|Singer/Songwriter|Traditional Folk
+  <br>1068 = Music|Hip-Hop/Rap|Alternative Rap
+  <br>1069 = Music|Hip-Hop/Rap|Dirty South
+  <br>1070 = Music|Hip-Hop/Rap|East Coast Rap
+  <br>1071 = Music|Hip-Hop/Rap|Gangsta Rap
+  <br>1072 = Music|Hip-Hop/Rap|Hardcore Rap
+  <br>1073 = Music|Hip-Hop/Rap|Hip-Hop
+  <br>1074 = Music|Hip-Hop/Rap|Latin Rap
+  <br>1075 = Music|Hip-Hop/Rap|Old School Rap
+  <br>1076 = Music|Hip-Hop/Rap|Rap
+  <br>1077 = Music|Hip-Hop/Rap|Underground Rap
+  <br>1078 = Music|Hip-Hop/Rap|West Coast Rap
+  <br>1079 = Music|Holiday|Chanukah
+  <br>1080 = Music|Holiday|Christmas
+  <br>1081 = Music|Holiday|Christmas: Children&#39;s
+  <br>1082 = Music|Holiday|Christmas: Classic
+  <br>1083 = Music|Holiday|Christmas: Classical
+  <br>1084 = Music|Holiday|Christmas: Jazz
+  <br>1085 = Music|Holiday|Christmas: Modern
+  <br>1086 = Music|Holiday|Christmas: Pop
+  <br>1087 = Music|Holiday|Christmas: R&amp;B
+  <br>1088 = Music|Holiday|Christmas: Religious
+  <br>1089 = Music|Holiday|Christmas: Rock
+  <br>1090 = Music|Holiday|Easter
+  <br>1091 = Music|Holiday|Halloween
+  <br>1092 = Music|Holiday|Holiday: Other
+  <br>1093 = Music|Holiday|Thanksgiving
+  <br>1094 = Music|Christian &amp; Gospel|CCM
+  <br>1095 = Music|Christian &amp; Gospel|Christian Metal
+  <br>1096 = Music|Christian &amp; Gospel|Christian Pop
+  <br>1097 = Music|Christian &amp; Gospel|Christian Rap
+  <br>1098 = Music|Christian &amp; Gospel|Christian Rock
+  <br>1099 = Music|Christian &amp; Gospel|Classic Christian
+  <br>1100 = Music|Christian &amp; Gospel|Contemporary Gospel
+  <br>1101 = Music|Christian &amp; Gospel|Gospel
+  <br>1103 = Music|Christian &amp; Gospel|Praise &amp; Worship
+  <br>1104 = Music|Christian &amp; Gospel|Southern Gospel
+  <br>1105 = Music|Christian &amp; Gospel|Traditional Gospel
+  <br>1106 = Music|Jazz|Avant-Garde Jazz
+  <br>1107 = Music|Jazz|Contemporary Jazz
+  <br>1108 = Music|Jazz|Crossover Jazz
+  <br>1109 = Music|Jazz|Dixieland
+  <br>1110 = Music|Jazz|Fusion
+  <br>1111 = Music|Jazz|Latin Jazz
+  <br>1112 = Music|Jazz|Mainstream Jazz
+  <br>1113 = Music|Jazz|Ragtime
+  <br>1114 = Music|Jazz|Smooth Jazz
+  <br>1115 = Music|Latino|Latin Jazz
+  <br>1116 = Music|Latino|Contemporary Latin
+  <br>1117 = Music|Latino|Pop Latino
+  <br>1118 = Music|Latino|Raices
+  <br>1119 = Music|Latino|Latin Urban
+  <br>1120 = Music|Latino|Baladas y Boleros
+  <br>1121 = Music|Latino|Alternativo &amp; Rock Latino
+  <br>1122 = Music|Brazilian
+  <br>1123 = Music|Latino|Regional Mexicano
+  <br>1124 = Music|Latino|Salsa y Tropical
+  <br>1125 = Music|New Age|Environmental
+  <br>1126 = Music|New Age|Healing
+  <br>1127 = Music|New Age|Meditation
+  <br>1128 = Music|New Age|Nature
+  <br>1129 = Music|New Age|Relaxation
+  <br>1130 = Music|New Age|Travel
+  <br>1131 = Music|Pop|Adult Contemporary
+  <br>1132 = Music|Pop|Britpop
+  <br>1133 = Music|Pop|Pop/Rock
+  <br>1134 = Music|Pop|Soft Rock
+  <br>1135 = Music|Pop|Teen Pop
+  <br>1136 = Music|R&amp;B/Soul|Contemporary R&amp;B
+  <br>1137 = Music|R&amp;B/Soul|Disco
+  <br>1138 = Music|R&amp;B/Soul|Doo Wop
+  <br>1139 = Music|R&amp;B/Soul|Funk
+  <br>1140 = Music|R&amp;B/Soul|Motown
+  <br>1141 = Music|R&amp;B/Soul|Neo-Soul
+  <br>1142 = Music|R&amp;B/Soul|Quiet Storm
+  <br>1143 = Music|R&amp;B/Soul|Soul
+  <br>1144 = Music|Rock|Adult Alternative
+  <br>1145 = Music|Rock|American Trad Rock
+  <br>1146 = Music|Rock|Arena Rock
+  <br>1147 = Music|Rock|Blues-Rock
+  <br>1148 = Music|Rock|British Invasion
+  <br>1149 = Music|Rock|Death Metal/Black Metal
+  <br>1150 = Music|Rock|Glam Rock
+  <br>1151 = Music|Rock|Hair Metal
+  <br>1152 = Music|Rock|Hard Rock
+  <br>1153 = Music|Rock|Metal
+  <br>1154 = Music|Rock|Jam Bands
+  <br>1155 = Music|Rock|Prog-Rock/Art Rock
+  <br>1156 = Music|Rock|Psychedelic
+  <br>1157 = Music|Rock|Rock &amp; Roll
+  <br>1158 = Music|Rock|Rockabilly
+  <br>1159 = Music|Rock|Roots Rock
+  <br>1160 = Music|Rock|Singer/Songwriter
+  <br>1161 = Music|Rock|Southern Rock
+  <br>1162 = Music|Rock|Surf
+  <br>1163 = Music|Rock|Tex-Mex
+  <br>1165 = Music|Soundtrack|Foreign Cinema
+  <br>1166 = Music|Soundtrack|Musicals
+  <br>1167 = Music|Comedy|Novelty
+  <br>1168 = Music|Soundtrack|Original Score
+  <br>1169 = Music|Soundtrack|Soundtrack
+  <br>1171 = Music|Comedy|Standup Comedy
+  <br>1172 = Music|Soundtrack|TV Soundtrack
+  <br>1173 = Music|Vocal|Standards
+  <br>1174 = Music|Vocal|Traditional Pop
+  <br>1175 = Music|Jazz|Vocal Jazz
+  <br>1176 = Music|Vocal|Vocal Pop
+  <br>1177 = Music|World|Afro-Beat
+  <br>1178 = Music|World|Afro-Pop
+  <br>1179 = Music|World|Cajun
+  <br>1180 = Music|World|Celtic
+  <br>1181 = Music|World|Celtic Folk
+  <br>1182 = Music|World|Contemporary Celtic
+  <br>1183 = Music|Reggae|Dancehall
+  <br>1184 = Music|World|Drinking Songs
+  <br>1185 = Music|Indian|Indian Pop
+  <br>1186 = Music|World|Japanese Pop
+  <br>1187 = Music|World|Klezmer
+  <br>1188 = Music|World|Polka
+  <br>1189 = Music|World|Traditional Celtic
+  <br>1190 = Music|World|Worldbeat
+  <br>1191 = Music|World|Zydeco
+  <br>1192 = Music|Reggae|Roots Reggae
+  <br>1193 = Music|Reggae|Dub
+  <br>1194 = Music|Reggae|Ska
+  <br>1195 = Music|World|Caribbean
+  <br>1196 = Music|World|South America
+  <br>1197 = Music|Arabic
+  <br>1198 = Music|World|North America
+  <br>1199 = Music|World|Hawaii
+  <br>1200 = Music|World|Australia
+  <br>1201 = Music|World|Japan
+  <br>1202 = Music|World|France
+  <br>1203 = Music|World|Africa
+  <br>1204 = Music|World|Asia
+  <br>1205 = Music|World|Europe
+  <br>1206 = Music|World|South Africa
+  <br>1207 = Music|Jazz|Hard Bop
+  <br>1208 = Music|Jazz|Trad Jazz
+  <br>1209 = Music|Jazz|Cool
+  <br>1210 = Music|Blues|Acoustic Blues
+  <br>1211 = Music|Classical|High Classical
+  <br>1220 = Music|Brazilian|Axe
+  <br>1221 = Music|Brazilian|Bossa Nova
+  <br>1222 = Music|Brazilian|Choro
+  <br>1223 = Music|Brazilian|Forro
+  <br>1224 = Music|Brazilian|Frevo
+  <br>1225 = Music|Brazilian|MPB
+  <br>1226 = Music|Brazilian|Pagode
+  <br>1227 = Music|Brazilian|Samba
+  <br>1228 = Music|Brazilian|Sertanejo
+  <br>1229 = Music|Brazilian|Baile Funk
+  <br>1230 = Music|Alternative|Chinese Alt
+  <br>1231 = Music|Alternative|Korean Indie
+  <br>1232 = Music|Chinese
+  <br>1233 = Music|Chinese|Chinese Classical
+  <br>1234 = Music|Chinese|Chinese Flute
+  <br>1235 = Music|Chinese|Chinese Opera
+  <br>1236 = Music|Chinese|Chinese Orchestral
+  <br>1237 = Music|Chinese|Chinese Regional Folk
+  <br>1238 = Music|Chinese|Chinese Strings
+  <br>1239 = Music|Chinese|Taiwanese Folk
+  <br>1240 = Music|Chinese|Tibetan Native Music
+  <br>1241 = Music|Hip-Hop/Rap|Chinese Hip-Hop
+  <br>1242 = Music|Hip-Hop/Rap|Korean Hip-Hop
+  <br>1243 = Music|Korean
+  <br>1244 = Music|Korean|Korean Classical
+  <br>1245 = Music|Korean|Korean Trad Song
+  <br>1246 = Music|Korean|Korean Trad Instrumental
+  <br>1247 = Music|Korean|Korean Trad Theater
+  <br>1248 = Music|Rock|Chinese Rock
+  <br>1249 = Music|Rock|Korean Rock
+  <br>1250 = Music|Pop|C-Pop
+  <br>1251 = Music|Pop|Cantopop/HK-Pop
+  <br>1252 = Music|Pop|Korean Folk-Pop
+  <br>1253 = Music|Pop|Mandopop
+  <br>1254 = Music|Pop|Tai-Pop
+  <br>1255 = Music|Pop|Malaysian Pop
+  <br>1256 = Music|Pop|Pinoy Pop
+  <br>1257 = Music|Pop|Original Pilipino Music
+  <br>1258 = Music|Pop|Manilla Sound
+  <br>1259 = Music|Pop|Indo Pop
+  <br>1260 = Music|Pop|Thai Pop
+  <br>1261 = Music|Vocal|Trot
+  <br>1262 = Music|Indian
+  <br>1263 = Music|Indian|Bollywood
+  <br>1264 = Music|Indian|Tamil
+  <br>1265 = Music|Indian|Telugu
+  <br>1266 = Music|Indian|Regional Indian
+  <br>1267 = Music|Indian|Devotional &amp; Spiritual
+  <br>1268 = Music|Indian|Sufi
+  <br>1269 = Music|Indian|Indian Classical
+  <br>1270 = Music|World|Russian Chanson
+  <br>1271 = Music|World|Dini
+  <br>1272 = Music|World|Halk
+  <br>1273 = Music|World|Sanat
+  <br>1274 = Music|World|Dangdut
+  <br>1275 = Music|World|Indonesian Religious
+  <br>1276 = Music|World|Calypso
+  <br>1277 = Music|World|Soca
+  <br>1278 = Music|Indian|Ghazals
+  <br>1279 = Music|Indian|Indian Folk
+  <br>1280 = Music|World|Arabesque
+  <br>1281 = Music|World|Afrikaans
+  <br>1282 = Music|World|Farsi
+  <br>1283 = Music|World|Israeli
+  <br>1284 = Music|Arabic|Khaleeji
+  <br>1285 = Music|Arabic|North African
+  <br>1286 = Music|Arabic|Arabic Pop
+  <br>1287 = Music|Arabic|Islamic
+  <br>1288 = Music|Soundtrack|Sound Effects
+  <br>1289 = Music|Folk
+  <br>1290 = Music|Orchestral
+  <br>1291 = Music|Marching
+  <br>1293 = Music|Pop|Oldies
+  <br>1294 = Music|Country|Thai Country
+  <br>1295 = Music|World|Flamenco
+  <br>1296 = Music|World|Tango
+  <br>1297 = Music|World|Fado
+  <br>1298 = Music|World|Iberia
+  <br>1299 = Music|World|Russian
+  <br>1300 = Music|World|Turkish
+  <br>1301 = Podcasts|Arts
+  <br>1302 = Podcasts|Society &amp; Culture|Personal Journals
+  <br>1303 = Podcasts|Comedy
+  <br>1304 = Podcasts|Education
+  <br>1305 = Podcasts|Kids &amp; Family
+  <br>1306 = Podcasts|Arts|Food
+  <br>1307 = Podcasts|Health
+  <br>1309 = Podcasts|TV &amp; Film
+  <br>1310 = Podcasts|Music
+  <br>1311 = Podcasts|News &amp; Politics
+  <br>1314 = Podcasts|Religion &amp; Spirituality
+  <br>1315 = Podcasts|Science &amp; Medicine
+  <br>1316 = Podcasts|Sports &amp; Recreation
+  <br>1318 = Podcasts|Technology
+  <br>1320 = Podcasts|Society &amp; Culture|Places &amp; Travel
+  <br>1321 = Podcasts|Business
+  <br>1323 = Podcasts|Games &amp; Hobbies
+  <br>1324 = Podcasts|Society &amp; Culture
+  <br>1325 = Podcasts|Government &amp; Organizations
+  <br>1401 = Podcasts|Arts|Literature
+  <br>1402 = Podcasts|Arts|Design
+  <br>1404 = Podcasts|Games &amp; Hobbies|Video Games
+  <br>1405 = Podcasts|Arts|Performing Arts
+  <br>1406 = Podcasts|Arts|Visual Arts
+  <br>1410 = Podcasts|Business|Careers
+  <br>1412 = Podcasts|Business|Investing
+  <br>1413 = Podcasts|Business|Management &amp; Marketing
+  <br>1415 = Podcasts|Education|K-12
+  <br>1416 = Podcasts|Education|Higher Education
+  <br>1417 = Podcasts|Health|Fitness &amp; Nutrition
+  <br>1420 = Podcasts|Health|Self-Help
+  <br>1421 = Podcasts|Health|Sexuality
+  <br>1438 = Podcasts|Religion &amp; Spirituality|Buddhism
+  <br>1439 = Podcasts|Religion &amp; Spirituality|Christianity
+  <br>1440 = Podcasts|Religion &amp; Spirituality|Islam
+  <br>1441 = Podcasts|Religion &amp; Spirituality|Judaism
+  <br>1443 = Podcasts|Society &amp; Culture|Philosophy
+  <br>1444 = Podcasts|Religion &amp; Spirituality|Spirituality
+  <br>1446 = Podcasts|Technology|Gadgets
+  <br>1448 = Podcasts|Technology|Tech News
+  <br>1450 = Podcasts|Technology|Podcasting
+  <br>1454 = Podcasts|Games &amp; Hobbies|Automotive
+  <br>1455 = Podcasts|Games &amp; Hobbies|Aviation
+  <br>1456 = Podcasts|Sports &amp; Recreation|Outdoor
+  <br>1459 = Podcasts|Arts|Fashion &amp; Beauty
+  <br>1460 = Podcasts|Games &amp; Hobbies|Hobbies
+  <br>1461 = Podcasts|Games &amp; Hobbies|Other Games
+  <br>1462 = Podcasts|Society &amp; Culture|History
+  <br>1463 = Podcasts|Religion &amp; Spirituality|Hinduism
+  <br>1464 = Podcasts|Religion &amp; Spirituality|Other
+  <br>1465 = Podcasts|Sports &amp; Recreation|Professional
+  <br>1466 = Podcasts|Sports &amp; Recreation|College &amp; High School
+  <br>1467 = Podcasts|Sports &amp; Recreation|Amateur
+  <br>1468 = Podcasts|Education|Educational Technology
+  <br>1469 = Podcasts|Education|Language Courses
+  <br>1470 = Podcasts|Education|Training
+  <br>1471 = Podcasts|Business|Business News
+  <br>1472 = Podcasts|Business|Shopping
+  <br>1473 = Podcasts|Government &amp; Organizations|National
+  <br>1474 = Podcasts|Government &amp; Organizations|Regional
+  <br>1475 = Podcasts|Government &amp; Organizations|Local
+  <br>1476 = Podcasts|Government &amp; Organizations|Non-Profit
+  <br>1477 = Podcasts|Science &amp; Medicine|Natural Sciences
+  <br>1478 = Podcasts|Science &amp; Medicine|Medicine
+  <br>1479 = Podcasts|Science &amp; Medicine|Social Sciences
+  <br>1480 = Podcasts|Technology|Software How-To
+  <br>1481 = Podcasts|Health|Alternative Health
+  <br>1602 = Music Videos|Blues
+  <br>1603 = Music Videos|Comedy
+  <br>1604 = Music Videos|Children&#39;s Music
+  <br>1605 = Music Videos|Classical
+  <br>1606 = Music Videos|Country
+  <br>1607 = Music Videos|Electronic
+  <br>1608 = Music Videos|Holiday
+  <br>1609 = Music Videos|Opera
+  <br>1610 = Music Videos|Singer/Songwriter
+  <br>1611 = Music Videos|Jazz
+  <br>1612 = Music Videos|Latin
+  <br>1613 = Music Videos|New Age
+  <br>1614 = Music Videos|Pop
+  <br>1615 = Music Videos|R&amp;B/Soul
+  <br>1616 = Music Videos|Soundtrack
+  <br>1617 = Music Videos|Dance
+  <br>1618 = Music Videos|Hip-Hop/Rap
+  <br>1619 = Music Videos|World
+  <br>1620 = Music Videos|Alternative
+  <br>1621 = Music Videos|Rock
+  <br>1622 = Music Videos|Christian &amp; Gospel
+  <br>1623 = Music Videos|Vocal
+  <br>1624 = Music Videos|Reggae
+  <br>1625 = Music Videos|Easy Listening
+  <br>1626 = Music Videos|Podcasts
+  <br>1627 = Music Videos|J-Pop
+  <br>1628 = Music Videos|Enka
+  <br>1629 = Music Videos|Anime
+  <br>1630 = Music Videos|Kayokyoku
+  <br>1631 = Music Videos|Disney
+  <br>1632 = Music Videos|French Pop
+  <br>1633 = Music Videos|German Pop
+  <br>1634 = Music Videos|German Folk
+  <br>1635 = Music Videos|Alternative|Chinese Alt
+  <br>1636 = Music Videos|Alternative|Korean Indie
+  <br>1637 = Music Videos|Chinese
+  <br>1638 = Music Videos|Chinese|Chinese Classical
+  <br>1639 = Music Videos|Chinese|Chinese Flute
+  <br>1640 = Music Videos|Chinese|Chinese Opera
+  <br>1641 = Music Videos|Chinese|Chinese Orchestral
+  <br>1642 = Music Videos|Chinese|Chinese Regional Folk
+  <br>1643 = Music Videos|Chinese|Chinese Strings
+  <br>1644 = Music Videos|Chinese|Taiwanese Folk
+  <br>1645 = Music Videos|Chinese|Tibetan Native Music
+  <br>1646 = Music Videos|Hip-Hop/Rap|Chinese Hip-Hop
+  <br>1647 = Music Videos|Hip-Hop/Rap|Korean Hip-Hop
+  <br>1648 = Music Videos|Korean
+  <br>1649 = Music Videos|Korean|Korean Classical
+  <br>1650 = Music Videos|Korean|Korean Trad Song
+  <br>1651 = Music Videos|Korean|Korean Trad Instrumental
+  <br>1652 = Music Videos|Korean|Korean Trad Theater
+  <br>1653 = Music Videos|Rock|Chinese Rock
+  <br>1654 = Music Videos|Rock|Korean Rock
+  <br>1655 = Music Videos|Pop|C-Pop
+  <br>1656 = Music Videos|Pop|Cantopop/HK-Pop
+  <br>1657 = Music Videos|Pop|Korean Folk-Pop
+  <br>1658 = Music Videos|Pop|Mandopop
+  <br>1659 = Music Videos|Pop|Tai-Pop
+  <br>1660 = Music Videos|Pop|Malaysian Pop
+  <br>1661 = Music Videos|Pop|Pinoy Pop
+  <br>1662 = Music Videos|Pop|Original Pilipino Music
+  <br>1663 = Music Videos|Pop|Manilla Sound
+  <br>1664 = Music Videos|Pop|Indo Pop
+  <br>1665 = Music Videos|Pop|Thai Pop
+  <br>1666 = Music Videos|Vocal|Trot
+  <br>1671 = Music Videos|Brazilian
+  <br>1672 = Music Videos|Brazilian|Axe
+  <br>1673 = Music Videos|Brazilian|Baile Funk
+  <br>1674 = Music Videos|Brazilian|Bossa Nova
+  <br>1675 = Music Videos|Brazilian|Choro
+  <br>1676 = Music Videos|Brazilian|Forro
+  <br>1677 = Music Videos|Brazilian|Frevo
+  <br>1678 = Music Videos|Brazilian|MPB
+  <br>1679 = Music Videos|Brazilian|Pagode
+  <br>1680 = Music Videos|Brazilian|Samba
+  <br>1681 = Music Videos|Brazilian|Sertanejo
+  <br>1682 = Music Videos|Classical|High Classical
+  <br>1683 = Music Videos|Fitness &amp; Workout
+  <br>1684 = Music Videos|Instrumental
+  <br>1685 = Music Videos|Jazz|MZGenre.MusicVideo.Jazz.BigBand
+  <br>1686 = Music Videos|K-Pop
+  <br>1687 = Music Videos|Karaoke
+  <br>1688 = Music Videos|Rock|Heavy Metal
+  <br>1689 = Music Videos|Spoken Word
+  <br>1690 = Music Videos|Indian
+  <br>1691 = Music Videos|Indian|Bollywood
+  <br>1692 = Music Videos|Indian|Tamil
+  <br>1693 = Music Videos|Indian|Telugu
+  <br>1694 = Music Videos|Indian|Regional Indian
+  <br>1695 = Music Videos|Indian|Devotional &amp; Spiritual
+  <br>1696 = Music Videos|Indian|Sufi
+  <br>1697 = Music Videos|Indian|Indian Classical
+  <br>1698 = Music Videos|World|Russian Chanson
+  <br>1699 = Music Videos|World|Dini
+  <br>1700 = Music Videos|World|Halk
+  <br>1701 = Music Videos|World|Sanat
+  <br>1702 = Music Videos|World|Dangdut
+  <br>1703 = Music Videos|World|Indonesian Religious
+  <br>1704 = Music Videos|Indian|Indian Pop
+  <br>1705 = Music Videos|World|Calypso
+  <br>1706 = Music Videos|World|Soca
+  <br>1707 = Music Videos|Indian|Ghazals
+  <br>1708 = Music Videos|Indian|Indian Folk
+  <br>1709 = Music Videos|World|Arabesque
+  <br>1710 = Music Videos|World|Afrikaans
+  <br>1711 = Music Videos|World|Farsi
+  <br>1712 = Music Videos|World|Israeli
+  <br>1713 = Music Videos|Arabic
+  <br>1714 = Music Videos|Arabic|Khaleeji
+  <br>1715 = Music Videos|Arabic|North African
+  <br>1716 = Music Videos|Arabic|Arabic Pop
+  <br>1717 = Music Videos|Arabic|Islamic
+  <br>1718 = Music Videos|Soundtrack|Sound Effects
+  <br>1719 = Music Videos|Folk
+  <br>1720 = Music Videos|Orchestral
+  <br>1721 = Music Videos|Marching
+  <br>1723 = Music Videos|Pop|Oldies
+  <br>1724 = Music Videos|Country|Thai Country
+  <br>1725 = Music Videos|World|Flamenco
+  <br>1726 = Music Videos|World|Tango
+  <br>1727 = Music Videos|World|Fado
+  <br>1728 = Music Videos|World|Iberia
+  <br>1729 = Music Videos|World|Russian
+  <br>1730 = Music Videos|World|Turkish
+  <br>1731 = Music Videos|Alternative|College Rock
+  <br>1732 = Music Videos|Alternative|Goth Rock
+  <br>1733 = Music Videos|Alternative|Grunge
+  <br>1734 = Music Videos|Alternative|Indie Rock
+  <br>1735 = Music Videos|Alternative|New Wave
+  <br>1736 = Music Videos|Alternative|Punk
+  <br>1737 = Music Videos|Blues|Acoustic Blues
+  <br>1738 = Music Videos|Blues|Chicago Blues
+  <br>1739 = Music Videos|Blues|Classic Blues
+  <br>1740 = Music Videos|Blues|Contemporary Blues
+  <br>1741 = Music Videos|Blues|Country Blues
+  <br>1742 = Music Videos|Blues|Delta Blues
+  <br>1743 = Music Videos|Blues|Electric Blues
+  <br>1744 = Music Videos|Children&#39;s Music|Lullabies
+  <br>1745 = Music Videos|Children&#39;s Music|Sing-Along
+  <br>1746 = Music Videos|Children&#39;s Music|Stories
+  <br>1747 = Music Videos|Christian &amp; Gospel|CCM
+  <br>1748 = Music Videos|Christian &amp; Gospel|Christian Metal
+  <br>1749 = Music Videos|Christian &amp; Gospel|Christian Pop
+  <br>1750 = Music Videos|Christian &amp; Gospel|Christian Rap
+  <br>1751 = Music Videos|Christian &amp; Gospel|Christian Rock
+  <br>1752 = Music Videos|Christian &amp; Gospel|Classic Christian
+  <br>1753 = Music Videos|Christian &amp; Gospel|Contemporary Gospel
+  <br>1754 = Music Videos|Christian &amp; Gospel|Gospel
+  <br>1755 = Music Videos|Christian &amp; Gospel|Praise &amp; Worship
+  <br>1756 = Music Videos|Christian &amp; Gospel|Southern Gospel
+  <br>1757 = Music Videos|Christian &amp; Gospel|Traditional Gospel
+  <br>1758 = Music Videos|Classical|Avant-Garde
+  <br>1759 = Music Videos|Classical|Baroque
+  <br>1760 = Music Videos|Classical|Chamber Music
+  <br>1761 = Music Videos|Classical|Chant
+  <br>1762 = Music Videos|Classical|Choral
+  <br>1763 = Music Videos|Classical|Classical Crossover
+  <br>1764 = Music Videos|Classical|Early Music
+  <br>1765 = Music Videos|Classical|Impressionist
+  <br>1766 = Music Videos|Classical|Medieval
+  <br>1767 = Music Videos|Classical|Minimalism
+  <br>1768 = Music Videos|Classical|Modern Composition
+  <br>1769 = Music Videos|Classical|Orchestral
+  <br>1770 = Music Videos|Classical|Renaissance
+  <br>1771 = Music Videos|Classical|Romantic
+  <br>1772 = Music Videos|Classical|Wedding Music
+  <br>1773 = Music Videos|Comedy|Novelty
+  <br>1774 = Music Videos|Comedy|Standup Comedy
+  <br>1775 = Music Videos|Country|Alternative Country
+  <br>1776 = Music Videos|Country|Americana
+  <br>1777 = Music Videos|Country|Bluegrass
+  <br>1778 = Music Videos|Country|Contemporary Bluegrass
+  <br>1779 = Music Videos|Country|Contemporary Country
+  <br>1780 = Music Videos|Country|Country Gospel
+  <br>1781 = Music Videos|Country|Honky Tonk
+  <br>1782 = Music Videos|Country|Outlaw Country
+  <br>1783 = Music Videos|Country|Traditional Bluegrass
+  <br>1784 = Music Videos|Country|Traditional Country
+  <br>1785 = Music Videos|Country|Urban Cowboy
+  <br>1786 = Music Videos|Dance|Breakbeat
+  <br>1787 = Music Videos|Dance|Exercise
+  <br>1788 = Music Videos|Dance|Garage
+  <br>1789 = Music Videos|Dance|Hardcore
+  <br>1790 = Music Videos|Dance|House
+  <br>1791 = Music Videos|Dance|Jungle/Drum&#39;n&#39;bass
+  <br>1792 = Music Videos|Dance|Techno
+  <br>1793 = Music Videos|Dance|Trance
+  <br>1794 = Music Videos|Easy Listening|Lounge
+  <br>1795 = Music Videos|Easy Listening|Swing
+  <br>1796 = Music Videos|Electronic|Ambient
+  <br>1797 = Music Videos|Electronic|Downtempo
+  <br>1798 = Music Videos|Electronic|Electronica
+  <br>1799 = Music Videos|Electronic|IDM/Experimental
+  <br>1800 = Music Videos|Electronic|Industrial
+  <br>1801 = Music Videos|Hip-Hop/Rap|Alternative Rap
+  <br>1802 = Music Videos|Hip-Hop/Rap|Dirty South
+  <br>1803 = Music Videos|Hip-Hop/Rap|East Coast Rap
+  <br>1804 = Music Videos|Hip-Hop/Rap|Gangsta Rap
+  <br>1805 = Music Videos|Hip-Hop/Rap|Hardcore Rap
+  <br>1806 = Music Videos|Hip-Hop/Rap|Hip-Hop
+  <br>1807 = Music Videos|Hip-Hop/Rap|Latin Rap
+  <br>1808 = Music Videos|Hip-Hop/Rap|Old School Rap
+  <br>1809 = Music Videos|Hip-Hop/Rap|Rap
+  <br>1810 = Music Videos|Hip-Hop/Rap|Underground Rap
+  <br>1811 = Music Videos|Hip-Hop/Rap|West Coast Rap
+  <br>1812 = Music Videos|Holiday|Chanukah
+  <br>1813 = Music Videos|Holiday|Christmas
+  <br>1814 = Music Videos|Holiday|Christmas: Children&#39;s
+  <br>1815 = Music Videos|Holiday|Christmas: Classic
+  <br>1816 = Music Videos|Holiday|Christmas: Classical
+  <br>1817 = Music Videos|Holiday|Christmas: Jazz
+  <br>1818 = Music Videos|Holiday|Christmas: Modern
+  <br>1819 = Music Videos|Holiday|Christmas: Pop
+  <br>1820 = Music Videos|Holiday|Christmas: R&amp;B
+  <br>1821 = Music Videos|Holiday|Christmas: Religious
+  <br>1822 = Music Videos|Holiday|Christmas: Rock
+  <br>1823 = Music Videos|Holiday|Easter
+  <br>1824 = Music Videos|Holiday|Halloween
+  <br>1825 = Music Videos|Holiday|Thanksgiving
+  <br>1826 = Music Videos|Jazz|Avant-Garde Jazz
+  <br>1828 = Music Videos|Jazz|Bop
+  <br>1829 = Music Videos|Jazz|Contemporary Jazz
+  <br>1830 = Music Videos|Jazz|Cool
+  <br>1831 = Music Videos|Jazz|Crossover Jazz
+  <br>1832 = Music Videos|Jazz|Dixieland
+  <br>1833 = Music Videos|Jazz|Fusion
+  <br>1834 = Music Videos|Jazz|Hard Bop
+  <br>1835 = Music Videos|Jazz|Latin Jazz
+  <br>1836 = Music Videos|Jazz|Mainstream Jazz
+  <br>1837 = Music Videos|Jazz|Ragtime
+  <br>1838 = Music Videos|Jazz|Smooth Jazz
+  <br>1839 = Music Videos|Jazz|Trad Jazz
+  <br>1840 = Music Videos|Latin|Alternativo &amp; Rock Latino
+  <br>1841 = Music Videos|Latin|Baladas y Boleros
+  <br>1842 = Music Videos|Latin|Contemporary Latin
+  <br>1843 = Music Videos|Latin|Latin Jazz
+  <br>1844 = Music Videos|Latin|Latin Urban
+  <br>1845 = Music Videos|Latin|Pop Latino
+  <br>1846 = Music Videos|Latin|Raices
+  <br>1847 = Music Videos|Latin|Regional Mexicano
+  <br>1848 = Music Videos|Latin|Salsa y Tropical
+  <br>1849 = Music Videos|New Age|Healing
+  <br>1850 = Music Videos|New Age|Meditation
+  <br>1851 = Music Videos|New Age|Nature
+  <br>1852 = Music Videos|New Age|Relaxation
+  <br>1853 = Music Videos|New Age|Travel
+  <br>1854 = Music Videos|Pop|Adult Contemporary
+  <br>1855 = Music Videos|Pop|Britpop
+  <br>1856 = Music Videos|Pop|Pop/Rock
+  <br>1857 = Music Videos|Pop|Soft Rock
+  <br>1858 = Music Videos|Pop|Teen Pop
+  <br>1859 = Music Videos|R&amp;B/Soul|Contemporary R&amp;B
+  <br>1860 = Music Videos|R&amp;B/Soul|Disco
+  <br>1861 = Music Videos|R&amp;B/Soul|Doo Wop
+  <br>1862 = Music Videos|R&amp;B/Soul|Funk
+  <br>1863 = Music Videos|R&amp;B/Soul|Motown
+  <br>1864 = Music Videos|R&amp;B/Soul|Neo-Soul
+  <br>1865 = Music Videos|R&amp;B/Soul|Soul
+  <br>1866 = Music Videos|Reggae|Dancehall
+  <br>1867 = Music Videos|Reggae|Dub
+  <br>1868 = Music Videos|Reggae|Roots Reggae
+  <br>1869 = Music Videos|Reggae|Ska
+  <br>1870 = Music Videos|Rock|Adult Alternative
+  <br>1871 = Music Videos|Rock|American Trad Rock
+  <br>1872 = Music Videos|Rock|Arena Rock
+  <br>1873 = Music Videos|Rock|Blues-Rock
+  <br>1874 = Music Videos|Rock|British Invasion
+  <br>1875 = Music Videos|Rock|Death Metal/Black Metal
+  <br>1876 = Music Videos|Rock|Glam Rock
+  <br>1877 = Music Videos|Rock|Hair Metal
+  <br>1878 = Music Videos|Rock|Hard Rock
+  <br>1879 = Music Videos|Rock|Jam Bands
+  <br>1880 = Music Videos|Rock|Prog-Rock/Art Rock
+  <br>1881 = Music Videos|Rock|Psychedelic
+  <br>1882 = Music Videos|Rock|Rock &amp; Roll
+  <br>1883 = Music Videos|Rock|Rockabilly
+  <br>1884 = Music Videos|Rock|Roots Rock
+  <br>1885 = Music Videos|Rock|Singer/Songwriter
+  <br>1886 = Music Videos|Rock|Southern Rock
+  <br>1887 = Music Videos|Rock|Surf
+  <br>1888 = Music Videos|Rock|Tex-Mex
+  <br>1889 = Music Videos|Singer/Songwriter|Alternative Folk
+  <br>1890 = Music Videos|Singer/Songwriter|Contemporary Folk
+  <br>1891 = Music Videos|Singer/Songwriter|Contemporary Singer/Songwriter
+  <br>1892 = Music Videos|Singer/Songwriter|Folk-Rock
+  <br>1893 = Music Videos|Singer/Songwriter|New Acoustic
+  <br>1894 = Music Videos|Singer/Songwriter|Traditional Folk
+  <br>1895 = Music Videos|Soundtrack|Foreign Cinema
+  <br>1896 = Music Videos|Soundtrack|Musicals
+  <br>1897 = Music Videos|Soundtrack|Original Score
+  <br>1898 = Music Videos|Soundtrack|Soundtrack
+  <br>1899 = Music Videos|Soundtrack|TV Soundtrack
+  <br>1900 = Music Videos|Vocal|Standards
+  <br>1901 = Music Videos|Vocal|Traditional Pop
+  <br>1902 = Music Videos|Jazz|Vocal Jazz
+  <br>1903 = Music Videos|Vocal|Vocal Pop
+  <br>1904 = Music Videos|World|Africa
+  <br>1905 = Music Videos|World|Afro-Beat
+  <br>1906 = Music Videos|World|Afro-Pop
+  <br>1907 = Music Videos|World|Asia
+  <br>1908 = Music Videos|World|Australia
+  <br>1909 = Music Videos|World|Cajun
+  <br>1910 = Music Videos|World|Caribbean
+  <br>1911 = Music Videos|World|Celtic
+  <br>1912 = Music Videos|World|Celtic Folk
+  <br>1913 = Music Videos|World|Contemporary Celtic
+  <br>1914 = Music Videos|World|Europe
+  <br>1915 = Music Videos|World|France
+  <br>1916 = Music Videos|World|Hawaii
+  <br>1917 = Music Videos|World|Japan
+  <br>1918 = Music Videos|World|Klezmer
+  <br>1919 = Music Videos|World|North America
+  <br>1920 = Music Videos|World|Polka
+  <br>1921 = Music Videos|World|South Africa
+  <br>1922 = Music Videos|World|South America
+  <br>1923 = Music Videos|World|Traditional Celtic
+  <br>1924 = Music Videos|World|Worldbeat
+  <br>1925 = Music Videos|World|Zydeco
+  <br>1926 = Music Videos|Christian &amp; Gospel
+  <br>4000 = TV Shows|Comedy
+  <br>4001 = TV Shows|Drama
+  <br>4002 = TV Shows|Animation
+  <br>4003 = TV Shows|Action &amp; Adventure
+  <br>4004 = TV Shows|Classic
+  <br>4005 = TV Shows|Kids
+  <br>4006 = TV Shows|Nonfiction
+  <br>4007 = TV Shows|Reality TV
+  <br>4008 = TV Shows|Sci-Fi &amp; Fantasy
+  <br>4009 = TV Shows|Sports
+  <br>4010 = TV Shows|Teens
+  <br>4011 = TV Shows|Latino TV
+  <br>4401 = Movies|Action &amp; Adventure
+  <br>4402 = Movies|Anime
+  <br>4403 = Movies|Classics
+  <br>4404 = Movies|Comedy
+  <br>4405 = Movies|Documentary
+  <br>4406 = Movies|Drama
+  <br>4407 = Movies|Foreign
+  <br>4408 = Movies|Horror
+  <br>4409 = Movies|Independent
+  <br>4410 = Movies|Kids &amp; Family
+  <br>4411 = Movies|Musicals
+  <br>4412 = Movies|Romance
+  <br>4413 = Movies|Sci-Fi &amp; Fantasy
+  <br>4414 = Movies|Short Films
+  <br>4415 = Movies|Special Interest
+  <br>4416 = Movies|Thriller
+  <br>4417 = Movies|Sports
+  <br>4418 = Movies|Western
+  <br>4419 = Movies|Urban
+  <br>4420 = Movies|Holiday
+  <br>4421 = Movies|Made for TV
+  <br>4422 = Movies|Concert Films
+  <br>4423 = Movies|Music Documentaries
+  <br>4424 = Movies|Music Feature Films
+  <br>4425 = Movies|Japanese Cinema
+  <br>4426 = Movies|Jidaigeki
+  <br>4427 = Movies|Tokusatsu
+  <br>4428 = Movies|Korean Cinema
+  <br>4429 = Movies|Russian
+  <br>4430 = Movies|Turkish
+  <br>4431 = Movies|Bollywood
+  <br>4432 = Movies|Regional Indian
+  <br>4433 = Movies|MiddleEastern
+  <br>4434 = Movies|African
+  <br>6000 = App Store|Business
+  <br>6001 = App Store|Weather
+  <br>6002 = App Store|Utilities
+  <br>6003 = App Store|Travel
+  <br>6004 = App Store|Sports
+  <br>6005 = App Store|Social Networking
+  <br>6006 = App Store|Reference
+  <br>6007 = App Store|Productivity
+  <br>6008 = App Store|Photo &amp; Video
+  <br>6009 = App Store|News
+  <br>6010 = App Store|Navigation
+  <br>6011 = App Store|Music
+  <br>6012 = App Store|Lifestyle
+  <br>6013 = App Store|Health &amp; Fitness
+  <br>6014 = App Store|Games
+  <br>6015 = App Store|Finance
+  <br>6016 = App Store|Entertainment
+  <br>6017 = App Store|Education
+  <br>6018 = App Store|Books
+  <br>6020 = App Store|Medical
+  <br>6021 = App Store|Newsstand
+  <br>6022 = App Store|Catalogs
+  <br>6023 = App Store|Food &amp; Drink
+  <br>7001 = App Store|Games|Action
+  <br>7002 = App Store|Games|Adventure
+  <br>7003 = App Store|Games|Arcade
+  <br>7004 = App Store|Games|Board
+  <br>7005 = App Store|Games|Card
+  <br>7006 = App Store|Games|Casino
+  <br>7007 = App Store|Games|Dice
+  <br>7008 = App Store|Games|Educational
+  <br>7009 = App Store|Games|Family
+  <br>7011 = App Store|Games|Music
+  <br>7012 = App Store|Games|Puzzle
+  <br>7013 = App Store|Games|Racing
+  <br>7014 = App Store|Games|Role Playing
+  <br>7015 = App Store|Games|Simulation
+  <br>7016 = App Store|Games|Sports
+  <br>7017 = App Store|Games|Strategy
+  <br>7018 = App Store|Games|Trivia
+  <br>7019 = App Store|Games|Word
+  <br>8001 = Tones|Ringtones|Alternative
+  <br>8002 = Tones|Ringtones|Blues
+  <br>8003 = Tones|Ringtones|Children&#39;s Music
+  <br>8004 = Tones|Ringtones|Classical
+  <br>8005 = Tones|Ringtones|Comedy
+  <br>8006 = Tones|Ringtones|Country
+  <br>8007 = Tones|Ringtones|Dance
+  <br>8008 = Tones|Ringtones|Electronic
+  <br>8009 = Tones|Ringtones|Enka
+  <br>8010 = Tones|Ringtones|French Pop
+  <br>8011 = Tones|Ringtones|German Folk
+  <br>8012 = Tones|Ringtones|German Pop
+  <br>8013 = Tones|Ringtones|Hip-Hop/Rap
+  <br>8014 = Tones|Ringtones|Holiday
+  <br>8015 = Tones|Ringtones|Inspirational
+  <br>8016 = Tones|Ringtones|J-Pop
+  <br>8017 = Tones|Ringtones|Jazz
+  <br>8018 = Tones|Ringtones|Kayokyoku
+  <br>8019 = Tones|Ringtones|Latin
+  <br>8020 = Tones|Ringtones|New Age
+  <br>8021 = Tones|Ringtones|Opera
+  <br>8022 = Tones|Ringtones|Pop
+  <br>8023 = Tones|Ringtones|R&amp;B/Soul
+  <br>8024 = Tones|Ringtones|Reggae
+  <br>8025 = Tones|Ringtones|Rock
+  <br>8026 = Tones|Ringtones|Singer/Songwriter
+  <br>8027 = Tones|Ringtones|Soundtrack
+  <br>8028 = Tones|Ringtones|Spoken Word
+  <br>8029 = Tones|Ringtones|Vocal
+  <br>8030 = Tones|Ringtones|World
+  <br>8050 = Tones|Alert Tones|Sound Effects
+  <br>8051 = Tones|Alert Tones|Dialogue
+  <br>8052 = Tones|Alert Tones|Music
+  <br>8053 = Tones|Ringtones
+  <br>8054 = Tones|Alert Tones
+  <br>8055 = Tones|Ringtones|Alternative|Chinese Alt
+  <br>8056 = Tones|Ringtones|Alternative|College Rock
+  <br>8057 = Tones|Ringtones|Alternative|Goth Rock
+  <br>8058 = Tones|Ringtones|Alternative|Grunge
+  <br>8059 = Tones|Ringtones|Alternative|Indie Rock
+  <br>8060 = Tones|Ringtones|Alternative|Korean Indie
+  <br>8061 = Tones|Ringtones|Alternative|New Wave
+  <br>8062 = Tones|Ringtones|Alternative|Punk
+  <br>8063 = Tones|Ringtones|Anime
+  <br>8064 = Tones|Ringtones|Arabic
+  <br>8065 = Tones|Ringtones|Arabic|Arabic Pop
+  <br>8066 = Tones|Ringtones|Arabic|Islamic
+  <br>8067 = Tones|Ringtones|Arabic|Khaleeji
+  <br>8068 = Tones|Ringtones|Arabic|North African
+  <br>8069 = Tones|Ringtones|Blues|Acoustic Blues
+  <br>8070 = Tones|Ringtones|Blues|Chicago Blues
+  <br>8071 = Tones|Ringtones|Blues|Classic Blues
+  <br>8072 = Tones|Ringtones|Blues|Contemporary Blues
+  <br>8073 = Tones|Ringtones|Blues|Country Blues
+  <br>8074 = Tones|Ringtones|Blues|Delta Blues
+  <br>8075 = Tones|Ringtones|Blues|Electric Blues
+  <br>8076 = Tones|Ringtones|Brazilian
+  <br>8077 = Tones|Ringtones|Brazilian|Axe
+  <br>8078 = Tones|Ringtones|Brazilian|Baile Funk
+  <br>8079 = Tones|Ringtones|Brazilian|Bossa Nova
+  <br>8080 = Tones|Ringtones|Brazilian|Choro
+  <br>8081 = Tones|Ringtones|Brazilian|Forro
+  <br>8082 = Tones|Ringtones|Brazilian|Frevo
+  <br>8083 = Tones|Ringtones|Brazilian|MPB
+  <br>8084 = Tones|Ringtones|Brazilian|Pagode
+  <br>8085 = Tones|Ringtones|Brazilian|Samba
+  <br>8086 = Tones|Ringtones|Brazilian|Sertanejo
+  <br>8087 = Tones|Ringtones|Children&#39;s Music|Lullabies
+  <br>8088 = Tones|Ringtones|Children&#39;s Music|Sing-Along
+  <br>8089 = Tones|Ringtones|Children&#39;s Music|Stories
+  <br>8090 = Tones|Ringtones|Chinese
+  <br>8091 = Tones|Ringtones|Chinese|Chinese Classical
+  <br>8092 = Tones|Ringtones|Chinese|Chinese Flute
+  <br>8093 = Tones|Ringtones|Chinese|Chinese Opera
+  <br>8094 = Tones|Ringtones|Chinese|Chinese Orchestral
+  <br>8095 = Tones|Ringtones|Chinese|Chinese Regional Folk
+  <br>8096 = Tones|Ringtones|Chinese|Chinese Strings
+  <br>8097 = Tones|Ringtones|Chinese|Taiwanese Folk
+  <br>8098 = Tones|Ringtones|Chinese|Tibetan Native Music
+  <br>8099 = Tones|Ringtones|Christian &amp; Gospel
+  <br>8100 = Tones|Ringtones|Christian &amp; Gospel|CCM
+  <br>8101 = Tones|Ringtones|Christian &amp; Gospel|Christian Metal
+  <br>8102 = Tones|Ringtones|Christian &amp; Gospel|Christian Pop
+  <br>8103 = Tones|Ringtones|Christian &amp; Gospel|Christian Rap
+  <br>8104 = Tones|Ringtones|Christian &amp; Gospel|Christian Rock
+  <br>8105 = Tones|Ringtones|Christian &amp; Gospel|Classic Christian
+  <br>8106 = Tones|Ringtones|Christian &amp; Gospel|Contemporary Gospel
+  <br>8107 = Tones|Ringtones|Christian &amp; Gospel|Gospel
+  <br>8108 = Tones|Ringtones|Christian &amp; Gospel|Praise &amp; Worship
+  <br>8109 = Tones|Ringtones|Christian &amp; Gospel|Southern Gospel
+  <br>8110 = Tones|Ringtones|Christian &amp; Gospel|Traditional Gospel
+  <br>8111 = Tones|Ringtones|Classical|Avant-Garde
+  <br>8112 = Tones|Ringtones|Classical|Baroque
+  <br>8113 = Tones|Ringtones|Classical|Chamber Music
+  <br>8114 = Tones|Ringtones|Classical|Chant
+  <br>8115 = Tones|Ringtones|Classical|Choral
+  <br>8116 = Tones|Ringtones|Classical|Classical Crossover
+  <br>8117 = Tones|Ringtones|Classical|Early Music
+  <br>8118 = Tones|Ringtones|Classical|High Classical
+  <br>8119 = Tones|Ringtones|Classical|Impressionist
+  <br>8120 = Tones|Ringtones|Classical|Medieval
+  <br>8121 = Tones|Ringtones|Classical|Minimalism
+  <br>8122 = Tones|Ringtones|Classical|Modern Composition
+  <br>8123 = Tones|Ringtones|Classical|Orchestral
+  <br>8124 = Tones|Ringtones|Classical|Renaissance
+  <br>8125 = Tones|Ringtones|Classical|Romantic
+  <br>8126 = Tones|Ringtones|Classical|Wedding Music
+  <br>8127 = Tones|Ringtones|Comedy|Novelty
+  <br>8128 = Tones|Ringtones|Comedy|Standup Comedy
+  <br>8129 = Tones|Ringtones|Country|Alternative Country
+  <br>8130 = Tones|Ringtones|Country|Americana
+  <br>8131 = Tones|Ringtones|Country|Bluegrass
+  <br>8132 = Tones|Ringtones|Country|Contemporary Bluegrass
+  <br>8133 = Tones|Ringtones|Country|Contemporary Country
+  <br>8134 = Tones|Ringtones|Country|Country Gospel
+  <br>8135 = Tones|Ringtones|Country|Honky Tonk
+  <br>8136 = Tones|Ringtones|Country|Outlaw Country
+  <br>8137 = Tones|Ringtones|Country|Thai Country
+  <br>8138 = Tones|Ringtones|Country|Traditional Bluegrass
+  <br>8139 = Tones|Ringtones|Country|Traditional Country
+  <br>8140 = Tones|Ringtones|Country|Urban Cowboy
+  <br>8141 = Tones|Ringtones|Dance|Breakbeat
+  <br>8142 = Tones|Ringtones|Dance|Exercise
+  <br>8143 = Tones|Ringtones|Dance|Garage
+  <br>8144 = Tones|Ringtones|Dance|Hardcore
+  <br>8145 = Tones|Ringtones|Dance|House
+  <br>8146 = Tones|Ringtones|Dance|Jungle/Drum&#39;n&#39;bass
+  <br>8147 = Tones|Ringtones|Dance|Techno
+  <br>8148 = Tones|Ringtones|Dance|Trance
+  <br>8149 = Tones|Ringtones|Disney
+  <br>8150 = Tones|Ringtones|Easy Listening
+  <br>8151 = Tones|Ringtones|Easy Listening|Lounge
+  <br>8152 = Tones|Ringtones|Easy Listening|Swing
+  <br>8153 = Tones|Ringtones|Electronic|Ambient
+  <br>8154 = Tones|Ringtones|Electronic|Downtempo
+  <br>8155 = Tones|Ringtones|Electronic|Electronica
+  <br>8156 = Tones|Ringtones|Electronic|IDM/Experimental
+  <br>8157 = Tones|Ringtones|Electronic|Industrial
+  <br>8158 = Tones|Ringtones|Fitness &amp; Workout
+  <br>8159 = Tones|Ringtones|Folk
+  <br>8160 = Tones|Ringtones|Hip-Hop/Rap|Alternative Rap
+  <br>8161 = Tones|Ringtones|Hip-Hop/Rap|Chinese Hip-Hop
+  <br>8162 = Tones|Ringtones|Hip-Hop/Rap|Dirty South
+  <br>8163 = Tones|Ringtones|Hip-Hop/Rap|East Coast Rap
+  <br>8164 = Tones|Ringtones|Hip-Hop/Rap|Gangsta Rap
+  <br>8165 = Tones|Ringtones|Hip-Hop/Rap|Hardcore Rap
+  <br>8166 = Tones|Ringtones|Hip-Hop/Rap|Hip-Hop
+  <br>8167 = Tones|Ringtones|Hip-Hop/Rap|Korean Hip-Hop
+  <br>8168 = Tones|Ringtones|Hip-Hop/Rap|Latin Rap
+  <br>8169 = Tones|Ringtones|Hip-Hop/Rap|Old School Rap
+  <br>8170 = Tones|Ringtones|Hip-Hop/Rap|Rap
+  <br>8171 = Tones|Ringtones|Hip-Hop/Rap|Underground Rap
+  <br>8172 = Tones|Ringtones|Hip-Hop/Rap|West Coast Rap
+  <br>8173 = Tones|Ringtones|Holiday|Chanukah
+  <br>8174 = Tones|Ringtones|Holiday|Christmas
+  <br>8175 = Tones|Ringtones|Holiday|Christmas: Children&#39;s
+  <br>8176 = Tones|Ringtones|Holiday|Christmas: Classic
+  <br>8177 = Tones|Ringtones|Holiday|Christmas: Classical
+  <br>8178 = Tones|Ringtones|Holiday|Christmas: Jazz
+  <br>8179 = Tones|Ringtones|Holiday|Christmas: Modern
+  <br>8180 = Tones|Ringtones|Holiday|Christmas: Pop
+  <br>8181 = Tones|Ringtones|Holiday|Christmas: R&amp;B
+  <br>8182 = Tones|Ringtones|Holiday|Christmas: Religious
+  <br>8183 = Tones|Ringtones|Holiday|Christmas: Rock
+  <br>8184 = Tones|Ringtones|Holiday|Easter
+  <br>8185 = Tones|Ringtones|Holiday|Halloween
+  <br>8186 = Tones|Ringtones|Holiday|Thanksgiving
+  <br>8187 = Tones|Ringtones|Indian
+  <br>8188 = Tones|Ringtones|Indian|Bollywood
+  <br>8189 = Tones|Ringtones|Indian|Devotional &amp; Spiritual
+  <br>8190 = Tones|Ringtones|Indian|Ghazals
+  <br>8191 = Tones|Ringtones|Indian|Indian Classical
+  <br>8192 = Tones|Ringtones|Indian|Indian Folk
+  <br>8193 = Tones|Ringtones|Indian|Indian Pop
+  <br>8194 = Tones|Ringtones|Indian|Regional Indian
+  <br>8195 = Tones|Ringtones|Indian|Sufi
+  <br>8196 = Tones|Ringtones|Indian|Tamil
+  <br>8197 = Tones|Ringtones|Indian|Telugu
+  <br>8198 = Tones|Ringtones|Instrumental
+  <br>8199 = Tones|Ringtones|Jazz|Avant-Garde Jazz
+  <br>8201 = Tones|Ringtones|Jazz|Big Band
+  <br>8202 = Tones|Ringtones|Jazz|Bop
+  <br>8203 = Tones|Ringtones|Jazz|Contemporary Jazz
+  <br>8204 = Tones|Ringtones|Jazz|Cool
+  <br>8205 = Tones|Ringtones|Jazz|Crossover Jazz
+  <br>8206 = Tones|Ringtones|Jazz|Dixieland
+  <br>8207 = Tones|Ringtones|Jazz|Fusion
+  <br>8208 = Tones|Ringtones|Jazz|Hard Bop
+  <br>8209 = Tones|Ringtones|Jazz|Latin Jazz
+  <br>8210 = Tones|Ringtones|Jazz|Mainstream Jazz
+  <br>8211 = Tones|Ringtones|Jazz|Ragtime
+  <br>8212 = Tones|Ringtones|Jazz|Smooth Jazz
+  <br>8213 = Tones|Ringtones|Jazz|Trad Jazz
+  <br>8214 = Tones|Ringtones|K-Pop
+  <br>8215 = Tones|Ringtones|Karaoke
+  <br>8216 = Tones|Ringtones|Korean
+  <br>8217 = Tones|Ringtones|Korean|Korean Classical
+  <br>8218 = Tones|Ringtones|Korean|Korean Trad Instrumental
+  <br>8219 = Tones|Ringtones|Korean|Korean Trad Song
+  <br>8220 = Tones|Ringtones|Korean|Korean Trad Theater
+  <br>8221 = Tones|Ringtones|Latin|Alternativo &amp; Rock Latino
+  <br>8222 = Tones|Ringtones|Latin|Baladas y Boleros
+  <br>8223 = Tones|Ringtones|Latin|Contemporary Latin
+  <br>8224 = Tones|Ringtones|Latin|Latin Jazz
+  <br>8225 = Tones|Ringtones|Latin|Latin Urban
+  <br>8226 = Tones|Ringtones|Latin|Pop Latino
+  <br>8227 = Tones|Ringtones|Latin|Raices
+  <br>8228 = Tones|Ringtones|Latin|Regional Mexicano
+  <br>8229 = Tones|Ringtones|Latin|Salsa y Tropical
+  <br>8230 = Tones|Ringtones|Marching Bands
+  <br>8231 = Tones|Ringtones|New Age|Healing
+  <br>8232 = Tones|Ringtones|New Age|Meditation
+  <br>8233 = Tones|Ringtones|New Age|Nature
+  <br>8234 = Tones|Ringtones|New Age|Relaxation
+  <br>8235 = Tones|Ringtones|New Age|Travel
+  <br>8236 = Tones|Ringtones|Orchestral
+  <br>8237 = Tones|Ringtones|Pop|Adult Contemporary
+  <br>8238 = Tones|Ringtones|Pop|Britpop
+  <br>8239 = Tones|Ringtones|Pop|C-Pop
+  <br>8240 = Tones|Ringtones|Pop|Cantopop/HK-Pop
+  <br>8241 = Tones|Ringtones|Pop|Indo Pop
+  <br>8242 = Tones|Ringtones|Pop|Korean Folk-Pop
+  <br>8243 = Tones|Ringtones|Pop|Malaysian Pop
+  <br>8244 = Tones|Ringtones|Pop|Mandopop
+  <br>8245 = Tones|Ringtones|Pop|Manilla Sound
+  <br>8246 = Tones|Ringtones|Pop|Oldies
+  <br>8247 = Tones|Ringtones|Pop|Original Pilipino Music
+  <br>8248 = Tones|Ringtones|Pop|Pinoy Pop
+  <br>8249 = Tones|Ringtones|Pop|Pop/Rock
+  <br>8250 = Tones|Ringtones|Pop|Soft Rock
+  <br>8251 = Tones|Ringtones|Pop|Tai-Pop
+  <br>8252 = Tones|Ringtones|Pop|Teen Pop
+  <br>8253 = Tones|Ringtones|Pop|Thai Pop
+  <br>8254 = Tones|Ringtones|R&amp;B/Soul|Contemporary R&amp;B
+  <br>8255 = Tones|Ringtones|R&amp;B/Soul|Disco
+  <br>8256 = Tones|Ringtones|R&amp;B/Soul|Doo Wop
+  <br>8257 = Tones|Ringtones|R&amp;B/Soul|Funk
+  <br>8258 = Tones|Ringtones|R&amp;B/Soul|Motown
+  <br>8259 = Tones|Ringtones|R&amp;B/Soul|Neo-Soul
+  <br>8260 = Tones|Ringtones|R&amp;B/Soul|Soul
+  <br>8261 = Tones|Ringtones|Reggae|Dancehall
+  <br>8262 = Tones|Ringtones|Reggae|Dub
+  <br>8263 = Tones|Ringtones|Reggae|Roots Reggae
+  <br>8264 = Tones|Ringtones|Reggae|Ska
+  <br>8265 = Tones|Ringtones|Rock|Adult Alternative
+  <br>8266 = Tones|Ringtones|Rock|American Trad Rock
+  <br>8267 = Tones|Ringtones|Rock|Arena Rock
+  <br>8268 = Tones|Ringtones|Rock|Blues-Rock
+  <br>8269 = Tones|Ringtones|Rock|British Invasion
+  <br>8270 = Tones|Ringtones|Rock|Chinese Rock
+  <br>8271 = Tones|Ringtones|Rock|Death Metal/Black Metal
+  <br>8272 = Tones|Ringtones|Rock|Glam Rock
+  <br>8273 = Tones|Ringtones|Rock|Hair Metal
+  <br>8274 = Tones|Ringtones|Rock|Hard Rock
+  <br>8275 = Tones|Ringtones|Rock|Metal
+  <br>8276 = Tones|Ringtones|Rock|Jam Bands
+  <br>8277 = Tones|Ringtones|Rock|Korean Rock
+  <br>8278 = Tones|Ringtones|Rock|Prog-Rock/Art Rock
+  <br>8279 = Tones|Ringtones|Rock|Psychedelic
+  <br>8280 = Tones|Ringtones|Rock|Rock &amp; Roll
+  <br>8281 = Tones|Ringtones|Rock|Rockabilly
+  <br>8282 = Tones|Ringtones|Rock|Roots Rock
+  <br>8283 = Tones|Ringtones|Rock|Singer/Songwriter
+  <br>8284 = Tones|Ringtones|Rock|Southern Rock
+  <br>8285 = Tones|Ringtones|Rock|Surf
+  <br>8286 = Tones|Ringtones|Rock|Tex-Mex
+  <br>8287 = Tones|Ringtones|Singer/Songwriter|Alternative Folk
+  <br>8288 = Tones|Ringtones|Singer/Songwriter|Contemporary Folk
+  <br>8289 = Tones|Ringtones|Singer/Songwriter|Contemporary Singer/Songwriter
+  <br>8290 = Tones|Ringtones|Singer/Songwriter|Folk-Rock
+  <br>8291 = Tones|Ringtones|Singer/Songwriter|New Acoustic
+  <br>8292 = Tones|Ringtones|Singer/Songwriter|Traditional Folk
+  <br>8293 = Tones|Ringtones|Soundtrack|Foreign Cinema
+  <br>8294 = Tones|Ringtones|Soundtrack|Musicals
+  <br>8295 = Tones|Ringtones|Soundtrack|Original Score
+  <br>8296 = Tones|Ringtones|Soundtrack|Sound Effects
+  <br>8297 = Tones|Ringtones|Soundtrack|Soundtrack
+  <br>8298 = Tones|Ringtones|Soundtrack|TV Soundtrack
+  <br>8299 = Tones|Ringtones|Vocal|Standards
+  <br>8300 = Tones|Ringtones|Vocal|Traditional Pop
+  <br>8301 = Tones|Ringtones|Vocal|Trot
+  <br>8302 = Tones|Ringtones|Jazz|Vocal Jazz
+  <br>8303 = Tones|Ringtones|Vocal|Vocal Pop
+  <br>8304 = Tones|Ringtones|World|Africa
+  <br>8305 = Tones|Ringtones|World|Afrikaans
+  <br>8306 = Tones|Ringtones|World|Afro-Beat
+  <br>8307 = Tones|Ringtones|World|Afro-Pop
+  <br>8308 = Tones|Ringtones|World|Arabesque
+  <br>8309 = Tones|Ringtones|World|Asia
+  <br>8310 = Tones|Ringtones|World|Australia
+  <br>8311 = Tones|Ringtones|World|Cajun
+  <br>8312 = Tones|Ringtones|World|Calypso
+  <br>8313 = Tones|Ringtones|World|Caribbean
+  <br>8314 = Tones|Ringtones|World|Celtic
+  <br>8315 = Tones|Ringtones|World|Celtic Folk
+  <br>8316 = Tones|Ringtones|World|Contemporary Celtic
+  <br>8317 = Tones|Ringtones|World|Dangdut
+  <br>8318 = Tones|Ringtones|World|Dini
+  <br>8319 = Tones|Ringtones|World|Europe
+  <br>8320 = Tones|Ringtones|World|Fado
+  <br>8321 = Tones|Ringtones|World|Farsi
+  <br>8322 = Tones|Ringtones|World|Flamenco
+  <br>8323 = Tones|Ringtones|World|France
+  <br>8324 = Tones|Ringtones|World|Halk
+  <br>8325 = Tones|Ringtones|World|Hawaii
+  <br>8326 = Tones|Ringtones|World|Iberia
+  <br>8327 = Tones|Ringtones|World|Indonesian Religious
+  <br>8328 = Tones|Ringtones|World|Israeli
+  <br>8329 = Tones|Ringtones|World|Japan
+  <br>8330 = Tones|Ringtones|World|Klezmer
+  <br>8331 = Tones|Ringtones|World|North America
+  <br>8332 = Tones|Ringtones|World|Polka
+  <br>8333 = Tones|Ringtones|World|Russian
+  <br>8334 = Tones|Ringtones|World|Russian Chanson
+  <br>8335 = Tones|Ringtones|World|Sanat
+  <br>8336 = Tones|Ringtones|World|Soca
+  <br>8337 = Tones|Ringtones|World|South Africa
+  <br>8338 = Tones|Ringtones|World|South America
+  <br>8339 = Tones|Ringtones|World|Tango
+  <br>8340 = Tones|Ringtones|World|Traditional Celtic
+  <br>8341 = Tones|Ringtones|World|Turkish
+  <br>8342 = Tones|Ringtones|World|Worldbeat
+  <br>8343 = Tones|Ringtones|World|Zydeco
+  <br>9002 = Books|Nonfiction
+  <br>9003 = Books|Romance
+  <br>9004 = Books|Travel &amp; Adventure
+  <br>9007 = Books|Arts &amp; Entertainment
+  <br>9008 = Books|Biographies &amp; Memoirs
+  <br>9009 = Books|Business &amp; Personal Finance
+  <br>9010 = Books|Children &amp; Teens
+  <br>9012 = Books|Humor
+  <br>9015 = Books|History
+  <br>9018 = Books|Religion &amp; Spirituality
+  <br>9019 = Books|Science &amp; Nature
+  <br>9020 = Books|Sci-Fi &amp; Fantasy
+  <br>9024 = Books|Lifestyle &amp; Home
+  <br>9025 = Books|Health, Mind &amp; Body
+  <br>9026 = Books|Comics &amp; Graphic Novels
+  <br>9027 = Books|Computers &amp; Internet
+  <br>9028 = Books|Cookbooks, Food &amp; Wine
+  <br>9029 = Books|Professional &amp; Technical
+  <br>9030 = Books|Parenting
+  <br>9031 = Books|Fiction &amp; Literature
+  <br>9032 = Books|Mysteries &amp; Thrillers
+  <br>9033 = Books|Reference
+  <br>9034 = Books|Politics &amp; Current Events
+  <br>9035 = Books|Sports &amp; Outdoors
+  <br>10001 = Books|Lifestyle &amp; Home|Antiques &amp; Collectibles
+  <br>10002 = Books|Arts &amp; Entertainment|Art &amp; Architecture
+  <br>10003 = Books|Religion &amp; Spirituality|Bibles
+  <br>10004 = Books|Health, Mind &amp; Body|Spirituality
+  <br>10005 = Books|Business &amp; Personal Finance|Industries &amp; Professions
+  <br>10006 = Books|Business &amp; Personal Finance|Marketing &amp; Sales
+  <br>10007 = Books|Business &amp; Personal Finance|Small Business &amp; Entrepreneurship
+  <br>10008 = Books|Business &amp; Personal Finance|Personal Finance
+  <br>10009 = Books|Business &amp; Personal Finance|Reference
+  <br>10010 = Books|Business &amp; Personal Finance|Careers
+  <br>10011 = Books|Business &amp; Personal Finance|Economics
+  <br>10012 = Books|Business &amp; Personal Finance|Investing
+  <br>10013 = Books|Business &amp; Personal Finance|Finance
+  <br>10014 = Books|Business &amp; Personal Finance|Management &amp; Leadership
+  <br>10015 = Books|Comics &amp; Graphic Novels|Graphic Novels
+  <br>10016 = Books|Comics &amp; Graphic Novels|Manga
+  <br>10017 = Books|Computers &amp; Internet|Computers
+  <br>10018 = Books|Computers &amp; Internet|Databases
+  <br>10019 = Books|Computers &amp; Internet|Digital Media
+  <br>10020 = Books|Computers &amp; Internet|Internet
+  <br>10021 = Books|Computers &amp; Internet|Network
+  <br>10022 = Books|Computers &amp; Internet|Operating Systems
+  <br>10023 = Books|Computers &amp; Internet|Programming
+  <br>10024 = Books|Computers &amp; Internet|Software
+  <br>10025 = Books|Computers &amp; Internet|System Administration
+  <br>10026 = Books|Cookbooks, Food &amp; Wine|Beverages
+  <br>10027 = Books|Cookbooks, Food &amp; Wine|Courses &amp; Dishes
+  <br>10028 = Books|Cookbooks, Food &amp; Wine|Special Diet
+  <br>10029 = Books|Cookbooks, Food &amp; Wine|Special Occasions
+  <br>10030 = Books|Cookbooks, Food &amp; Wine|Methods
+  <br>10031 = Books|Cookbooks, Food &amp; Wine|Reference
+  <br>10032 = Books|Cookbooks, Food &amp; Wine|Regional &amp; Ethnic
+  <br>10033 = Books|Cookbooks, Food &amp; Wine|Specific Ingredients
+  <br>10034 = Books|Lifestyle &amp; Home|Crafts &amp; Hobbies
+  <br>10035 = Books|Professional &amp; Technical|Design
+  <br>10036 = Books|Arts &amp; Entertainment|Theater
+  <br>10037 = Books|Professional &amp; Technical|Education
+  <br>10038 = Books|Nonfiction|Family &amp; Relationships
+  <br>10039 = Books|Fiction &amp; Literature|Action &amp; Adventure
+  <br>10040 = Books|Fiction &amp; Literature|African American
+  <br>10041 = Books|Fiction &amp; Literature|Religious
+  <br>10042 = Books|Fiction &amp; Literature|Classics
+  <br>10043 = Books|Fiction &amp; Literature|Erotica
+  <br>10044 = Books|Sci-Fi &amp; Fantasy|Fantasy
+  <br>10045 = Books|Fiction &amp; Literature|Gay
+  <br>10046 = Books|Fiction &amp; Literature|Ghost
+  <br>10047 = Books|Fiction &amp; Literature|Historical
+  <br>10048 = Books|Fiction &amp; Literature|Horror
+  <br>10049 = Books|Fiction &amp; Literature|Literary
+  <br>10050 = Books|Mysteries &amp; Thrillers|Hard-Boiled
+  <br>10051 = Books|Mysteries &amp; Thrillers|Historical
+  <br>10052 = Books|Mysteries &amp; Thrillers|Police Procedural
+  <br>10053 = Books|Mysteries &amp; Thrillers|Short Stories
+  <br>10054 = Books|Mysteries &amp; Thrillers|British Detectives
+  <br>10055 = Books|Mysteries &amp; Thrillers|Women Sleuths
+  <br>10056 = Books|Romance|Erotica
+  <br>10057 = Books|Romance|Contemporary
+  <br>10058 = Books|Romance|Fantasy, Futuristic &amp; Ghost
+  <br>10059 = Books|Romance|Historical
+  <br>10060 = Books|Romance|Short Stories
+  <br>10061 = Books|Romance|Suspense
+  <br>10062 = Books|Romance|Western
+  <br>10063 = Books|Sci-Fi &amp; Fantasy|Science Fiction
+  <br>10064 = Books|Sci-Fi &amp; Fantasy|Science Fiction &amp; Literature
+  <br>10065 = Books|Fiction &amp; Literature|Short Stories
+  <br>10066 = Books|Reference|Foreign Languages
+  <br>10067 = Books|Arts &amp; Entertainment|Games
+  <br>10068 = Books|Lifestyle &amp; Home|Gardening
+  <br>10069 = Books|Health, Mind &amp; Body|Health &amp; Fitness
+  <br>10070 = Books|History|Africa
+  <br>10071 = Books|History|Americas
+  <br>10072 = Books|History|Ancient
+  <br>10073 = Books|History|Asia
+  <br>10074 = Books|History|Australia &amp; Oceania
+  <br>10075 = Books|History|Europe
+  <br>10076 = Books|History|Latin America
+  <br>10077 = Books|History|Middle East
+  <br>10078 = Books|History|Military
+  <br>10079 = Books|History|United States
+  <br>10080 = Books|History|World
+  <br>10081 = Books|Children &amp; Teens|Children&#39;s Fiction
+  <br>10082 = Books|Children &amp; Teens|Children&#39;s Nonfiction
+  <br>10083 = Books|Professional &amp; Technical|Law
+  <br>10084 = Books|Fiction &amp; Literature|Literary Criticism
+  <br>10085 = Books|Science &amp; Nature|Mathematics
+  <br>10086 = Books|Professional &amp; Technical|Medical
+  <br>10087 = Books|Arts &amp; Entertainment|Music
+  <br>10088 = Books|Science &amp; Nature|Nature
+  <br>10089 = Books|Arts &amp; Entertainment|Performing Arts
+  <br>10090 = Books|Lifestyle &amp; Home|Pets
+  <br>10091 = Books|Nonfiction|Philosophy
+  <br>10092 = Books|Arts &amp; Entertainment|Photography
+  <br>10093 = Books|Fiction &amp; Literature|Poetry
+  <br>10094 = Books|Health, Mind &amp; Body|Psychology
+  <br>10095 = Books|Reference|Almanacs &amp; Yearbooks
+  <br>10096 = Books|Reference|Atlases &amp; Maps
+  <br>10097 = Books|Reference|Catalogs &amp; Directories
+  <br>10098 = Books|Reference|Consumer Guides
+  <br>10099 = Books|Reference|Dictionaries &amp; Thesauruses
+  <br>10100 = Books|Reference|Encyclopedias
+  <br>10101 = Books|Reference|Etiquette
+  <br>10102 = Books|Reference|Quotations
+  <br>10103 = Books|Reference|Words &amp; Language
+  <br>10104 = Books|Reference|Writing
+  <br>10105 = Books|Religion &amp; Spirituality|Bible Studies
+  <br>10106 = Books|Religion &amp; Spirituality|Buddhism
+  <br>10107 = Books|Religion &amp; Spirituality|Christianity
+  <br>10108 = Books|Religion &amp; Spirituality|Hinduism
+  <br>10109 = Books|Religion &amp; Spirituality|Islam
+  <br>10110 = Books|Religion &amp; Spirituality|Judaism
+  <br>10111 = Books|Science &amp; Nature|Astronomy
+  <br>10112 = Books|Science &amp; Nature|Chemistry
+  <br>10113 = Books|Science &amp; Nature|Earth Sciences
+  <br>10114 = Books|Science &amp; Nature|Essays
+  <br>10115 = Books|Science &amp; Nature|History
+  <br>10116 = Books|Science &amp; Nature|Life Sciences
+  <br>10117 = Books|Science &amp; Nature|Physics
+  <br>10118 = Books|Science &amp; Nature|Reference
+  <br>10119 = Books|Health, Mind &amp; Body|Self-Improvement
+  <br>10120 = Books|Nonfiction|Social Science
+  <br>10121 = Books|Sports &amp; Outdoors|Baseball
+  <br>10122 = Books|Sports &amp; Outdoors|Basketball
+  <br>10123 = Books|Sports &amp; Outdoors|Coaching
+  <br>10124 = Books|Sports &amp; Outdoors|Extreme Sports
+  <br>10125 = Books|Sports &amp; Outdoors|Football
+  <br>10126 = Books|Sports &amp; Outdoors|Golf
+  <br>10127 = Books|Sports &amp; Outdoors|Hockey
+  <br>10128 = Books|Sports &amp; Outdoors|Mountaineering
+  <br>10129 = Books|Sports &amp; Outdoors|Outdoors
+  <br>10130 = Books|Sports &amp; Outdoors|Racket Sports
+  <br>10131 = Books|Sports &amp; Outdoors|Reference
+  <br>10132 = Books|Sports &amp; Outdoors|Soccer
+  <br>10133 = Books|Sports &amp; Outdoors|Training
+  <br>10134 = Books|Sports &amp; Outdoors|Water Sports
+  <br>10135 = Books|Sports &amp; Outdoors|Winter Sports
+  <br>10136 = Books|Reference|Study Aids
+  <br>10137 = Books|Professional &amp; Technical|Engineering
+  <br>10138 = Books|Nonfiction|Transportation
+  <br>10139 = Books|Travel &amp; Adventure|Africa
+  <br>10140 = Books|Travel &amp; Adventure|Asia
+  <br>10141 = Books|Travel &amp; Adventure|Specialty Travel
+  <br>10142 = Books|Travel &amp; Adventure|Canada
+  <br>10143 = Books|Travel &amp; Adventure|Caribbean
+  <br>10144 = Books|Travel &amp; Adventure|Latin America
+  <br>10145 = Books|Travel &amp; Adventure|Essays &amp; Memoirs
+  <br>10146 = Books|Travel &amp; Adventure|Europe
+  <br>10147 = Books|Travel &amp; Adventure|Middle East
+  <br>10148 = Books|Travel &amp; Adventure|United States
+  <br>10149 = Books|Nonfiction|True Crime
+  <br>11001 = Books|Sci-Fi &amp; Fantasy|Fantasy|Contemporary
+  <br>11002 = Books|Sci-Fi &amp; Fantasy|Fantasy|Epic
+  <br>11003 = Books|Sci-Fi &amp; Fantasy|Fantasy|Historical
+  <br>11004 = Books|Sci-Fi &amp; Fantasy|Fantasy|Paranormal
+  <br>11005 = Books|Sci-Fi &amp; Fantasy|Fantasy|Short Stories
+  <br>11006 = Books|Sci-Fi &amp; Fantasy|Science Fiction &amp; Literature|Adventure
+  <br>11007 = Books|Sci-Fi &amp; Fantasy|Science Fiction &amp; Literature|High Tech
+  <br>11008 = Books|Sci-Fi &amp; Fantasy|Science Fiction &amp; Literature|Short Stories
+  <br>11009 = Books|Professional &amp; Technical|Education|Language Arts &amp; Disciplines
+  <br>12001 = Mac App Store|Business
+  <br>12002 = Mac App Store|Developer Tools
+  <br>12003 = Mac App Store|Education
+  <br>12004 = Mac App Store|Entertainment
+  <br>12005 = Mac App Store|Finance
+  <br>12006 = Mac App Store|Games
+  <br>12007 = Mac App Store|Health &amp; Fitness
+  <br>12008 = Mac App Store|Lifestyle
+  <br>12010 = Mac App Store|Medical
+  <br>12011 = Mac App Store|Music
+  <br>12012 = Mac App Store|News
+  <br>12013 = Mac App Store|Photography
+  <br>12014 = Mac App Store|Productivity
+  <br>12015 = Mac App Store|Reference
+  <br>12016 = Mac App Store|Social Networking
+  <br>12017 = Mac App Store|Sports
+  <br>12018 = Mac App Store|Travel
+  <br>12019 = Mac App Store|Utilities
+  <br>12020 = Mac App Store|Video
+  <br>12021 = Mac App Store|Weather
+  <br>12022 = Mac App Store|Graphics &amp; Design
+  <br>12201 = Mac App Store|Games|Action
+  <br>12202 = Mac App Store|Games|Adventure
+  <br>12203 = Mac App Store|Games|Arcade
+  <br>12204 = Mac App Store|Games|Board
+  <br>12205 = Mac App Store|Games|Card
+  <br>12206 = Mac App Store|Games|Casino
+  <br>12207 = Mac App Store|Games|Dice
+  <br>12208 = Mac App Store|Games|Educational
+  <br>12209 = Mac App Store|Games|Family
+  <br>12210 = Mac App Store|Games|Kids
+  <br>12211 = Mac App Store|Games|Music
+  <br>12212 = Mac App Store|Games|Puzzle
+  <br>12213 = Mac App Store|Games|Racing
+  <br>12214 = Mac App Store|Games|Role Playing
+  <br>12215 = Mac App Store|Games|Simulation
+  <br>12216 = Mac App Store|Games|Sports
+  <br>12217 = Mac App Store|Games|Strategy
+  <br>12218 = Mac App Store|Games|Trivia
+  <br>12219 = Mac App Store|Games|Word
+  <br>13001 = App Store|Newsstand|News &amp; Politics
+  <br>13002 = App Store|Newsstand|Fashion &amp; Style
+  <br>13003 = App Store|Newsstand|Home &amp; Garden
+  <br>13004 = App Store|Newsstand|Outdoors &amp; Nature
+  <br>13005 = App Store|Newsstand|Sports &amp; Leisure
+  <br>13006 = App Store|Newsstand|Automotive
+  <br>13007 = App Store|Newsstand|Arts &amp; Photography
+  <br>13008 = App Store|Newsstand|Brides &amp; Weddings
+  <br>13009 = App Store|Newsstand|Business &amp; Investing
+  <br>13010 = App Store|Newsstand|Children&#39;s Magazines
+  <br>13011 = App Store|Newsstand|Computers &amp; Internet
+  <br>13012 = App Store|Newsstand|Cooking, Food &amp; Drink
+  <br>13013 = App Store|Newsstand|Crafts &amp; Hobbies
+  <br>13014 = App Store|Newsstand|Electronics &amp; Audio
+  <br>13015 = App Store|Newsstand|Entertainment
+  <br>13017 = App Store|Newsstand|Health, Mind &amp; Body
+  <br>13018 = App Store|Newsstand|History
+  <br>13019 = App Store|Newsstand|Literary Magazines &amp; Journals
+  <br>13020 = App Store|Newsstand|Men&#39;s Interest
+  <br>13021 = App Store|Newsstand|Movies &amp; Music
+  <br>13023 = App Store|Newsstand|Parenting &amp; Family
+  <br>13024 = App Store|Newsstand|Pets
+  <br>13025 = App Store|Newsstand|Professional &amp; Trade
+  <br>13026 = App Store|Newsstand|Regional News
+  <br>13027 = App Store|Newsstand|Science
+  <br>13028 = App Store|Newsstand|Teens
+  <br>13029 = App Store|Newsstand|Travel &amp; Regional
+  <br>13030 = App Store|Newsstand|Women&#39;s Interest
+  <br>15000 = Textbooks|Arts &amp; Entertainment
+  <br>15001 = Textbooks|Arts &amp; Entertainment|Art &amp; Architecture
+  <br>15002 = Textbooks|Arts &amp; Entertainment|Art &amp; Architecture|Urban Planning
+  <br>15003 = Textbooks|Arts &amp; Entertainment|Art History
+  <br>15004 = Textbooks|Arts &amp; Entertainment|Dance
+  <br>15005 = Textbooks|Arts &amp; Entertainment|Design
+  <br>15006 = Textbooks|Arts &amp; Entertainment|Fashion
+  <br>15007 = Textbooks|Arts &amp; Entertainment|Film
+  <br>15008 = Textbooks|Arts &amp; Entertainment|Games
+  <br>15009 = Textbooks|Arts &amp; Entertainment|Interior Design
+  <br>15010 = Textbooks|Arts &amp; Entertainment|Media Arts
+  <br>15011 = Textbooks|Arts &amp; Entertainment|Music
+  <br>15012 = Textbooks|Arts &amp; Entertainment|Performing Arts
+  <br>15013 = Textbooks|Arts &amp; Entertainment|Photography
+  <br>15014 = Textbooks|Arts &amp; Entertainment|Theater
+  <br>15015 = Textbooks|Arts &amp; Entertainment|TV
+  <br>15016 = Textbooks|Arts &amp; Entertainment|Visual Arts
+  <br>15017 = Textbooks|Biographies &amp; Memoirs
+  <br>15018 = Textbooks|Business &amp; Personal Finance
+  <br>15019 = Textbooks|Business &amp; Personal Finance|Accounting
+  <br>15020 = Textbooks|Business &amp; Personal Finance|Careers
+  <br>15021 = Textbooks|Business &amp; Personal Finance|Economics
+  <br>15022 = Textbooks|Business &amp; Personal Finance|Finance
+  <br>15023 = Textbooks|Business &amp; Personal Finance|Hospitality
+  <br>15024 = Textbooks|Business &amp; Personal Finance|Industries &amp; Professions
+  <br>15025 = Textbooks|Business &amp; Personal Finance|Investing
+  <br>15026 = Textbooks|Business &amp; Personal Finance|Management &amp; Leadership
+  <br>15027 = Textbooks|Business &amp; Personal Finance|Marketing &amp; Sales
+  <br>15028 = Textbooks|Business &amp; Personal Finance|Personal Finance
+  <br>15029 = Textbooks|Business &amp; Personal Finance|Real Estate
+  <br>15030 = Textbooks|Business &amp; Personal Finance|Reference
+  <br>15031 = Textbooks|Business &amp; Personal Finance|Small Business &amp; Entrepreneurship
+  <br>15032 = Textbooks|Children &amp; Teens
+  <br>15033 = Textbooks|Children &amp; Teens|Fiction
+  <br>15034 = Textbooks|Children &amp; Teens|Nonfiction
+  <br>15035 = Textbooks|Comics &amp; Graphic Novels
+  <br>15036 = Textbooks|Comics &amp; Graphic Novels|Graphic Novels
+  <br>15037 = Textbooks|Comics &amp; Graphic Novels|Manga
+  <br>15038 = Textbooks|Communications &amp; Media
+  <br>15039 = Textbooks|Communications &amp; Media|Broadcasting
+  <br>15040 = Textbooks|Communications &amp; Media|Digital Media
+  <br>15041 = Textbooks|Communications &amp; Media|Journalism
+  <br>15042 = Textbooks|Communications &amp; Media|Photojournalism
+  <br>15043 = Textbooks|Communications &amp; Media|Print
+  <br>15044 = Textbooks|Communications &amp; Media|Speech
+  <br>15045 = Textbooks|Communications &amp; Media|Writing
+  <br>15046 = Textbooks|Computers &amp; Internet
+  <br>15047 = Textbooks|Computers &amp; Internet|Computers
+  <br>15048 = Textbooks|Computers &amp; Internet|Databases
+  <br>15049 = Textbooks|Computers &amp; Internet|Digital Media
+  <br>15050 = Textbooks|Computers &amp; Internet|Internet
+  <br>15051 = Textbooks|Computers &amp; Internet|Network
+  <br>15052 = Textbooks|Computers &amp; Internet|Operating Systems
+  <br>15053 = Textbooks|Computers &amp; Internet|Programming
+  <br>15054 = Textbooks|Computers &amp; Internet|Software
+  <br>15055 = Textbooks|Computers &amp; Internet|System Administration
+  <br>15056 = Textbooks|Cookbooks, Food &amp; Wine
+  <br>15057 = Textbooks|Cookbooks, Food &amp; Wine|Beverages
+  <br>15058 = Textbooks|Cookbooks, Food &amp; Wine|Courses &amp; Dishes
+  <br>15059 = Textbooks|Cookbooks, Food &amp; Wine|Culinary Arts
+  <br>15060 = Textbooks|Cookbooks, Food &amp; Wine|Methods
+  <br>15061 = Textbooks|Cookbooks, Food &amp; Wine|Reference
+  <br>15062 = Textbooks|Cookbooks, Food &amp; Wine|Regional &amp; Ethnic
+  <br>15063 = Textbooks|Cookbooks, Food &amp; Wine|Special Diet
+  <br>15064 = Textbooks|Cookbooks, Food &amp; Wine|Special Occasions
+  <br>15065 = Textbooks|Cookbooks, Food &amp; Wine|Specific Ingredients
+  <br>15066 = Textbooks|Engineering
+  <br>15067 = Textbooks|Engineering|Aeronautics
+  <br>15068 = Textbooks|Engineering|Chemical &amp; Petroleum Engineering
+  <br>15069 = Textbooks|Engineering|Civil Engineering
+  <br>15070 = Textbooks|Engineering|Computer Science
+  <br>15071 = Textbooks|Engineering|Electrical Engineering
+  <br>15072 = Textbooks|Engineering|Environmental Engineering
+  <br>15073 = Textbooks|Engineering|Mechanical Engineering
+  <br>15074 = Textbooks|Engineering|Power Resources
+  <br>15075 = Textbooks|Fiction &amp; Literature
+  <br>15076 = Textbooks|Fiction &amp; Literature|Latino
+  <br>15077 = Textbooks|Fiction &amp; Literature|Action &amp; Adventure
+  <br>15078 = Textbooks|Fiction &amp; Literature|African American
+  <br>15079 = Textbooks|Fiction &amp; Literature|Anthologies
+  <br>15080 = Textbooks|Fiction &amp; Literature|Classics
+  <br>15081 = Textbooks|Fiction &amp; Literature|Comparative Literature
+  <br>15082 = Textbooks|Fiction &amp; Literature|Erotica
+  <br>15083 = Textbooks|Fiction &amp; Literature|Gay
+  <br>15084 = Textbooks|Fiction &amp; Literature|Ghost
+  <br>15085 = Textbooks|Fiction &amp; Literature|Historical
+  <br>15086 = Textbooks|Fiction &amp; Literature|Horror
+  <br>15087 = Textbooks|Fiction &amp; Literature|Literary
+  <br>15088 = Textbooks|Fiction &amp; Literature|Literary Criticism
+  <br>15089 = Textbooks|Fiction &amp; Literature|Poetry
+  <br>15090 = Textbooks|Fiction &amp; Literature|Religious
+  <br>15091 = Textbooks|Fiction &amp; Literature|Short Stories
+  <br>15092 = Textbooks|Health, Mind &amp; Body
+  <br>15093 = Textbooks|Health, Mind &amp; Body|Fitness
+  <br>15094 = Textbooks|Health, Mind &amp; Body|Self-Improvement
+  <br>15095 = Textbooks|History
+  <br>15096 = Textbooks|History|Africa
+  <br>15097 = Textbooks|History|Americas
+  <br>15098 = Textbooks|History|Americas|Canada
+  <br>15099 = Textbooks|History|Americas|Latin America
+  <br>15100 = Textbooks|History|Americas|United States
+  <br>15101 = Textbooks|History|Ancient
+  <br>15102 = Textbooks|History|Asia
+  <br>15103 = Textbooks|History|Australia &amp; Oceania
+  <br>15104 = Textbooks|History|Europe
+  <br>15105 = Textbooks|History|Middle East
+  <br>15106 = Textbooks|History|Military
+  <br>15107 = Textbooks|History|World
+  <br>15108 = Textbooks|Humor
+  <br>15109 = Textbooks|Language Studies
+  <br>15110 = Textbooks|Language Studies|African Languages
+  <br>15111 = Textbooks|Language Studies|Ancient Languages
+  <br>15112 = Textbooks|Language Studies|Arabic
+  <br>15113 = Textbooks|Language Studies|Bilingual Editions
+  <br>15114 = Textbooks|Language Studies|Chinese
+  <br>15115 = Textbooks|Language Studies|English
+  <br>15116 = Textbooks|Language Studies|French
+  <br>15117 = Textbooks|Language Studies|German
+  <br>15118 = Textbooks|Language Studies|Hebrew
+  <br>15119 = Textbooks|Language Studies|Hindi
+  <br>15120 = Textbooks|Language Studies|Indigenous Languages
+  <br>15121 = Textbooks|Language Studies|Italian
+  <br>15122 = Textbooks|Language Studies|Japanese
+  <br>15123 = Textbooks|Language Studies|Korean
+  <br>15124 = Textbooks|Language Studies|Linguistics
+  <br>15125 = Textbooks|Language Studies|Other Language
+  <br>15126 = Textbooks|Language Studies|Portuguese
+  <br>15127 = Textbooks|Language Studies|Russian
+  <br>15128 = Textbooks|Language Studies|Spanish
+  <br>15129 = Textbooks|Language Studies|Speech Pathology
+  <br>15130 = Textbooks|Lifestyle &amp; Home
+  <br>15131 = Textbooks|Lifestyle &amp; Home|Antiques &amp; Collectibles
+  <br>15132 = Textbooks|Lifestyle &amp; Home|Crafts &amp; Hobbies
+  <br>15133 = Textbooks|Lifestyle &amp; Home|Gardening
+  <br>15134 = Textbooks|Lifestyle &amp; Home|Pets
+  <br>15135 = Textbooks|Mathematics
+  <br>15136 = Textbooks|Mathematics|Advanced Mathematics
+  <br>15137 = Textbooks|Mathematics|Algebra
+  <br>15138 = Textbooks|Mathematics|Arithmetic
+  <br>15139 = Textbooks|Mathematics|Calculus
+  <br>15140 = Textbooks|Mathematics|Geometry
+  <br>15141 = Textbooks|Mathematics|Statistics
+  <br>15142 = Textbooks|Medicine
+  <br>15143 = Textbooks|Medicine|Anatomy &amp; Physiology
+  <br>15144 = Textbooks|Medicine|Dentistry
+  <br>15145 = Textbooks|Medicine|Emergency Medicine
+  <br>15146 = Textbooks|Medicine|Genetics
+  <br>15147 = Textbooks|Medicine|Immunology
+  <br>15148 = Textbooks|Medicine|Neuroscience
+  <br>15149 = Textbooks|Medicine|Nursing
+  <br>15150 = Textbooks|Medicine|Pharmacology &amp; Toxicology
+  <br>15151 = Textbooks|Medicine|Psychiatry
+  <br>15152 = Textbooks|Medicine|Psychology
+  <br>15153 = Textbooks|Medicine|Radiology
+  <br>15154 = Textbooks|Medicine|Veterinary
+  <br>15155 = Textbooks|Mysteries &amp; Thrillers
+  <br>15156 = Textbooks|Mysteries &amp; Thrillers|British Detectives
+  <br>15157 = Textbooks|Mysteries &amp; Thrillers|Hard-Boiled
+  <br>15158 = Textbooks|Mysteries &amp; Thrillers|Historical
+  <br>15159 = Textbooks|Mysteries &amp; Thrillers|Police Procedural
+  <br>15160 = Textbooks|Mysteries &amp; Thrillers|Short Stories
+  <br>15161 = Textbooks|Mysteries &amp; Thrillers|Women Sleuths
+  <br>15162 = Textbooks|Nonfiction
+  <br>15163 = Textbooks|Nonfiction|Family &amp; Relationships
+  <br>15164 = Textbooks|Nonfiction|Transportation
+  <br>15165 = Textbooks|Nonfiction|True Crime
+  <br>15166 = Textbooks|Parenting
+  <br>15167 = Textbooks|Philosophy
+  <br>15168 = Textbooks|Philosophy|Aesthetics
+  <br>15169 = Textbooks|Philosophy|Epistemology
+  <br>15170 = Textbooks|Philosophy|Ethics
+  <br>15171 = Textbooks|Philosophy|Philosophy of Language
+  <br>15172 = Textbooks|Philosophy|Logic
+  <br>15173 = Textbooks|Philosophy|Metaphysics
+  <br>15174 = Textbooks|Philosophy|Political Philosophy
+  <br>15175 = Textbooks|Philosophy|Philosophy of Religion
+  <br>15176 = Textbooks|Politics &amp; Current Events
+  <br>15177 = Textbooks|Politics &amp; Current Events|Current Events
+  <br>15178 = Textbooks|Politics &amp; Current Events|Foreign Policy &amp; International Relations
+  <br>15179 = Textbooks|Politics &amp; Current Events|Local Governments
+  <br>15180 = Textbooks|Politics &amp; Current Events|National Governments
+  <br>15181 = Textbooks|Politics &amp; Current Events|Political Science
+  <br>15182 = Textbooks|Politics &amp; Current Events|Public Administration
+  <br>15183 = Textbooks|Politics &amp; Current Events|World Affairs
+  <br>15184 = Textbooks|Professional &amp; Technical
+  <br>15185 = Textbooks|Professional &amp; Technical|Design
+  <br>15186 = Textbooks|Professional &amp; Technical|Language Arts &amp; Disciplines
+  <br>15187 = Textbooks|Professional &amp; Technical|Engineering
+  <br>15188 = Textbooks|Professional &amp; Technical|Law
+  <br>15189 = Textbooks|Professional &amp; Technical|Medical
+  <br>15190 = Textbooks|Reference
+  <br>15191 = Textbooks|Reference|Almanacs &amp; Yearbooks
+  <br>15192 = Textbooks|Reference|Atlases &amp; Maps
+  <br>15193 = Textbooks|Reference|Catalogs &amp; Directories
+  <br>15194 = Textbooks|Reference|Consumer Guides
+  <br>15195 = Textbooks|Reference|Dictionaries &amp; Thesauruses
+  <br>15196 = Textbooks|Reference|Encyclopedias
+  <br>15197 = Textbooks|Reference|Etiquette
+  <br>15198 = Textbooks|Reference|Quotations
+  <br>15199 = Textbooks|Reference|Study Aids
+  <br>15200 = Textbooks|Reference|Words &amp; Language
+  <br>15201 = Textbooks|Reference|Writing
+  <br>15202 = Textbooks|Religion &amp; Spirituality
+  <br>15203 = Textbooks|Religion &amp; Spirituality|Bible Studies
+  <br>15204 = Textbooks|Religion &amp; Spirituality|Bibles
+  <br>15205 = Textbooks|Religion &amp; Spirituality|Buddhism
+  <br>15206 = Textbooks|Religion &amp; Spirituality|Christianity
+  <br>15207 = Textbooks|Religion &amp; Spirituality|Comparative Religion
+  <br>15208 = Textbooks|Religion &amp; Spirituality|Hinduism
+  <br>15209 = Textbooks|Religion &amp; Spirituality|Islam
+  <br>15210 = Textbooks|Religion &amp; Spirituality|Judaism
+  <br>15211 = Textbooks|Religion &amp; Spirituality|Spirituality
+  <br>15212 = Textbooks|Romance
+  <br>15213 = Textbooks|Romance|Contemporary
+  <br>15214 = Textbooks|Romance|Erotica
+  <br>15215 = Textbooks|Romance|Fantasy, Futuristic &amp; Ghost
+  <br>15216 = Textbooks|Romance|Historical
+  <br>15217 = Textbooks|Romance|Short Stories
+  <br>15218 = Textbooks|Romance|Suspense
+  <br>15219 = Textbooks|Romance|Western
+  <br>15220 = Textbooks|Sci-Fi &amp; Fantasy
+  <br>15221 = Textbooks|Sci-Fi &amp; Fantasy|Fantasy
+  <br>15222 = Textbooks|Sci-Fi &amp; Fantasy|Fantasy|Contemporary
+  <br>15223 = Textbooks|Sci-Fi &amp; Fantasy|Fantasy|Epic
+  <br>15224 = Textbooks|Sci-Fi &amp; Fantasy|Fantasy|Historical
+  <br>15225 = Textbooks|Sci-Fi &amp; Fantasy|Fantasy|Paranormal
+  <br>15226 = Textbooks|Sci-Fi &amp; Fantasy|Fantasy|Short Stories
+  <br>15227 = Textbooks|Sci-Fi &amp; Fantasy|Science Fiction
+  <br>15228 = Textbooks|Sci-Fi &amp; Fantasy|Science Fiction &amp; Literature
+  <br>15229 = Textbooks|Sci-Fi &amp; Fantasy|Science Fiction &amp; Literature|Adventure
+  <br>15230 = Textbooks|Sci-Fi &amp; Fantasy|Science Fiction &amp; Literature|High Tech
+  <br>15231 = Textbooks|Sci-Fi &amp; Fantasy|Science Fiction &amp; Literature|Short Stories
+  <br>15232 = Textbooks|Science &amp; Nature
+  <br>15233 = Textbooks|Science &amp; Nature|Agriculture
+  <br>15234 = Textbooks|Science &amp; Nature|Astronomy
+  <br>15235 = Textbooks|Science &amp; Nature|Atmosphere
+  <br>15236 = Textbooks|Science &amp; Nature|Biology
+  <br>15237 = Textbooks|Science &amp; Nature|Chemistry
+  <br>15238 = Textbooks|Science &amp; Nature|Earth Sciences
+  <br>15239 = Textbooks|Science &amp; Nature|Ecology
+  <br>15240 = Textbooks|Science &amp; Nature|Environment
+  <br>15241 = Textbooks|Science &amp; Nature|Essays
+  <br>15242 = Textbooks|Science &amp; Nature|Geography
+  <br>15243 = Textbooks|Science &amp; Nature|Geology
+  <br>15244 = Textbooks|Science &amp; Nature|History
+  <br>15245 = Textbooks|Science &amp; Nature|Life Sciences
+  <br>15246 = Textbooks|Science &amp; Nature|Nature
+  <br>15247 = Textbooks|Science &amp; Nature|Physics
+  <br>15248 = Textbooks|Science &amp; Nature|Reference
+  <br>15249 = Textbooks|Social Science
+  <br>15250 = Textbooks|Social Science|Anthropology
+  <br>15251 = Textbooks|Social Science|Archaeology
+  <br>15252 = Textbooks|Social Science|Civics
+  <br>15253 = Textbooks|Social Science|Government
+  <br>15254 = Textbooks|Social Science|Social Studies
+  <br>15255 = Textbooks|Social Science|Social Welfare
+  <br>15256 = Textbooks|Social Science|Society
+  <br>15257 = Textbooks|Social Science|Society|African Studies
+  <br>15258 = Textbooks|Social Science|Society|American Studies
+  <br>15259 = Textbooks|Social Science|Society|Asia Pacific Studies
+  <br>15260 = Textbooks|Social Science|Society|Cross-Cultural Studies
+  <br>15261 = Textbooks|Social Science|Society|European Studies
+  <br>15262 = Textbooks|Social Science|Society|Immigration &amp; Emigration
+  <br>15263 = Textbooks|Social Science|Society|Indigenous Studies
+  <br>15264 = Textbooks|Social Science|Society|Latin &amp; Caribbean Studies
+  <br>15265 = Textbooks|Social Science|Society|Middle Eastern Studies
+  <br>15266 = Textbooks|Social Science|Society|Race &amp; Ethnicity Studies
+  <br>15267 = Textbooks|Social Science|Society|Sexuality Studies
+  <br>15268 = Textbooks|Social Science|Society|Women&#39;s Studies
+  <br>15269 = Textbooks|Social Science|Sociology
+  <br>15270 = Textbooks|Sports &amp; Outdoors
+  <br>15271 = Textbooks|Sports &amp; Outdoors|Baseball
+  <br>15272 = Textbooks|Sports &amp; Outdoors|Basketball
+  <br>15273 = Textbooks|Sports &amp; Outdoors|Coaching
+  <br>15274 = Textbooks|Sports &amp; Outdoors|Equestrian
+  <br>15275 = Textbooks|Sports &amp; Outdoors|Extreme Sports
+  <br>15276 = Textbooks|Sports &amp; Outdoors|Football
+  <br>15277 = Textbooks|Sports &amp; Outdoors|Golf
+  <br>15278 = Textbooks|Sports &amp; Outdoors|Hockey
+  <br>15279 = Textbooks|Sports &amp; Outdoors|Motor Sports
+  <br>15280 = Textbooks|Sports &amp; Outdoors|Mountaineering
+  <br>15281 = Textbooks|Sports &amp; Outdoors|Outdoors
+  <br>15282 = Textbooks|Sports &amp; Outdoors|Racket Sports
+  <br>15283 = Textbooks|Sports &amp; Outdoors|Reference
+  <br>15284 = Textbooks|Sports &amp; Outdoors|Soccer
+  <br>15285 = Textbooks|Sports &amp; Outdoors|Training
+  <br>15286 = Textbooks|Sports &amp; Outdoors|Water Sports
+  <br>15287 = Textbooks|Sports &amp; Outdoors|Winter Sports
+  <br>15288 = Textbooks|Teaching &amp; Learning
+  <br>15289 = Textbooks|Teaching &amp; Learning|Adult Education
+  <br>15290 = Textbooks|Teaching &amp; Learning|Curriculum &amp; Teaching
+  <br>15291 = Textbooks|Teaching &amp; Learning|Educational Leadership
+  <br>15292 = Textbooks|Teaching &amp; Learning|Educational Technology
+  <br>15293 = Textbooks|Teaching &amp; Learning|Family &amp; Childcare
+  <br>15294 = Textbooks|Teaching &amp; Learning|Information &amp; Library Science
+  <br>15295 = Textbooks|Teaching &amp; Learning|Learning Resources
+  <br>15296 = Textbooks|Teaching &amp; Learning|Psychology &amp; Research
+  <br>15297 = Textbooks|Teaching &amp; Learning|Special Education
+  <br>15298 = Textbooks|Travel &amp; Adventure
+  <br>15299 = Textbooks|Travel &amp; Adventure|Africa
+  <br>15300 = Textbooks|Travel &amp; Adventure|Americas
+  <br>15301 = Textbooks|Travel &amp; Adventure|Americas|Canada
+  <br>15302 = Textbooks|Travel &amp; Adventure|Americas|Latin America
+  <br>15303 = Textbooks|Travel &amp; Adventure|Americas|United States
+  <br>15304 = Textbooks|Travel &amp; Adventure|Asia
+  <br>15305 = Textbooks|Travel &amp; Adventure|Caribbean
+  <br>15306 = Textbooks|Travel &amp; Adventure|Essays &amp; Memoirs
+  <br>15307 = Textbooks|Travel &amp; Adventure|Europe
+  <br>15308 = Textbooks|Travel &amp; Adventure|Middle East
+  <br>15309 = Textbooks|Travel &amp; Adventure|Oceania
+  <br>15310 = Textbooks|Travel &amp; Adventure|Specialty Travel
+  <br>15311 = Textbooks|Comics &amp; Graphic Novels|Comics
+  <br>15312 = Textbooks|Reference|Manuals
+  <br>100000 = Music|Christian &amp; Gospel
+  <br>40000000 = iTunes U
+  <br>40000001 = iTunes U|Business
+  <br>40000002 = iTunes U|Business|Economics
+  <br>40000003 = iTunes U|Business|Finance
+  <br>40000004 = iTunes U|Business|Hospitality
+  <br>40000005 = iTunes U|Business|Management
+  <br>40000006 = iTunes U|Business|Marketing
+  <br>40000007 = iTunes U|Business|Personal Finance
+  <br>40000008 = iTunes U|Business|Real Estate
+  <br>40000009 = iTunes U|Engineering
+  <br>40000010 = iTunes U|Engineering|Chemical &amp; Petroleum Engineering
+  <br>40000011 = iTunes U|Engineering|Civil Engineering
+  <br>40000012 = iTunes U|Engineering|Computer Science
+  <br>40000013 = iTunes U|Engineering|Electrical Engineering
+  <br>40000014 = iTunes U|Engineering|Environmental Engineering
+  <br>40000015 = iTunes U|Engineering|Mechanical Engineering
+  <br>40000016 = iTunes U|Art &amp; Architecture
+  <br>40000017 = iTunes U|Art &amp; Architecture|Architecture
+  <br>40000019 = iTunes U|Art &amp; Architecture|Art History
+  <br>40000020 = iTunes U|Art &amp; Architecture|Dance
+  <br>40000021 = iTunes U|Art &amp; Architecture|Film
+  <br>40000022 = iTunes U|Art &amp; Architecture|Design
+  <br>40000023 = iTunes U|Art &amp; Architecture|Interior Design
+  <br>40000024 = iTunes U|Art &amp; Architecture|Music
+  <br>40000025 = iTunes U|Art &amp; Architecture|Theater
+  <br>40000026 = iTunes U|Health &amp; Medicine
+  <br>40000027 = iTunes U|Health &amp; Medicine|Anatomy &amp; Physiology
+  <br>40000028 = iTunes U|Health &amp; Medicine|Behavioral Science
+  <br>40000029 = iTunes U|Health &amp; Medicine|Dentistry
+  <br>40000030 = iTunes U|Health &amp; Medicine|Diet &amp; Nutrition
+  <br>40000031 = iTunes U|Health &amp; Medicine|Emergency Medicine
+  <br>40000032 = iTunes U|Health &amp; Medicine|Genetics
+  <br>40000033 = iTunes U|Health &amp; Medicine|Gerontology
+  <br>40000034 = iTunes U|Health &amp; Medicine|Health &amp; Exercise Science
+  <br>40000035 = iTunes U|Health &amp; Medicine|Immunology
+  <br>40000036 = iTunes U|Health &amp; Medicine|Neuroscience
+  <br>40000037 = iTunes U|Health &amp; Medicine|Pharmacology &amp; Toxicology
+  <br>40000038 = iTunes U|Health &amp; Medicine|Psychiatry
+  <br>40000039 = iTunes U|Health &amp; Medicine|Global Health
+  <br>40000040 = iTunes U|Health &amp; Medicine|Radiology
+  <br>40000041 = iTunes U|History
+  <br>40000042 = iTunes U|History|Ancient History
+  <br>40000043 = iTunes U|History|Medieval History
+  <br>40000044 = iTunes U|History|Military History
+  <br>40000045 = iTunes U|History|Modern History
+  <br>40000046 = iTunes U|History|African History
+  <br>40000047 = iTunes U|History|Asia-Pacific History
+  <br>40000048 = iTunes U|History|European History
+  <br>40000049 = iTunes U|History|Middle Eastern History
+  <br>40000050 = iTunes U|History|North American History
+  <br>40000051 = iTunes U|History|South American History
+  <br>40000053 = iTunes U|Communications &amp; Media
+  <br>40000054 = iTunes U|Philosophy
+  <br>40000055 = iTunes U|Religion &amp; Spirituality
+  <br>40000056 = iTunes U|Language
+  <br>40000057 = iTunes U|Language|African Languages
+  <br>40000058 = iTunes U|Language|Ancient Languages
+  <br>40000061 = iTunes U|Language|English
+  <br>40000063 = iTunes U|Language|French
+  <br>40000064 = iTunes U|Language|German
+  <br>40000065 = iTunes U|Language|Italian
+  <br>40000066 = iTunes U|Language|Linguistics
+  <br>40000068 = iTunes U|Language|Spanish
+  <br>40000069 = iTunes U|Language|Speech Pathology
+  <br>40000070 = iTunes U|Literature
+  <br>40000071 = iTunes U|Literature|Anthologies
+  <br>40000072 = iTunes U|Literature|Biography
+  <br>40000073 = iTunes U|Literature|Classics
+  <br>40000074 = iTunes U|Literature|Literary Criticism
+  <br>40000075 = iTunes U|Literature|Fiction
+  <br>40000076 = iTunes U|Literature|Poetry
+  <br>40000077 = iTunes U|Mathematics
+  <br>40000078 = iTunes U|Mathematics|Advanced Mathematics
+  <br>40000079 = iTunes U|Mathematics|Algebra
+  <br>40000080 = iTunes U|Mathematics|Arithmetic
+  <br>40000081 = iTunes U|Mathematics|Calculus
+  <br>40000082 = iTunes U|Mathematics|Geometry
+  <br>40000083 = iTunes U|Mathematics|Statistics
+  <br>40000084 = iTunes U|Science
+  <br>40000085 = iTunes U|Science|Agricultural
+  <br>40000086 = iTunes U|Science|Astronomy
+  <br>40000087 = iTunes U|Science|Atmosphere
+  <br>40000088 = iTunes U|Science|Biology
+  <br>40000089 = iTunes U|Science|Chemistry
+  <br>40000090 = iTunes U|Science|Ecology
+  <br>40000091 = iTunes U|Science|Geography
+  <br>40000092 = iTunes U|Science|Geology
+  <br>40000093 = iTunes U|Science|Physics
+  <br>40000094 = iTunes U|Psychology &amp; Social Science
+  <br>40000095 = iTunes U|Law &amp; Politics|Law
+  <br>40000096 = iTunes U|Law &amp; Politics|Political Science
+  <br>40000097 = iTunes U|Law &amp; Politics|Public Administration
+  <br>40000098 = iTunes U|Psychology &amp; Social Science|Psychology
+  <br>40000099 = iTunes U|Psychology &amp; Social Science|Social Welfare
+  <br>40000100 = iTunes U|Psychology &amp; Social Science|Sociology
+  <br>40000101 = iTunes U|Society
+  <br>40000103 = iTunes U|Society|Asia Pacific Studies
+  <br>40000104 = iTunes U|Society|European Studies
+  <br>40000105 = iTunes U|Society|Indigenous Studies
+  <br>40000106 = iTunes U|Society|Latin &amp; Caribbean Studies
+  <br>40000107 = iTunes U|Society|Middle Eastern Studies
+  <br>40000108 = iTunes U|Society|Women&#39;s Studies
+  <br>40000109 = iTunes U|Teaching &amp; Learning
+  <br>40000110 = iTunes U|Teaching &amp; Learning|Curriculum &amp; Teaching
+  <br>40000111 = iTunes U|Teaching &amp; Learning|Educational Leadership
+  <br>40000112 = iTunes U|Teaching &amp; Learning|Family &amp; Childcare
+  <br>40000113 = iTunes U|Teaching &amp; Learning|Learning Resources
+  <br>40000114 = iTunes U|Teaching &amp; Learning|Psychology &amp; Research
+  <br>40000115 = iTunes U|Teaching &amp; Learning|Special Education
+  <br>40000116 = iTunes U|Art &amp; Architecture|Culinary Arts
+  <br>40000117 = iTunes U|Art &amp; Architecture|Fashion
+  <br>40000118 = iTunes U|Art &amp; Architecture|Media Arts
+  <br>40000119 = iTunes U|Art &amp; Architecture|Photography
+  <br>40000120 = iTunes U|Art &amp; Architecture|Visual Art
+  <br>40000121 = iTunes U|Business|Entrepreneurship
+  <br>40000122 = iTunes U|Communications &amp; Media|Broadcasting
+  <br>40000123 = iTunes U|Communications &amp; Media|Digital Media
+  <br>40000124 = iTunes U|Communications &amp; Media|Journalism
+  <br>40000125 = iTunes U|Communications &amp; Media|Photojournalism
+  <br>40000126 = iTunes U|Communications &amp; Media|Print
+  <br>40000127 = iTunes U|Communications &amp; Media|Speech
+  <br>40000128 = iTunes U|Communications &amp; Media|Writing
+  <br>40000129 = iTunes U|Health &amp; Medicine|Nursing
+  <br>40000130 = iTunes U|Language|Arabic
+  <br>40000131 = iTunes U|Language|Chinese
+  <br>40000132 = iTunes U|Language|Hebrew
+  <br>40000133 = iTunes U|Language|Hindi
+  <br>40000134 = iTunes U|Language|Indigenous Languages
+  <br>40000135 = iTunes U|Language|Japanese
+  <br>40000136 = iTunes U|Language|Korean
+  <br>40000137 = iTunes U|Language|Other Languages
+  <br>40000138 = iTunes U|Language|Portuguese
+  <br>40000139 = iTunes U|Language|Russian
+  <br>40000140 = iTunes U|Law &amp; Politics
+  <br>40000141 = iTunes U|Law &amp; Politics|Foreign Policy &amp; International Relations
+  <br>40000142 = iTunes U|Law &amp; Politics|Local Governments
+  <br>40000143 = iTunes U|Law &amp; Politics|National Governments
+  <br>40000144 = iTunes U|Law &amp; Politics|World Affairs
+  <br>40000145 = iTunes U|Literature|Comparative Literature
+  <br>40000146 = iTunes U|Philosophy|Aesthetics
+  <br>40000147 = iTunes U|Philosophy|Epistemology
+  <br>40000148 = iTunes U|Philosophy|Ethics
+  <br>40000149 = iTunes U|Philosophy|Metaphysics
+  <br>40000150 = iTunes U|Philosophy|Political Philosophy
+  <br>40000151 = iTunes U|Philosophy|Logic
+  <br>40000152 = iTunes U|Philosophy|Philosophy of Language
+  <br>40000153 = iTunes U|Philosophy|Philosophy of Religion
+  <br>40000154 = iTunes U|Psychology &amp; Social Science|Archaeology
+  <br>40000155 = iTunes U|Psychology &amp; Social Science|Anthropology
+  <br>40000156 = iTunes U|Religion &amp; Spirituality|Buddhism
+  <br>40000157 = iTunes U|Religion &amp; Spirituality|Christianity
+  <br>40000158 = iTunes U|Religion &amp; Spirituality|Comparative Religion
+  <br>40000159 = iTunes U|Religion &amp; Spirituality|Hinduism
+  <br>40000160 = iTunes U|Religion &amp; Spirituality|Islam
+  <br>40000161 = iTunes U|Religion &amp; Spirituality|Judaism
+  <br>40000162 = iTunes U|Religion &amp; Spirituality|Other Religions
+  <br>40000163 = iTunes U|Religion &amp; Spirituality|Spirituality
+  <br>40000164 = iTunes U|Science|Environment
+  <br>40000165 = iTunes U|Society|African Studies
+  <br>40000166 = iTunes U|Society|American Studies
+  <br>40000167 = iTunes U|Society|Cross-cultural Studies
+  <br>40000168 = iTunes U|Society|Immigration &amp; Emigration
+  <br>40000169 = iTunes U|Society|Race &amp; Ethnicity Studies
+  <br>40000170 = iTunes U|Society|Sexuality Studies
+  <br>40000171 = iTunes U|Teaching &amp; Learning|Educational Technology
+  <br>40000172 = iTunes U|Teaching &amp; Learning|Information/Library Science
+  <br>40000173 = iTunes U|Language|Dutch
+  <br>40000174 = iTunes U|Language|Luxembourgish
+  <br>40000175 = iTunes U|Language|Swedish
+  <br>40000176 = iTunes U|Language|Norwegian
+  <br>40000177 = iTunes U|Language|Finnish
+  <br>40000178 = iTunes U|Language|Danish
+  <br>40000179 = iTunes U|Language|Polish
+  <br>40000180 = iTunes U|Language|Turkish
+  <br>40000181 = iTunes U|Language|Flemish
+  <br>50000024 = Audiobooks
+  <br>50000040 = Audiobooks|Fiction
+  <br>50000041 = Audiobooks|Arts &amp; Entertainment
+  <br>50000042 = Audiobooks|Biography &amp; Memoir
+  <br>50000043 = Audiobooks|Business
+  <br>50000044 = Audiobooks|Kids &amp; Young Adults
+  <br>50000045 = Audiobooks|Classics
+  <br>50000046 = Audiobooks|Comedy
+  <br>50000047 = Audiobooks|Drama &amp; Poetry
+  <br>50000048 = Audiobooks|Speakers &amp; Storytellers
+  <br>50000049 = Audiobooks|History
+  <br>50000050 = Audiobooks|Languages
+  <br>50000051 = Audiobooks|Mystery
+  <br>50000052 = Audiobooks|Nonfiction
+  <br>50000053 = Audiobooks|Religion &amp; Spirituality
+  <br>50000054 = Audiobooks|Science
+  <br>50000055 = Audiobooks|Sci Fi &amp; Fantasy
+  <br>50000056 = Audiobooks|Self Development
+  <br>50000057 = Audiobooks|Sports
+  <br>50000058 = Audiobooks|Technology
+  <br>50000059 = Audiobooks|Travel &amp; Adventure
+  <br>50000061 = Music|Spoken Word
+  <br>50000063 = Music|Disney
+  <br>50000064 = Music|French Pop
+  <br>50000066 = Music|German Pop
+  <br>50000068 = Music|German Folk
+  <br>50000069 = Audiobooks|Romance
+  <br>50000070 = Audiobooks|Audiobooks Latino
+  <br>50000071 = Books|Comics &amp; Graphic Novels|Manga|Action
+  <br>50000072 = Books|Comics &amp; Graphic Novels|Manga|Comedy
+  <br>50000073 = Books|Comics &amp; Graphic Novels|Manga|Erotica
+  <br>50000074 = Books|Comics &amp; Graphic Novels|Manga|Fantasy
+  <br>50000075 = Books|Comics &amp; Graphic Novels|Manga|Four Cell Manga
+  <br>50000076 = Books|Comics &amp; Graphic Novels|Manga|Gay &amp; Lesbian
+  <br>50000077 = Books|Comics &amp; Graphic Novels|Manga|Hard-Boiled
+  <br>50000078 = Books|Comics &amp; Graphic Novels|Manga|Heroes
+  <br>50000079 = Books|Comics &amp; Graphic Novels|Manga|Historical Fiction
+  <br>50000080 = Books|Comics &amp; Graphic Novels|Manga|Mecha
+  <br>50000081 = Books|Comics &amp; Graphic Novels|Manga|Mystery
+  <br>50000082 = Books|Comics &amp; Graphic Novels|Manga|Nonfiction
+  <br>50000083 = Books|Comics &amp; Graphic Novels|Manga|Religious
+  <br>50000084 = Books|Comics &amp; Graphic Novels|Manga|Romance
+  <br>50000085 = Books|Comics &amp; Graphic Novels|Manga|Romantic Comedy
+  <br>50000086 = Books|Comics &amp; Graphic Novels|Manga|Science Fiction
+  <br>50000087 = Books|Comics &amp; Graphic Novels|Manga|Sports
+  <br>50000088 = Books|Fiction &amp; Literature|Light Novels
+  <br>50000089 = Books|Comics &amp; Graphic Novels|Manga|Horror</span></td></tr>
+<tr class=b>
+<td>'gnre'</td>
+<td>Genre</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'grup'</td>
+<td>Grouping</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'gshh'</td>
+<td>GoogleHostHeader</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'gspm'</td>
+<td>GooglePingMessage</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'gspu'</td>
+<td>GooglePingURL</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'gssd'</td>
+<td>GoogleSourceData</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'gsst'</td>
+<td>GoogleStartTime</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'gstd'</td>
+<td>GoogleTrackDuration</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'hdvd'</td>
+<td>HDVideo</td>
+<td class=c>N</td>
+<td><span class=s>0 = No
+  <br>1 = Yes</span></td></tr>
+<tr>
+<td>'itnu'</td>
+<td>iTunesU</td>
+<td class=c>N</td>
+<td><span class=s>0 = No
+  <br>1 = Yes</span></td></tr>
+<tr class=b>
+<td>'keyw'</td>
+<td>Keyword</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'ldes'</td>
+<td>LongDescription</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'pcst'</td>
+<td>Podcast</td>
+<td class=c>N</td>
+<td><span class=s>0 = No
+  <br>1 = Yes</span></td></tr>
+<tr>
+<td>'perf'</td>
+<td>Performer</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'pgap'</td>
+<td>PlayGap</td>
+<td class=c>N</td>
+<td><span class=s>0 = Insert Gap
+  <br>1 = No Gap</span></td></tr>
+<tr>
+<td>'plID'</td>
+<td>PlayListID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'purd'</td>
+<td>PurchaseDate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'purl'</td>
+<td>PodcastURL</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'rtng'</td>
+<td>Rating</td>
+<td class=c>N</td>
+<td><span class=s>0 = none
+  <br>2 = Clean
+  <br>4 = Explicit</span></td></tr>
+<tr>
+<td>'sfID'</td>
+<td>AppleStoreCountry</td>
+<td class=c>N</td>
+<td><table class=cols><tr>
+  <td>143441 = United States
+  <br>143442 = France
+  <br>143443 = Germany
+  <br>143444 = United Kingdom
+  <br>143445 = Austria
+  <br>143446 = Belgium
+  <br>143447 = Finland
+  <br>143448 = Greece
+  <br>143449 = Ireland
+  <br>143450 = Italy
+  <br>143451 = Luxembourg
+  <br>143452 = Netherlands
+  <br>143453 = Portugal
+  <br>143454 = Spain
+  <br>143455 = Canada
+  <br>143456 = Sweden
+  <br>143457 = Norway
+  <br>143458 = Denmark
+  <br>143459 = Switzerland
+  <br>143460 = Australia
+  <br>143461 = New Zealand
+  <br>143462 = Japan
+  <br>143463 = Hong Kong
+  <br>143464 = Singapore
+  <br>143465 = China
+  <br>143466 = Republic of Korea
+  <br>143467 = India
+  <br>143468 = Mexico
+  <br>143469 = Russia
+  <br>143470 = Taiwan
+  <br>143471 = Vietnam
+  <br>143472 = South Africa
+  <br>143473 = Malaysia
+  <br>143474 = Philippines
+  <br>143475 = Thailand
+  <br>143476 = Indonesia
+  <br>143477 = Pakistan
+  <br>143478 = Poland
+  <br>143479 = Saudi Arabia
+  <br>143480 = Turkey
+  <br>143481 = United Arab Emirates
+  <br>143482 = Hungary
+  <br>143483 = Chile
+  <br>143484 = Nepal
+  <br>143485 = Panama
+  <br>143486 = Sri Lanka
+  <br>143487 = Romania
+  <br>143489 = Czech Republic
+  <br>143491 = Israel
+  <br>143492 = Ukraine
+  <br>143493 = Kuwait
+  <br>143494 = Croatia
+  <br>143495 = Costa Rica
+  <br>143496 = Slovakia
+  <br>143497 = Lebanon
+  <br>143498 = Qatar
+  <br>143499 = Slovenia
+  <br>143501 = Colombia
+  <br>143502 = Venezuela
+  <br>143503 = Brazil
+  <br>143504 = Guatemala
+  <br>143505 = Argentina
+  <br>143506 = El Salvador
+  <br>143507 = Peru
+  <br>143508 = Dominican Republic
+  <br>143509 = Ecuador
+  <br>143510 = Honduras
+  <br>143511 = Jamaica
+  <br>143512 = Nicaragua
+  <br>143513 = Paraguay
+  <br>143514 = Uruguay
+  <br>143515 = Macau
+  <br>143516 = Egypt
+  <br>143517 = Kazakhstan
+  <br>143518 = Estonia
+  <br>143519 = Latvia
+  <br>143520 = Lithuania
+  <br>143521 = Malta</td><td>&nbsp;&nbsp;</td>
+  <td>143523 = Moldova
+  <br>143524 = Armenia
+  <br>143525 = Botswana
+  <br>143526 = Bulgaria
+  <br>143528 = Jordan
+  <br>143529 = Kenya
+  <br>143530 = Macedonia
+  <br>143531 = Madagascar
+  <br>143532 = Mali
+  <br>143533 = Mauritius
+  <br>143534 = Niger
+  <br>143535 = Senegal
+  <br>143536 = Tunisia
+  <br>143537 = Uganda
+  <br>143538 = Anguilla
+  <br>143539 = Bahamas
+  <br>143540 = Antigua and Barbuda
+  <br>143541 = Barbados
+  <br>143542 = Bermuda
+  <br>143543 = British Virgin Islands
+  <br>143544 = Cayman Islands
+  <br>143545 = Dominica
+  <br>143546 = Grenada
+  <br>143547 = Montserrat
+  <br>143548 = St. Kitts and Nevis
+  <br>143549 = St. Lucia
+  <br>143550 = St. Vincent and The Grenadines
+  <br>143551 = Trinidad and Tobago
+  <br>143552 = Turks and Caicos
+  <br>143553 = Guyana
+  <br>143554 = Suriname
+  <br>143555 = Belize
+  <br>143556 = Bolivia
+  <br>143557 = Cyprus
+  <br>143558 = Iceland
+  <br>143559 = Bahrain
+  <br>143560 = Brunei Darussalam
+  <br>143561 = Nigeria
+  <br>143562 = Oman
+  <br>143563 = Algeria
+  <br>143564 = Angola
+  <br>143565 = Belarus
+  <br>143566 = Uzbekistan
+  <br>143568 = Azerbaijan
+  <br>143571 = Yemen
+  <br>143572 = Tanzania
+  <br>143573 = Ghana
+  <br>143575 = Albania
+  <br>143576 = Benin
+  <br>143577 = Bhutan
+  <br>143578 = Burkina Faso
+  <br>143579 = Cambodia
+  <br>143580 = Cape Verde
+  <br>143581 = Chad
+  <br>143582 = Republic of the Congo
+  <br>143583 = Fiji
+  <br>143584 = Gambia
+  <br>143585 = Guinea-Bissau
+  <br>143586 = Kyrgyzstan
+  <br>143587 = Lao People&#39;s Democratic Republic
+  <br>143588 = Liberia
+  <br>143589 = Malawi
+  <br>143590 = Mauritania
+  <br>143591 = Federated States of Micronesia
+  <br>143592 = Mongolia
+  <br>143593 = Mozambique
+  <br>143594 = Namibia
+  <br>143595 = Palau
+  <br>143597 = Papua New Guinea
+  <br>143598 = Sao Tome and Principe
+  <br>143599 = Seychelles
+  <br>143600 = Sierra Leone
+  <br>143601 = Solomon Islands
+  <br>143602 = Swaziland
+  <br>143603 = Tajikistan
+  <br>143604 = Turkmenistan
+  <br>143605 = Zimbabwe</td><td>&nbsp;&nbsp;</td></tr></table>
+</td></tr>
+<tr class=b>
+<td>'soaa'</td>
+<td>SortAlbumArtist</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'soal'</td>
+<td>SortAlbum</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'soar'</td>
+<td>SortArtist</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'soco'</td>
+<td>SortComposer</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'sonm'</td>
+<td>SortName</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'sosn'</td>
+<td>SortShow</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'stik'</td>
+<td>MediaType</td>
+<td class=c>N</td>
+<td><table class=cols><tr>
+  <td>0 = Movie
+  <br>1 = Normal (Music)
+  <br>2 = Audiobook
+  <br>5 = Whacked Bookmark
+  <br>6 = Music Video</td><td>&nbsp;&nbsp;</td>
+  <td>9 = Short Film
+  <br>10 = TV Show
+  <br>11 = Booklet
+  <br>14 = Ringtone
+  <br>21 = Podcast</td><td>&nbsp;&nbsp;</td></tr></table>
+</td></tr>
+<tr>
+<td>'titl'</td>
+<td>Title</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'tmpo'</td>
+<td>BeatsPerMinute</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'trkn'</td>
+<td>TrackNumber</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'tven'</td>
+<td>TVEpisodeID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'tves'</td>
+<td>TVEpisode</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'tvnn'</td>
+<td>TVNetworkName</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'tvsh'</td>
+<td>TVShow</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'tvsn'</td>
+<td>TVSeason</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'yrrc'</td>
+<td>Year</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;ART"</td>
+<td>Artist</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;alb"</td>
+<td>Album</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;cmt"</td>
+<td>Comment</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;com"</td>
+<td>Composer</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;day"</td>
+<td>Year</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;des"</td>
+<td>Description</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;enc"</td>
+<td>EncodedBy</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;gen"</td>
+<td>Genre</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;grp"</td>
+<td>Grouping</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;lyr"</td>
+<td>Lyrics</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;nam"</td>
+<td>Title</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;too"</td>
+<td>Encoder</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;trk"</td>
+<td>Track</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;wrt"</td>
+<td>Composer</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='iTunesInfo'>QuickTime iTunesInfo Tags</a></h2>
+<p>ExifTool will extract any iTunesInfo tags that exist, even if they are not
+defined in this table.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'Encoding Params'</td>
+<td>EncodingParams</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#EncodingParams'>QuickTime EncodingParams Tags</a></td></tr>
+<tr class=b>
+<td>'iTunEXTC'</td>
+<td>ContentRating</td>
+<td class=c>N</td>
+<td><span class=s><span class=n>(standard | rating | score | reasons)</span></span></td></tr>
+<tr>
+<td>'iTunMOVI'</td>
+<td>iTunMOVI</td>
+<td class=c>-</td>
+<td>--&gt; <a href='PLIST.html'>PLIST Tags</a></td></tr>
+<tr class=b>
+<td>'iTunNORM'</td>
+<td>VolumeNormalization</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'iTunSMPB'</td>
+<td>iTunSMPB</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'iTunes_CDDB_1'</td>
+<td>CDDB1Info</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'iTunes_CDDB_TrackNumber'</td>
+<td>CDDBTrackNumber</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'tool'</td>
+<td>iTunTool</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='EncodingParams'>QuickTime EncodingParams Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'abrt'</td>
+<td>AudioAvailableBitRateRange</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'acbf'</td>
+<td>AudioBitRateControlMode</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'acef'</td>
+<td>AudioExtendFrequencies</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'brat'</td>
+<td>AudioCurrentTargetBitRate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'cdcv'</td>
+<td>AudioComponentVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'cmnc'</td>
+<td>AudioAvailableNumberChannels</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'init'</td>
+<td>AudioIsInitialized</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'lmrc'</td>
+<td>AudioDoesSampleRateConversion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'mdel'</td>
+<td>AudioMinimumDelayMode</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'mnip'</td>
+<td>AudioMinimumNumberInputPackets</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'mnop'</td>
+<td>AudioMinimumNumberOutputPackets</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'oppr'</td>
+<td>AudioOutputPrecedence</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'pad0'</td>
+<td>AudioZeroFramesPadded</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'pakb'</td>
+<td>AudioMaximumPacketByteSize</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'pakd'</td>
+<td>AudioRequiresPacketDescription</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'pakf'</td>
+<td>AudioPacketFrameSize</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'prmm'</td>
+<td>AudioCodecPrimeMethod</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'srcq'</td>
+<td>AudioQualitySetting</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'tbuf'</td>
+<td>AudioInputBufferSize</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'ubuf'</td>
+<td>AudioUsedInputBufferSize</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'ursr'</td>
+<td>AudioUseRecommendedSampleRate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'vbrq'</td>
+<td>AudioVBRQuality</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'vers'</td>
+<td>AudioEncodingParamsVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'vpk?'</td>
+<td>AudioHasVariablePacketByteSizes</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='Keys'>QuickTime Keys Tags</a></h2>
+<p>This directory contains a list of key names which are used to decode
+ItemList tags written by the &quot;mdta&quot; handler.  The prefix of
+&quot;com.apple.quicktime.&quot; has been removed from all TagID&#39;s below.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'Encoded_With'</td>
+<td>EncodedWith</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'album'</td>
+<td>Album</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'artist'</td>
+<td>Artist</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'artwork'</td>
+<td>Artwork</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'author'</td>
+<td>Author</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'camera.framereadouttimeinmicroseconds'</td>
+<td>FrameReadoutTime</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'camera.identifier'</td>
+<td>CameraIdentifier</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'comment'</td>
+<td>Comment</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'copyright'</td>
+<td>Copyright</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'creationdate'</td>
+<td>CreationDate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'description'</td>
+<td>Description</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'direction.facing'</td>
+<td>CameraDirection</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'direction.motion'</td>
+<td>CameraMotion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'director'</td>
+<td>Director</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'genre'</td>
+<td>Genre</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'information'</td>
+<td>Information</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'keywords'</td>
+<td>Keywords</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'location.ISO6709'</td>
+<td>GPSCoordinates</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'location.body'</td>
+<td>LocationBody</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'location.date'</td>
+<td>LocationDate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'location.name'</td>
+<td>LocationName</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'location.note'</td>
+<td>LocationNote</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'location.role'</td>
+<td>LocationRole</td>
+<td class=c>N</td>
+<td><span class=s>0 = Shooting Location
+  <br>1 = Real Location
+  <br>2 = Fictional Location</span></td></tr>
+<tr class=b>
+<td>'make'</td>
+<td>Make</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'model'</td>
+<td>Model</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'player.movie.audio.balance'</td>
+<td>Balance</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'player.movie.audio.bass'</td>
+<td>Bass</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'player.movie.audio.gain'</td>
+<td>AudioGain</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'player.movie.audio.mute'</td>
+<td>Mute</td>
+<td class=c>N</td>
+<td><span class=s>0 = Off
+  <br>1 = On</span></td></tr>
+<tr class=b>
+<td>'player.movie.audio.pitchshift'</td>
+<td>PitchShift</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'player.movie.audio.treble'</td>
+<td>Trebel</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'player.movie.visual.brightness'</td>
+<td>Brightness</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'player.movie.visual.color'</td>
+<td>Color</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'player.movie.visual.contrast'</td>
+<td>Contrast</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'player.movie.visual.tint'</td>
+<td>Tint</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'player.version'</td>
+<td>PlayerVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'publisher'</td>
+<td>Publisher</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'rating.user'</td>
+<td>UserRating</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'software'</td>
+<td>Software</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'version'</td>
+<td>Version</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'year'</td>
+<td>Year</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='TrackAperture'>QuickTime TrackAperture Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'clef'</td>
+<td>CleanApertureDimensions</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'enof'</td>
+<td>EncodedPixelsDimensions</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'prof'</td>
+<td>ProductionApertureDimensions</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='TrackHeader'>QuickTime TrackHeader Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index4</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='0 = 0x0'>0</td>
+<td>TrackHeaderVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='1 = 0x1'>1</td>
+<td>TrackCreateDate</td>
+<td class=c>int32u</td>
+<td><span class=s><span class=n>(converted from UTC to local time if the QuickTimeUTC option is set)</span></span></td></tr>
+<tr>
+<td class=r title='2 = 0x2'>2</td>
+<td>TrackModifyDate</td>
+<td class=c>int32u</td>
+<td><span class=s><span class=n>(converted from UTC to local time if the QuickTimeUTC option is set)</span></span></td></tr>
+<tr class=b>
+<td class=r title='3 = 0x3'>3</td>
+<td>TrackID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='5 = 0x5'>5</td>
+<td>TrackDuration</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='8 = 0x8'>8</td>
+<td>TrackLayer</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='9 = 0x9'>9</td>
+<td>TrackVolume</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='10 = 0xa'>10</td>
+<td>MatrixStructure</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='19 = 0x13'>19</td>
+<td>ImageWidth</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='20 = 0x14'>20</td>
+<td>ImageHeight</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='TrackRef'>QuickTime TrackRef Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'chap'</td>
+<td>ChapterListTrackID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'mpod'</td>
+<td>ElementaryStreamTrack</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'tmcd'</td>
+<td>TimeCode</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='UserData'>QuickTime UserData Tags</a></h2>
+<p>Tag ID&#39;s beginning with the copyright symbol (hex 0xa9) are multi-language
+text.  Alternate language tags are accessed by adding a dash followed by the
+language/country code to the tag name.  ExifTool will extract any
+multi-language user data tags found, even if they don&#39;t exist in this table.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'@sec'</td>
+<td>SamsungSec</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Samsung.html#sec'>Samsung sec Tags</a></td></tr>
+<tr class=b>
+<td>'AllF'</td>
+<td>PlayAllFrames</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'CNCV'</td>
+<td>CompressorVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'CNFV'</td>
+<td>FirmwareVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'CNMN'</td>
+<td>Model</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'CNTH'</td>
+<td>CanonCNTH</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Canon.html#CNTH'>Canon CNTH Tags</a></td></tr>
+<tr>
+<td>'DcMD'</td>
+<td>KodakDcMD</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Kodak.html#DcMD'>Kodak DcMD Tags</a></td></tr>
+<tr class=b>
+<td>'FFMV'</td>
+<td>FujiFilmFFMV</td>
+<td class=c>-</td>
+<td>--&gt; <a href='FujiFilm.html#FFMV'>FujiFilm FFMV Tags</a></td></tr>
+<tr>
+<td>'GoPr'</td>
+<td>GoProType</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'INFO'</td>
+<td>SamsungINFO</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Samsung.html#INFO'>Samsung INFO Tags</a></td></tr>
+<tr>
+<td>'LEIC'</td>
+<td>LeicaLEIC</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Panasonic.html#PANA'>Panasonic PANA Tags</a></td></tr>
+<tr class=b>
+<td>'LOOP'</td>
+<td>LoopStyle</td>
+<td class=c>N</td>
+<td><span class=s>1 = Normal
+  <br>2 = Palindromic</span></td></tr>
+<tr>
+<td>'MMA0'</td>
+<td>MinoltaMMA0</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Minolta.html#MMA'>Minolta MMA Tags</a></td></tr>
+<tr class=b>
+<td>'MMA1'</td>
+<td>MinoltaMMA1</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Minolta.html#MMA'>Minolta MMA Tags</a></td></tr>
+<tr>
+<td>'MVTG'</td>
+<td>FujiFilmMVTG</td>
+<td class=c>-</td>
+<td>--&gt; <a href='EXIF.html'>EXIF Tags</a></td></tr>
+<tr class=b>
+<td>'NCDT'</td>
+<td>NikonNCDT</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Nikon.html#NCDT'>Nikon NCDT Tags</a></td></tr>
+<tr>
+<td>'PANA'</td>
+<td>PanasonicPANA</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Panasonic.html#PANA'>Panasonic PANA Tags</a></td></tr>
+<tr class=b>
+<td>'PENT'</td>
+<td>PentaxPENT</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Pentax.html#PENT'>Pentax PENT Tags</a></td></tr>
+<tr>
+<td>'PXMN'</td>
+<td>MakerNotePentax5b</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Pentax.html'>Pentax Tags</a></td></tr>
+<tr class=b>
+<td>'PXTH'</td>
+<td>PentaxPreview</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Pentax.html#PXTH'>Pentax PXTH Tags</a></td></tr>
+<tr>
+<td>'QVMI'</td>
+<td>CasioQVMI</td>
+<td class=c>-</td>
+<td>--&gt; <a href='EXIF.html'>EXIF Tags</a></td></tr>
+<tr class=b>
+<td>'RMKN'</td>
+<td>RicohRMKN</td>
+<td class=c>-</td>
+<td>--&gt; <a href='EXIF.html'>EXIF Tags</a></td></tr>
+<tr>
+<td>'RTHU'</td>
+<td>PreviewImage</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'SDLN'</td>
+<td>PlayMode</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'SelO'</td>
+<td>PlaySelection</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'TAGS'</td>
+<td>FujiFilmTags
+  <br>KodakTags
+  <br>KonicaMinoltaTags
+  <br>MinoltaTags
+  <br>NikonTags
+  <br>OlympusTags1
+  <br>OlympusTags2
+  <br>OlympusTags3
+  <br>OlympusTags4
+  <br>PentaxTags
+  <br>SamsungTags
+  <br>SanyoMOV
+  <br>SanyoMP4
+  <br>UnknownTags?</td>
+<td class=c>-<br>-<br>-<br>-<br>-<br>-<br>-<br>-<br>-<br>-<br>-<br>-<br>-<br>N</td>
+<td>--&gt; <a href='FujiFilm.html#MOV'>FujiFilm MOV Tags</a>
+  <br>--&gt; <a href='Kodak.html#MOV'>Kodak MOV Tags</a>
+  <br>--&gt; <a href='Minolta.html#MOV1'>Minolta MOV1 Tags</a>
+  <br>--&gt; <a href='Minolta.html#MOV2'>Minolta MOV2 Tags</a>
+  <br>--&gt; <a href='Nikon.html#MOV'>Nikon MOV Tags</a>
+  <br>--&gt; <a href='Olympus.html#MOV1'>Olympus MOV1 Tags</a>
+  <br>--&gt; <a href='Olympus.html#MOV2'>Olympus MOV2 Tags</a>
+  <br>--&gt; <a href='Olympus.html#MP4'>Olympus MP4 Tags</a>
+  <br>--&gt; <a href='Olympus.html#MOV3'>Olympus MOV3 Tags</a>
+  <br>--&gt; <a href='Pentax.html#MOV'>Pentax MOV Tags</a>
+  <br>--&gt; <a href='Samsung.html#MP4'>Samsung MP4 Tags</a>
+  <br>--&gt; <a href='Sanyo.html#MOV'>Sanyo MOV Tags</a>
+  <br>--&gt; <a href='Sanyo.html#MP4'>Sanyo MP4 Tags</a></td></tr>
+<tr>
+<td>'WLOC'</td>
+<td>WindowLocation</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'XMP_'</td>
+<td>XMP</td>
+<td class=c>-</td>
+<td>--&gt; <a href='XMP.html'>XMP Tags</a></td></tr>
+<tr>
+<td>'Xtra'</td>
+<td>MicrosoftXtra</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Microsoft.html#Xtra'>Microsoft Xtra Tags</a></td></tr>
+<tr class=b>
+<td>'albm'</td>
+<td>Album</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'albr'</td>
+<td>AlbumArtist</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'angl'</td>
+<td>CameraAngle</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'apmd'</td>
+<td>ApertureMode</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'auth'</td>
+<td>Author</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'ccid'</td>
+<td>ContentID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'cdis'</td>
+<td>ContentDistributorID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'chpl'</td>
+<td>ChapterList</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'clfn'</td>
+<td>ClipFileName</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'clid'</td>
+<td>ClipID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'clsf'</td>
+<td>Classification</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'cmid'</td>
+<td>CameraID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'cmnm'</td>
+<td>Model</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'coll'</td>
+<td>CollectionName</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'cprt'</td>
+<td>Copyright</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'cver'</td>
+<td>CodeVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'cvru'</td>
+<td>CoverURI</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'date'</td>
+<td>DateTimeOriginal</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'dscp'</td>
+<td>Description</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'gnre'</td>
+<td>Genre</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'hinf'</td>
+<td>HintTrackInfo</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#HintTrackInfo'>QuickTime HintTrackInfo Tags</a></td></tr>
+<tr>
+<td>'hinv'</td>
+<td>HintVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'hnti'</td>
+<td>HintInfo</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#HintInfo'>QuickTime HintInfo Tags</a></td></tr>
+<tr>
+<td>'htcb'</td>
+<td>HTCBinary</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#HTCBinary'>QuickTime HTCBinary Tags</a></td></tr>
+<tr class=b>
+<td>'icnu'</td>
+<td>IconURI</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'infu'</td>
+<td>InfoURL</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'kgtt'</td>
+<td>TrackType</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'kywd'</td>
+<td>Keywords</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'loci'</td>
+<td>LocationInformation</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'lrcu'</td>
+<td>LyricsURI</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'manu'</td>
+<td>Make</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'meta'</td>
+<td>Meta</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Meta'>QuickTime Meta Tags</a></td></tr>
+<tr class=b>
+<td>'modl'</td>
+<td>Model</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'name'</td>
+<td>Name</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'perf'</td>
+<td>Performer</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'ptv '</td>
+<td>PrintToVideo</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#Video'>QuickTime Video Tags</a></td></tr>
+<tr class=b>
+<td>'reel'</td>
+<td>ReelName</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'rtng'</td>
+<td>Rating</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'scen'</td>
+<td>Scene</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'scrn'</td>
+<td>OlympusPreview</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Olympus.html#scrn'>Olympus scrn Tags</a></td></tr>
+<tr class=b>
+<td>'shot'</td>
+<td>ShotName</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'slno'</td>
+<td>SerialNumber</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'smta'</td>
+<td>SamsungSmta</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Samsung.html#smta'>Samsung smta Tags</a></td></tr>
+<tr>
+<td>'thmb'</td>
+<td>MakerNotePentax5a
+  <br>OlympusThumbnail
+  <br>ThumbnailImage
+  <br>ThumbnailPNG
+  <br>UnknownThumbnail</td>
+<td class=c>-<br>-<br>N<br>N<br>N</td>
+<td>--&gt; <a href='Pentax.html'>Pentax Tags</a>
+  <br>--&gt; <a href='Olympus.html#thmb'>Olympus thmb Tags</a></td></tr>
+<tr class=b>
+<td>'titl'</td>
+<td>Title</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'urat'</td>
+<td>UserRating</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'vndr'</td>
+<td>Vendor</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'yrrc'</td>
+<td>Year</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;ART"</td>
+<td>Artist</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;alb"</td>
+<td>Album</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;arg"</td>
+<td>Arranger</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;ark"</td>
+<td>ArrangerKeywords</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;cmt"</td>
+<td>Comment</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;cok"</td>
+<td>ComposerKeywords</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;com"</td>
+<td>Composer</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;cpy"</td>
+<td>Copyright</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;day"</td>
+<td>CreateDate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;dir"</td>
+<td>Director</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;ed1"</td>
+<td>Edit1</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;ed2"</td>
+<td>Edit2</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;ed3"</td>
+<td>Edit3</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;ed4"</td>
+<td>Edit4</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;ed5"</td>
+<td>Edit5</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;ed6"</td>
+<td>Edit6</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;ed7"</td>
+<td>Edit7</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;ed8"</td>
+<td>Edit8</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;ed9"</td>
+<td>Edit9</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;fmt"</td>
+<td>Format</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;gen"</td>
+<td>Genre</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;grp"</td>
+<td>Grouping</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;inf"</td>
+<td>Information</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;isr"</td>
+<td>ISRCCode</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;lab"</td>
+<td>RecordLabelName</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;lal"</td>
+<td>RecordLabelURL</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;lyr"</td>
+<td>Lyrics</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;mak"</td>
+<td>Make</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;mal"</td>
+<td>MakerURL</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;mod"</td>
+<td>Model</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;nam"</td>
+<td>Title</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;pdk"</td>
+<td>ProducerKeywords</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;phg"</td>
+<td>RecordingCopyright</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;prd"</td>
+<td>Producer</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;prf"</td>
+<td>Performers</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;prk"</td>
+<td>PerformerKeywords</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;prl"</td>
+<td>PerformerURL</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;req"</td>
+<td>Requirements</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;snk"</td>
+<td>SubtitleKeywords</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;snm"</td>
+<td>Subtitle</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;src"</td>
+<td>SourceCredits</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;swf"</td>
+<td>SongWriter</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;swk"</td>
+<td>SongWriterKeywords</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;swr"</td>
+<td>SoftwareVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;too"</td>
+<td>Encoder</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;trk"</td>
+<td>Track</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>"&copy;wrt"</td>
+<td>Composer</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>"&copy;xyz"</td>
+<td>GPSCoordinates</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='HintTrackInfo'>QuickTime HintTrackInfo Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'dimm'</td>
+<td>ImmediateDataBytes</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'dmax'</td>
+<td>LargestPacketDuration</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'dmed'</td>
+<td>MediaTrackBytes</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'drep'</td>
+<td>RepeatedDataBytes</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'maxr'</td>
+<td>MaxDataRate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'npck'</td>
+<td>NumPackets</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'nump'</td>
+<td>NumPackets</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'payt'</td>
+<td>PayloadType</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'pmax'</td>
+<td>LargestPacketSize</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'tmax'</td>
+<td>MaxTransmissionTime</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'tmin'</td>
+<td>MinTransmissionTime</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'totl'</td>
+<td>TotalBytes</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'tpaY'</td>
+<td>TotalBytesNoRTPHeaders</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'tpay'</td>
+<td>TotalBytesNoRTPHeaders</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'tpyl'</td>
+<td>TotalBytesNoRTPHeaders</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'trpY'</td>
+<td>TotalBytes</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td>'trpy'</td>
+<td>TotalBytes</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='HintInfo'>QuickTime HintInfo Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'rtp '</td>
+<td>RealtimeStreamingProtocol</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'sdp '</td>
+<td>StreamingDataProtocol</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='HTCBinary'>QuickTime HTCBinary Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index4</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr><td colspan=4 class=c><i>[no tags known]</i></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='Video'>QuickTime Video Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index1</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='0 = 0x0'>0</td>
+<td>DisplaySize</td>
+<td class=c>N</td>
+<td><span class=s>0 = Normal
+  <br>1 = Double Size
+  <br>2 = Half Size
+  <br>3 = Full Screen
+  <br>4 = Current Size</span></td></tr>
+<tr class=b>
+<td class=r title='6 = 0x6'>6</td>
+<td>SlideShow</td>
+<td class=c>N</td>
+<td><span class=s>0 = No
+  <br>1 = Yes</span></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='UserMedia'>QuickTime UserMedia Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'MTDT'</td>
+<td>MetaData</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#MetaData'>QuickTime MetaData Tags</a></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='MetaData'>QuickTime MetaData Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td title='0x0001 = 1'>0x0001</td>
+<td>Title</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td title='0x0003 = 3'>0x0003</td>
+<td>ProductionDate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td title='0x0004 = 4'>0x0004</td>
+<td>Software</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td title='0x0005 = 5'>0x0005</td>
+<td>Product</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td title='0x000a = 10'>0x000a</td>
+<td>TrackProperty</td>
+<td class=c>N</td>
+<td><span class=s>[Value 0]
+  <br>0x0 = No presentation
+  <br>Bit 0 = Main track
+  <br>[Value 1]
+  <br>0x0 = No attributes
+  <br>Bit 15 = Read only</span></td></tr>
+<tr class=b>
+<td title='0x000b = 11'>0x000b</td>
+<td>TimeZone</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td title='0x000c = 12'>0x000c</td>
+<td>ModifyDate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='MovieHeader'>QuickTime MovieHeader Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index4</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='0 = 0x0'>0</td>
+<td>MovieHeaderVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='1 = 0x1'>1</td>
+<td>CreateDate</td>
+<td class=c>int32u</td>
+<td><span class=s><span class=n>(converted from UTC to local time if the QuickTimeUTC option is set)</span></span></td></tr>
+<tr>
+<td class=r title='2 = 0x2'>2</td>
+<td>ModifyDate</td>
+<td class=c>int32u</td>
+<td><span class=s><span class=n>(converted from UTC to local time if the QuickTimeUTC option is set)</span></span></td></tr>
+<tr class=b>
+<td class=r title='3 = 0x3'>3</td>
+<td>TimeScale</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='4 = 0x4'>4</td>
+<td>Duration</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='5 = 0x5'>5</td>
+<td>PreferredRate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='6 = 0x6'>6</td>
+<td>PreferredVolume</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='9 = 0x9'>9</td>
+<td>MatrixStructure</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='18 = 0x12'>18</td>
+<td>PreviewTime</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='19 = 0x13'>19</td>
+<td>PreviewDuration</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='20 = 0x14'>20</td>
+<td>PosterTime</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='21 = 0x15'>21</td>
+<td>SelectionTime</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='22 = 0x16'>22</td>
+<td>SelectionDuration</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='23 = 0x17'>23</td>
+<td>CurrentTime</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='24 = 0x18'>24</td>
+<td>NextTrackID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='Preview'>QuickTime Preview Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index2</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='0 = 0x0'>0</td>
+<td>PreviewDate</td>
+<td class=c>int32u</td>
+<td><span class=s><span class=n>(converted from UTC to local time if the QuickTimeUTC option is set)</span></span></td></tr>
+<tr class=b>
+<td class=r title='2 = 0x2'>2</td>
+<td>PreviewVersion</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='3 = 0x3'>3</td>
+<td>PreviewAtomType</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='5 = 0x5'>5</td>
+<td>PreviewAtomIndex</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='Profile'>QuickTime Profile Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'APRF'</td>
+<td>AudioProfile</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#AudioProf'>QuickTime AudioProf Tags</a></td></tr>
+<tr class=b>
+<td>'FPRF'</td>
+<td>FileGlobalProfile</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#FileProf'>QuickTime FileProf Tags</a></td></tr>
+<tr>
+<td>'OLYM'</td>
+<td>OlympusOLYM</td>
+<td class=c>-</td>
+<td>--&gt; <a href='Olympus.html#OLYM'>Olympus OLYM Tags</a></td></tr>
+<tr class=b>
+<td>'VPRF'</td>
+<td>VideoProfile</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#VideoProf'>QuickTime VideoProf Tags</a></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='AudioProf'>QuickTime AudioProf Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index4</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='0 = 0x0'>0</td>
+<td>AudioProfileVersion?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='1 = 0x1'>1</td>
+<td>AudioTrackID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='2 = 0x2'>2</td>
+<td>AudioCodec</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='3 = 0x3'>3</td>
+<td>AudioCodecInfo?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='4 = 0x4'>4</td>
+<td>AudioAttributes</td>
+<td class=c>N</td>
+<td><span class=s>Bit 0 = Encrypted
+  <br>Bit 1 = Variable bitrate
+  <br>Bit 2 = Dual mono</span></td></tr>
+<tr class=b>
+<td class=r title='5 = 0x5'>5</td>
+<td>AudioAvgBitrate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='6 = 0x6'>6</td>
+<td>AudioMaxBitrate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='7 = 0x7'>7</td>
+<td>AudioSampleRate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='8 = 0x8'>8</td>
+<td>AudioChannels</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='FileProf'>QuickTime FileProf Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index4</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='0 = 0x0'>0</td>
+<td>FileProfileVersion?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='1 = 0x1'>1</td>
+<td>FileFunctionFlags</td>
+<td class=c>N</td>
+<td><span class=s>Bit 28 = Fragmented
+  <br>Bit 29 = Additional tracks
+  <br>Bit 30 = Edited</span></td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='VideoProf'>QuickTime VideoProf Tags</a></h2>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index4</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='0 = 0x0'>0</td>
+<td>VideoProfileVersion?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='1 = 0x1'>1</td>
+<td>VideoTrackID</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='2 = 0x2'>2</td>
+<td>VideoCodec</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='3 = 0x3'>3</td>
+<td>VideoCodecInfo?</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='4 = 0x4'>4</td>
+<td>VideoAttributes</td>
+<td class=c>N</td>
+<td><span class=s>Bit 0 = Encrypted
+  <br>Bit 1 = Variable bitrate
+  <br>Bit 2 = Variable frame rate
+  <br>Bit 3 = Interlaced</span></td></tr>
+<tr class=b>
+<td class=r title='5 = 0x5'>5</td>
+<td>VideoAvgBitrate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='6 = 0x6'>6</td>
+<td>VideoMaxBitrate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='7 = 0x7'>7</td>
+<td>VideoAvgFrameRate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='8 = 0x8'>8</td>
+<td>VideoMaxFrameRate</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='9 = 0x9'>9</td>
+<td>VideoSize</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='10 = 0xa'>10</td>
+<td>PixelAspectRatio</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='Flip'>QuickTime Flip Tags</a></h2>
+<p>Found in MP4 files from Flip Video cameras.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Index4</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td class=r title='1 = 0x1'>1</td>
+<td>PreviewImageWidth</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='2 = 0x2'>2</td>
+<td>PreviewImageHeight</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='13 = 0xd'>13</td>
+<td>PreviewImageLength</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td class=r title='14 = 0xe'>14</td>
+<td>SerialNumber</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr>
+<td class=r title='28 = 0x1c'>28</td>
+<td>PreviewImage</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+</table></td></tr></table></blockquote>
+
+<h2><a name='ImageFile'>QuickTime ImageFile Tags</a></h2>
+<p>Tags used in QTIF QuickTime Image Files.</p>
+<blockquote>
+<table class=frame><tr><td>
+<table class=inner cellspacing=1>
+<tr class=h><th>Tag&nbsp;ID</th><th>Tag Name</th>
+<th>Writable</th><th>Values / <span class=n>Notes</span></th></tr>
+<tr>
+<td>'idat'</td>
+<td>ImageData</td>
+<td class=c>N</td>
+<td>&nbsp;</td></tr>
+<tr class=b>
+<td>'idsc'</td>
+<td>ImageDescription</td>
+<td class=c>-</td>
+<td>--&gt; <a href='QuickTime.html#ImageDesc'>QuickTime ImageDesc Tags</a></td></tr>
+<tr>
+<td>'iicc'</td>
+<td>ICC_Profile</td>
+<td class=c>-</td>
+<td>--&gt; <a href='ICC_Profile.html'>ICC_Profile Tags</a></td></tr>
+</table></td></tr></table></blockquote>
+
+<hr>
+(This document generated automatically by Image::ExifTool::BuildTagLookup)
+<br><i>Last revised Apr 29, 2014</i>
+<p class=lf><a href='index.html'>&lt;-- ExifTool Tag Names</a></p>
+</body>
+</html>
