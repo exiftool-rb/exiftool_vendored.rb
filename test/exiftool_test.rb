@@ -2,8 +2,6 @@ require 'test_helper'
 
 describe ExiftoolVendored do
 
-  DUMP_RESULTS = false
-
   it 'raises NoSuchFile for missing files' do
     proc { Exiftool.new('no/such/file') }.must_raise Exiftool::NoSuchFile
   end
@@ -45,7 +43,7 @@ describe ExiftoolVendored do
     basename = File.basename(filename)
     yaml_file = "test/expected/#{basename}.yaml"
     actual = result.to_hash.delete_if { |k, v| ignorable_key?(k) }
-    File.open(yaml_file, 'w') { |out| YAML.dump(actual, out) } if DUMP_RESULTS
+    File.open(yaml_file, 'w') { |out| YAML.dump(actual, out) } if ENV['DUMP_RESULTS']
     expected = File.open(yaml_file) { |f| YAML::load(f) }
     expected.delete_if { |k, v| ignorable_key?(k) }
     expected.must_equal_hash(actual)

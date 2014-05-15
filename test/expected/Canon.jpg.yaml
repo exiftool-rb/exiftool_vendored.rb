@@ -45,7 +45,7 @@
 :metering_mode: Center-weighted average
 :focus_range: Not Known
 :canon_exposure_mode: Manual
-:lens_type: Unknown (-1)
+:lens_type: n/a
 :focal_units: 1/mm
 :max_aperture: 4
 :min_aperture: 27
@@ -99,6 +99,7 @@
 :wb_rggb_levels_flash: 1933 832 831 895
 :wb_rggb_levels_custom: 1722 832 831 989
 :wb_rggb_levels_kelvin: 1722 832 831 988
+:wb_rggb_black_levels: 124 123 124 123
 :color_temperature: 5200
 :num_af_points: 7
 :valid_af_points: 7
