@@ -1,5 +1,7 @@
 language: ruby
 script: bundle exec rake
+sudo: false
+cache: bundler
 rvm:
   - 2.2.2
   - jruby
