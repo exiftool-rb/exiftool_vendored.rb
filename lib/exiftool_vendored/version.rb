@@ -1,3 +1,3 @@
 module ExiftoolVendored
-  VERSION = Gem::Version.new('9.78.0')
+  VERSION = Gem::Version.new('9.99.0')
 end
