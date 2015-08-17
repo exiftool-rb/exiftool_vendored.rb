@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = %w(lib)
 
-  spec.add_dependency 'exiftool', '>= 0.6.0'
+  spec.add_dependency 'exiftool', '>= 0.7.0'
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'yard'

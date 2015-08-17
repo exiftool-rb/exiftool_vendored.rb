@@ -2,6 +2,7 @@
 :file_name: Panasonic.jpg
 :file_size: 6.9 kB
 :file_type: JPEG
+:file_type_extension: jpg
 :mime_type: image/jpeg
 :exif_byte_order: Little-endian (Intel, II)
 :make: Panasonic
@@ -41,10 +42,10 @@
 :macro_mode: 'Off'
 :shooting_mode: Program
 :audio: 'No'
-:data_dump: (Binary data 5428 bytes, use -b option to extract)
+:data_dump: "(Binary data 5428 bytes, use -b option to extract)"
 :white_balance_bias: 0
 :flash_bias: 0
-:internal_serial_number: (S00) 2004:07:19 no. 0102
+:internal_serial_number: "(S00) 2004:07:19 no. 0102"
 :panasonic_exif_version: '0100'
 :color_effect: 'Off'
 :time_since_power_on: '00:00:06.96'
@@ -83,8 +84,10 @@
 :y_cb_cr_sub_sampling: YCbCr4:2:0 (2 2)
 :aperture: 4.0
 :image_size: 8x8
+:megapixels: 6.4e-05
 :shutter_speed: !ruby/object:Rational
   denominator: 400
   numerator: 1
-:thumbnail_image: (Binary data 28 bytes, use -b option to extract)
+:fov: 54.4 deg
+:hyperfocal_distance: 1.34 m
 :light_value: 13.0

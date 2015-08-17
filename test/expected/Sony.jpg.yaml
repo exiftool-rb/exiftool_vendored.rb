@@ -2,9 +2,10 @@
 :file_name: Sony.jpg
 :file_size: 2.7 kB
 :file_type: JPEG
+:file_type_extension: jpg
 :mime_type: image/jpeg
 :exif_byte_order: Little-endian (Intel, II)
-:image_description: ! '                               '
+:image_description: "                               "
 :make: SONY
 :model: DSC-F828
 :orientation: Horizontal (normal)
@@ -60,8 +61,8 @@
 :y_cb_cr_sub_sampling: YCbCr4:2:0 (2 2)
 :aperture: 7.1
 :image_size: 8x8
+:megapixels: 6.4e-05
 :shutter_speed: !ruby/object:Rational
   denominator: 250
   numerator: 1
-:thumbnail_image: (Binary data 28 bytes, use -b option to extract)
 :light_value: 14.3

@@ -2,6 +2,7 @@
 :file_name: FujiFilm.jpg
 :file_size: 1373 bytes
 :file_type: JPEG
+:file_type_extension: jpg
 :mime_type: image/jpeg
 :exif_byte_order: Little-endian (Intel, II)
 :make: FUJIFILM
@@ -36,7 +37,7 @@
 :flash: Fired
 :focal_length: 6.0 mm
 :version: '0130'
-:quality: ! 'NORMAL '
+:quality: 'NORMAL '
 :sharpness: Normal
 :white_balance: Auto
 :fuji_flash_mode: Red-eye reduction
@@ -72,8 +73,10 @@
 :y_cb_cr_sub_sampling: YCbCr4:2:0 (2 2)
 :aperture: 3.5
 :image_size: 8x8
+:megapixels: 6.4e-05
 :shutter_speed: !ruby/object:Rational
   denominator: 64
   numerator: 1
-:thumbnail_image: (Binary data 28 bytes, use -b option to extract)
+:fov: 48.9 deg
+:hyperfocal_distance: 2.26 m
 :light_value: 9.6

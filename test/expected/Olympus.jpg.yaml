@@ -2,9 +2,10 @@
 :file_name: Olympus.jpg
 :file_size: 1573 bytes
 :file_type: JPEG
+:file_type_extension: jpg
 :mime_type: image/jpeg
 :exif_byte_order: Little-endian (Intel, II)
-:image_description: ! 'OLYMPUS DIGITAL CAMERA         '
+:image_description: 'OLYMPUS DIGITAL CAMERA         '
 :make: OLYMPUS OPTICAL CO.,LTD
 :model: C2000Z
 :orientation: Horizontal (normal)
@@ -34,17 +35,17 @@
 :light_source: Unknown
 :flash: Fired
 :focal_length: 7.0 mm
-:special_mode: ! 'Normal, Sequence: 0, Panorama: (none)'
+:special_mode: 'Normal, Sequence: 0, Panorama: (none)'
 :quality: SQ (Low)
 :macro: 'Off'
 :bw_mode: 'Off'
 :digital_zoom: 0.0
 :focal_plane_diagonal: 7.8 mm
-:lens_distortion_params: -215 -388 -418 -185 -310 -314
+:lens_distortion_params: "-215 -388 -418 -185 -310 -314"
 :resolution: 1
 :camera_type: C2000Z
 :camera_id: OLYMPUS DIGITAL CAMERA
-:data_dump: (Binary data 186 bytes, use -b option to extract)
+:data_dump: "(Binary data 186 bytes, use -b option to extract)"
 :user_comment: ''
 :flashpix_version: '0100'
 :color_space: sRGB
@@ -65,8 +66,10 @@
 :y_cb_cr_sub_sampling: YCbCr4:2:0 (2 2)
 :aperture: 2.0
 :image_size: 8x8
+:megapixels: 6.4e-05
 :shutter_speed: !ruby/object:Rational
   denominator: 30
   numerator: 1
-:thumbnail_image: (Binary data 28 bytes, use -b option to extract)
+:fov: 49.7 deg
+:hyperfocal_distance: 4.52 m
 :light_value: 6.9

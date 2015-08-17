@@ -63,16 +63,33 @@ describe ExiftoolVendored do
     :file_modify_date,
     :file_modify_date_civil,
     :file_permissions,
-    :fov,
-    :hyperfocal_distance,
     :intelligent_contrast,
-    :long_focal,
     :max_focal_length,
     :min_focal_length,
+    :source_file,
+    :thumbnail_image
+  ] + (newer_exiftool? ? [] : [
+    :af_area_mode, # This can be "Auto" or "Multi-point AF or AI AF" depending on exiftool version
+    :blue_trc,
+    :dof,
+    :file_type_extension,
+    :fov,
+    :green_trc,
+    :hyperfocal_distance,
+    :lens_type,
+    :long_focal,
+    :maker_note_unknown_binary,
+    :measurement_geometry,
+    :megapixels,
     :nd_filter,
+    :red_trc,
     :short_focal,
-    :source_file
-  ]
+    :strip_byte_counts,
+    :strip_offsets,
+    :warning
+  ])
+
+  puts "Ignoring #{IGNORABLE_KEYS.size} keys."
 
   IGNORABLE_PATTERNS = [
     /.*\-ml-\w\w-\w\w$/, # < translatable

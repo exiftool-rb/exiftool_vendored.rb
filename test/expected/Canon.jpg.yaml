@@ -2,6 +2,7 @@
 :file_name: Canon.jpg
 :file_size: 2.6 kB
 :file_type: JPEG
+:file_type_extension: jpg
 :mime_type: image/jpeg
 :exif_byte_order: Little-endian (Intel, II)
 :make: Canon
@@ -38,9 +39,9 @@
 :canon_image_size: Large
 :easy_mode: Manual
 :digital_zoom: Unknown (-1)
-:contrast: '+1'
-:saturation: '+1'
-:sharpness: '+1'
+:contrast: "+1"
+:saturation: "+1"
+:sharpness: "+1"
 :camera_iso: n/a
 :metering_mode: Center-weighted average
 :focus_range: Not Known
@@ -50,7 +51,7 @@
 :max_aperture: 4
 :min_aperture: 27
 :flash_activity: 0
-:flash_bits: (none)
+:flash_bits: "(none)"
 :zoom_source_width: 3072
 :zoom_target_width: 3072
 :manual_flash_output: n/a
@@ -77,6 +78,7 @@
 :bulb_duration: 4
 :camera_type: EOS Mid-range
 :auto_rotate: None
+:nd_filter: n/a
 :self_timer2: 0
 :bracket_mode: 'Off'
 :bracket_value: 0
@@ -111,7 +113,7 @@
 :af_area_height: 151
 :af_area_x_positions: 1014 608 0 0 0 -608 -1014
 :af_area_y_positions: 0 0 -506 0 506 0 0
-:af_points_in_focus: (none)
+:af_points_in_focus: "(none)"
 :thumbnail_image_valid_area: 0 159 7 112
 :user_comment: ''
 :flashpix_version: '0100'
@@ -140,10 +142,14 @@
 :drive_mode: Continuous Shooting
 :image_size: 8x8
 :lens: 18.0 - 55.0 mm
-:lens_id: Unknown 18-55mm
+:megapixels: 6.4e-05
 :shooting_mode: Bulb
 :shutter_speed: 4
 :wb_rggb_levels: 1719 832 831 990
 :blue_balance: 1.190619
+:dof: inf (4.31 m - inf)
+:fov: 36.9 deg
+:hyperfocal_distance: 4.37 m
+:lens_id: Unknown 18-55mm
 :light_value: 5.6
 :red_balance: 2.067348

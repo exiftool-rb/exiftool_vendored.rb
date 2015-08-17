@@ -2,6 +2,7 @@
 :file_name: NikonD70.jpg
 :file_size: 3.6 kB
 :file_type: JPEG
+:file_type_extension: jpg
 :mime_type: image/jpeg
 :jfif_version: 1.01
 :exif_byte_order: Big-endian (Motorola, MM)
@@ -48,7 +49,7 @@
 :compression: JPEG (old-style)
 :preview_image_start: 2466
 :preview_image_length: 26
-:flash_exposure_comp: -5/3
+:flash_exposure_comp: "-5/3"
 :iso_setting: 200
 :image_boundary: 0 0 3008 2000
 :external_flash_exposure_comp: 0
@@ -86,7 +87,7 @@
 :flash_info_version: '0100'
 :flash_source: None
 :external_flash_firmware: n/a
-:external_flash_flags: (none)
+:external_flash_flags: "(none)"
 :flash_commander_mode: 'Off'
 :flash_control_mode: 'Off'
 :flash_compensation: 0
@@ -97,7 +98,7 @@
 :flash_group_b_compensation: 0
 :image_optimization: Custom
 :vari_program: ''
-:user_comment: ! 'curve: fotogenics point and shoot'
+:user_comment: 'curve: fotogenics point and shoot'
 :sub_sec_time: 20
 :sub_sec_time_original: 20
 :sub_sec_time_digitized: 20
@@ -110,7 +111,7 @@
 :sensing_method: One-chip color area
 :file_source: Digital Camera
 :scene_type: Directly photographed
-:cfa_pattern: ! '[Blue,Green][Green,Red]'
+:cfa_pattern: "[Blue,Green][Green,Red]"
 :custom_rendered: Custom
 :exposure_mode: Auto
 :digital_zoom_ratio: 1
@@ -131,10 +132,13 @@
 :color_components: 3
 :y_cb_cr_sub_sampling: YCbCr4:2:0 (2 2)
 :aperture: 5.0
+:blue_balance: 1.410156
 :image_size: 71x47
 :lens_id: AF-S DX Zoom-Nikkor 18-70mm f/3.5-4.5G IF-ED
 :lens_spec: 18-70mm f/3.5-4.5 G
-:preview_image: (Binary data 26 bytes, use -b option to extract)
+:megapixels: 0.003
+:preview_image: "(Binary data 26 bytes, use -b option to extract)"
+:red_balance: 2.332031
 :shutter_speed: !ruby/object:Rational
   denominator: 60
   numerator: 1
@@ -144,8 +148,7 @@
 :sub_sec_date_time_original_civil: 2005-01-14
 :sub_sec_modify_date: 2005:01:14 08:57:59.20
 :sub_sec_modify_date_civil: 2005-01-14
-:thumbnail_image: (Binary data 28 bytes, use -b option to extract)
-:blue_balance: 1.410156
+:dof: 0.02 m (0.62 - 0.64 m)
+:fov: 22.1 deg (0.25 m)
+:hyperfocal_distance: 31.31 m
 :light_value: 9.6
-:red_balance: 2.332031
-:dof: 0.02 m (0.62 - 0.64)
