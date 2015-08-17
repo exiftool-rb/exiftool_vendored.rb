@@ -2,7 +2,6 @@
 
 [![Build Status](https://secure.travis-ci.org/mceachen/exiftool_vendored.png?branch=master)](http://travis-ci.org/mceachen/exiftool_vendored)
 [![Gem Version](https://badge.fury.io/rb/exiftool_vendored.png)](http://rubygems.org/gems/exiftool_vendored)
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/mceachen/exiftool_vendored/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 This is
 * a vendored version of Phil Harvey's excellent [exiftool](http://www.sno.phy.queensu.ca/~phil/exiftool) library, and
