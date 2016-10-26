@@ -142,6 +142,7 @@
 :drive_mode: Continuous Shooting
 :image_size: 8x8
 :lens: 18.0 - 55.0 mm
+:lens_id: Unknown 18-55mm
 :megapixels: 6.4e-05
 :shooting_mode: Bulb
 :shutter_speed: 4
@@ -150,6 +151,5 @@
 :dof: inf (4.31 m - inf)
 :fov: 36.9 deg
 :hyperfocal_distance: 4.37 m
-:lens_id: Unknown 18-55mm
 :light_value: 5.6
 :red_balance: 2.067348

@@ -132,13 +132,11 @@
 :color_components: 3
 :y_cb_cr_sub_sampling: YCbCr4:2:0 (2 2)
 :aperture: 5.0
-:blue_balance: 1.410156
 :image_size: 71x47
 :lens_id: AF-S DX Zoom-Nikkor 18-70mm f/3.5-4.5G IF-ED
 :lens_spec: 18-70mm f/3.5-4.5 G
 :megapixels: 0.003
 :preview_image: "(Binary data 26 bytes, use -b option to extract)"
-:red_balance: 2.332031
 :shutter_speed: !ruby/object:Rational
   denominator: 60
   numerator: 1
@@ -148,7 +146,9 @@
 :sub_sec_date_time_original_civil: 2005-01-14
 :sub_sec_modify_date: 2005:01:14 08:57:59.20
 :sub_sec_modify_date_civil: 2005-01-14
+:blue_balance: 1.410156
+:light_value: 9.6
+:red_balance: 2.332031
 :dof: 0.02 m (0.62 - 0.64 m)
 :fov: 22.1 deg (0.25 m)
 :hyperfocal_distance: 31.31 m
-:light_value: 9.6

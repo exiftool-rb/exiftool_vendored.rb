@@ -2,6 +2,7 @@
 *.rbc
 .bundle
 .config
+.history
 .idea
 .yardoc
 Gemfile.lock
@@ -9,6 +10,7 @@ InstalledFiles
 _yardoc
 coverage
 doc/
+downloads/
 lib/bundler/man
 pkg
 rdoc

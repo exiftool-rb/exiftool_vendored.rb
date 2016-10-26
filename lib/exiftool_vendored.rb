@@ -1,4 +1,5 @@
 require 'exiftool'
+require 'exiftool_vendored/version'
 
 module ExiftoolVendored
 

@@ -8,7 +8,6 @@ describe ExiftoolVendored do
   end
 
   it 'matches the expected version' do
-    expected = /\A#{Exiftool.exiftool_version}\.\d+\z/
-    ExiftoolVendored::VERSION.to_s.must_match expected
+    ExiftoolVendored::VERSION.to_s.must_match /^#{Exiftool.exiftool_version}/
   end
 end
