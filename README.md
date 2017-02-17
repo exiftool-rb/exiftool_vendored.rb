@@ -1,7 +1,7 @@
 # ExiftoolVendored
 
-[![Build Status](https://secure.travis-ci.org/mceachen/exiftool_vendored.png?branch=master)](http://travis-ci.org/mceachen/exiftool_vendored)
-[![Gem Version](https://badge.fury.io/rb/exiftool_vendored.png)](http://rubygems.org/gems/exiftool_vendored)
+[![Build Status](https://secure.travis-ci.org/mceachen/exiftool_vendored.svg?branch=master)](http://travis-ci.org/mceachen/exiftool_vendored)
+[![Gem Version](https://badge.fury.io/rb/exiftool_vendored.svg)](http://rubygems.org/gems/exiftool_vendored)
 
 This is
 * a vendored version of Phil Harvey's excellent [exiftool](http://www.sno.phy.queensu.ca/~phil/exiftool) library, and
