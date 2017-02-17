@@ -8,6 +8,6 @@ describe ExiftoolVendored do
   end
 
   it 'matches the expected version' do
-    ExiftoolVendored::VERSION.to_s.must_match /^#{Exiftool.exiftool_version}/
+    ExiftoolVendored::VERSION.to_s.must_match(/^#{Exiftool.exiftool_version}/)
   end
 end
