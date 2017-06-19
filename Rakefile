@@ -50,6 +50,9 @@ task :update_exiftool do
   FileUtils.remove_entry_secure(dest_dir) if File.exist?(dest_dir)
   FileUtils.mkdir(dest_dir)
   `tar xzf #{tgz.realpath.to_s} -C #{dest_dir}`
+  # Move contents out of the subdirectory and into bin directly:
+  `mv #{dest_dir}/Image-ExifTool-*/* #{dest_dir}`
+  `rmdir #{dest_dir}/Image-ExifTool-*`
 
   require 'exiftool_vendored/version_extractor'
   new_version = ExiftoolVendored.extract_version

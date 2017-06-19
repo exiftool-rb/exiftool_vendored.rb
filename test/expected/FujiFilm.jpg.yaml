@@ -38,7 +38,7 @@
 :focal_length: 6.0 mm
 :version: '0130'
 :quality: 'NORMAL '
-:sharpness: Normal
+:sharpness: 0 (normal)
 :white_balance: Auto
 :fuji_flash_mode: Red-eye reduction
 :flash_exposure_comp: 0

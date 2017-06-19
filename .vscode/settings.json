@@ -1,0 +1,8 @@
+{
+  "search.exclude": {
+    "**/lib": false
+  },
+  "files.exclude": {
+    "**/lib": false
+  }
+}
