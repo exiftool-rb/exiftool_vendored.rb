@@ -85,7 +85,7 @@ sub ProcessSerialData($$$);
 sub ProcessFilters($$$);
 sub SwapWords($);
 
-$VERSION = '3.75';
+$VERSION = '3.77';
 
 # Note: Removed 'USM' from 'L' lenses since it is redundant - PH
 # (or is it?  Ref 32 shows 5 non-USM L-type lenses)
@@ -335,6 +335,7 @@ $VERSION = '3.75';
     183.3 => 'Sigma 180mm f/2.8 EX DG OS HSM APO Macro', #IB
     183.4 => 'Sigma 150-600mm f/5-6.3 DG OS HSM | C', #47
     183.5 => 'Sigma 150-600mm f/5-6.3 DG OS HSM | S', #forum7109 (Sports 014)
+    183.6 => 'Sigma 100-400mm f/5-6.3 DG OS HSM', #PH ("| C" ?)
     184 => 'Canon EF 400mm f/2.8L + 2x', #15
     185 => 'Canon EF 600mm f/4L IS', #32
     186 => 'Canon EF 70-200mm f/4L', #9
@@ -347,7 +348,8 @@ $VERSION = '3.75';
     194 => 'Canon EF 80-200mm f/4.5-5.6 USM', #32
     195 => 'Canon EF 35-105mm f/4.5-5.6 USM', #32
     196 => 'Canon EF 75-300mm f/4-5.6 USM', #15/32
-    197 => 'Canon EF 75-300mm f/4-5.6 IS USM',
+    197 => 'Canon EF 75-300mm f/4-5.6 IS USM or Sigma Lens',
+    197.1 => 'Sigma 18-300mm f/3.5-6.3 DC Macro OS HS', #50
     198 => 'Canon EF 50mm f/1.4 USM or Zeiss Lens',
     198.1 => 'Zeiss Otus 55mm f/1.4 ZE', #JR (seen only on Sony camera)
     198.2 => 'Zeiss Otus 85mm f/1.4 ZE', #JR (NC)
@@ -423,14 +425,15 @@ $VERSION = '3.75';
     505 => 'Canon EF 35mm f/2 IS USM', #PH
     506 => 'Canon EF 400mm f/4 DO IS II USM', #42
     507 => 'Canon EF 16-35mm f/4L IS USM', #42
-    508 => 'Canon EF 11-24mm f/4L USM', #PH
+    508 => 'Canon EF 11-24mm f/4L USM or Tamron Lens', #PH
+    508.1 => 'Tamron 10-24mm f/3.5-4.5 Di II VC HLD', #PH (B023)
     747 => 'Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens', #JR
     747.1 => 'Tamron SP 150-600mm F5-6.3 Di VC USD G2', #50
     748 => 'Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x', #JR (1.4x Mk III)
     750 => 'Canon EF 35mm f/1.4L II USM', #42
     751 => 'Canon EF 16-35mm f/2.8L III USM', #42
     752 => 'Canon EF 24-105mm f/4L IS II USM', #42
-    # (STM lenses seem to start with 0x10xx)
+    # (STM lenses - 0x10xx)
     4142 => 'Canon EF-S 18-135mm f/3.5-5.6 IS STM',
     4143 => 'Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens',
     4143.1 => 'Tamron 18-200mm F/3.5-6.3 Di III VC', #42
@@ -448,8 +451,11 @@ $VERSION = '3.75';
     4156 => 'Canon EF 50mm f/1.8 STM', #42
     4157 => 'Canon EF-M 18-150mm 1:3.5-6.3 IS STM', #42
     4158 => 'Canon EF-S 18-55mm f/4-5.6 IS STM', #PH
+    4160 => 'Canon EF-S 35mm f/2.8 Macro IS STM', #42
+    # (Nano USM lenses - 0x90xx)
     36910 => 'Canon EF 70-300mm f/4-5.6 IS II USM', #42
     36912 => 'Canon EF-S 18-135mm f/3.5-5.6 IS USM', #42
+    # (CN-E lenses - 0xf0xx)
     61494 => 'Canon CN-E 85mm T1.3 L F', #PH
     65535 => 'n/a',
 );
@@ -686,6 +692,9 @@ $VERSION = '3.75';
     0x4060000 => 'PowerShot SX620 HS',
     0x4070000 => 'EOS M6',
     0x4100000 => 'PowerShot G9 X Mark II',
+    0x4150000 => 'PowerShot ELPH 185 / IXUS 185 / IXY 200', 
+    0x4160000 => 'PowerShot SX430 IS',
+    0x4170000 => 'PowerShot SX730 HS',
     0x6040000 => 'PowerShot S100 / Digital IXUS / IXY Digital',
 
 # (see http://cweb.canon.jp/e-support/faq/answer/digitalcamera/10447-1.html for PowerShot/IXUS/IXY names)
@@ -778,7 +787,9 @@ $VERSION = '3.75';
     0x80000401 => 'EOS 5DS R',
     0x80000404 => 'EOS Rebel T6 / 1300D / Kiss X80',
     0x80000405 => 'EOS Rebel T7i / 800D / Kiss X9i',
+    0x80000406 => 'EOS 6D Mark II', #IB/42
     0x80000408 => 'EOS 77D / 9000D',
+    0x80000417 => 'EOS Rebel SL2 / 200D / Kiss X9', #IB/42
 );
 
 my %canonQuality = (
@@ -7438,7 +7449,7 @@ my %ciMaxFocal = (
             12 => '12 (5DS/5DSR)',
             13 => '13 (80D)', #PH
             14 => '14 (1300D)', #IB
-            15 => '15 (77D/800D)', #IB
+            15 => '15 (6DmkII/77D/200D/800D)', #IB
         },
     },
     0x3f => { Name => 'WB_RGGBLevelsAsShot',     Format => 'int16s[4]' },
@@ -7628,6 +7639,7 @@ my %ciMaxFocal = (
             0 => 'Disable',
             1 => 'Adjust all by the same amount',
             2 => 'Adjust by lens',
+          # 3 - seen this for EOS 77D, which doesn't have an AF Micro Adjust feature - PH
         },
     },
     2 => {

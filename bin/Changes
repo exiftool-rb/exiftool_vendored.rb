@@ -7,6 +7,37 @@ RSS feed: http://owl.phy.queensu.ca/~phil/exiftool/rss.xml
 Note: The most recent production release is Version 10.55. (Other versions are
 considered development releases, and are not uploaded to CPAN.)
 
+June 29, 2017 - Version 10.58
+
+  - Added read support for RIFF-format MBWF/RF64 files
+  - Added write support for dji-drone XMP tags
+  - Added a new Canon LensType (thanks Steve Bates)
+  - Added a few new Sony/Minolta LensType values (thanks Jos Roost)
+  - Added a new Canon LensType
+  - Added a couple of new CanonModelID values (thanks LibRaw and Norbert Wasser)
+  - Decode some new FujiFilm tags (thanks Chris Schucker)
+  - Enhanced FileSize print conversion to show in "GB" for large files
+  - Fixed "outside of string in unpack" errors when reading some corrupted
+    EXE/ICC files
+  - Fixed problem extracting GIF MIDISong metadata
+
+June 20, 2017 - Version 10.57
+
+  - Added a new Canon LensType (thanks Norbert Wasser)
+  - Added write support for PNG Collection tag
+  - Added a few new CanonModelID values
+  - Added some new Pentax ShakeReduction values
+  - Removed ability to create PNG zxIf chunks
+  - Documented -progress:%b feature (added in 10.26)
+  - No longer report FileType, FileTypeExtension or MIMEType for JPEG/TIFF
+    images with an unknown header
+  - Relaxed case requirement for "SourceFile" header in CSV and JSON import
+  - Fixed decoding of Pentax ExposureCompensation for newer Ricoh models
+  - Fixed some incorrect "Wrong IFD" messages with experimental -validate
+    feature
+  - Fixed a couple of Sony/Minolta lens names (thanks Jos Roost)
+  - Fixed "Error reading PreviewImage" warning for some Sony models
+
 June 6, 2017 - Version 10.56
 
   - Removed ordering constraints between Geotag/Geosync and Geotime assignments
@@ -201,6 +232,7 @@ Jan. 13, 2017 - Version 10.39
 
   - Added Perl version and Unicode settings to -ver -v output
   - Added a new Sony LensType2 value
+  - Added a new Canon LensType (thanks Norbert Wasser)
   - More improvements to sample time_zone.config file (thanks Hayo Baan)
   - Fixed problem with MWG date/time tags introduced in version 10.34
   - Fixed problem setting the value of a tag from a binary file when the
