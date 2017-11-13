@@ -14,13 +14,13 @@ the binary data block (floating point IDs allow multiple tags for the same
 offset, with the integer part being used for the offset).  The corresponding
 hash value provides information about the tag (explained later).
 
-Twenty-five special keys (TABLE_NAME, SHORT_NAME, PROCESS_PROC, WRITE_PROC,
+Twenty-six special keys (TABLE_NAME, SHORT_NAME, PROCESS_PROC, WRITE_PROC,
 CHECK_PROC, GROUPS, FORMAT, FIRST_ENTRY, TAG_PREFIX, PRINT_CONV, WRITABLE,
 TABLE_DESC, NOTES, IS_OFFSET, IS_SUBDIR, EXTRACT_UNKNOWN, NAMESPACE, PREFERRED,
-SRC_TABLE, PRIORITY, WRITE_GROUP, LANG_INFO, VARS, DATAMEMBER and SET_GROUP1)
-are used to provide additional information about a table.  The special keys have
-names that are all capitalized to avoid possible conflicts with tag keys.  Below
-is an explanation of the meaning of each special key:
+SRC_TABLE, PRIORITY, AVOID, WRITE_GROUP, LANG_INFO, VARS, DATAMEMBER and
+SET_GROUP1) are used to provide additional information about a table.  The
+special keys have names that are all capitalized to avoid possible conflicts
+with tag keys.  Below is an explanation of the meaning of each special key:
 
   TABLE_NAME : Name of this table (set automatically by GetTagTable()).
 
@@ -124,7 +124,7 @@ is an explanation of the meaning of each special key:
     real        - floating point value as a string
     string      - unformatted string
     struct      - structure
-    
+
   FIRST_ENTRY : Specifies the index for the first tag entry in a binary table.
   This value is only used if the Unknown option is set to 2 or higher, and
   allows the binary data to be scanned for unknown tag entries.
@@ -177,6 +177,8 @@ is an explanation of the meaning of each special key:
 
   PRIORITY : Default Priority for all tags in this table.
 
+  AVOID : Flag set to Avoid writing all tags in this table.
+
   WRITE_GROUP : Default WriteGroup for all tags in the table.
 
   LANG_INFO : Code reference to a routine which returns a reference to a
@@ -221,6 +223,11 @@ is an explanation of the meaning of each special key:
                   the second argument.
 
     ENTRY_SIZE    Used by ProcessPhaseOne to specify size of IFD entry
+
+    MAP_FORMAT    Lookup to map unknown format numbers (eg. Panasonic CameraIFD)
+
+    START_INDEX   [QuickTime tables only] Initial index for indices shown in
+                  Verbose output.  Indices are not show otherwise.
 
   DATAMEMBER : BinaryData tables only.  A reference to a list of sorted tag ID's
   which must be extracted as data members when writing.  Must also list "var_"
@@ -495,7 +502,7 @@ numerical.
                   'WritePseudo' - flag indicating that this is a writable pseudo
                   tag.  If set, this tag may be written without actually writing
                   to the file (eg. FileName, FileModifyDate).
- 
+
                   'WrongBase' - ['IsOffset' tags only] An expression using $self
                   that is evaluated to generate a base shift for 'IsOffset' tags
                   which use a different base than the rest of the tags.
@@ -736,7 +743,7 @@ numerical.
                   "ValueConv" and the Protected option has bit 0x02 set to allow
                   writing of Protected tags that aren't directly writable.  The
                   AddValue, DelValue, Shift and Replace options from the parent
-                  tag are also defined, but no other options are set by default. 
+                  tag are also defined, but no other options are set by default.
                   Previous new values of WriteAlso tags have already been
                   removed prior to the eval if the Replace option was used for
                   the parent tag.  If an empty warning is issued ("\n"), the
@@ -1016,7 +1023,7 @@ The contained structure field information hashes are similar to tag information
 hashes, except that only the following elements are used:
 
   Raw/Value/PrintConv (and their inverses), TagID (optional), Groups, List,
-  Writable, Struct, Namespace, LangCode, PropertyPath.
+  Writable, Struct, Namespace, LangCode, PropertyPath, Notes.
 
 But note that for PropertyPath, only the element of the path corresponding to
 the specific field is stored (including any necessary list properties).  The

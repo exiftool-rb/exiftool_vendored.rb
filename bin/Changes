@@ -7,13 +7,112 @@ RSS feed: http://owl.phy.queensu.ca/~phil/exiftool/rss.xml
 Note: The most recent production release is Version 10.55. (Other versions are
 considered development releases, and are not uploaded to CPAN.)
 
+Oct. 31, 2017 - Version 10.65
+
+  - Added support for DOSLatinUS (cp437) and DOSLatin1 (cp850) character sets
+  - Added Extra ForceWrite tag for forcing metadata in a file to be rewritten
+  - Added write support for RAF images from some newer FujiFilm models
+  - Added a new SonyModelID, Sony LensType and Olympus LensTypes (thanks LibRaw)
+  - Added a new Pentax LensType
+  - Added a new Nikon LensID
+  - Decode more Sony tags for new models (thanks Jos Roost)
+  - Decode Nikon D850 ShotInfo tags and custom settings (thanks Warren Hatch)
+  - Decode Nikon D850 ColorTemperatureAuto (thanks LibRaw)
+  - Decode Photoshop LayerModifyDates and LayerIDs
+  - Improved decoding of Nikon D5/D500/D810 ShotInfo tags
+  - Allow advanced formatting expressions to return a list reference
+  - Fixed problem in Composite:GPSAltitude when derived from an "undef" altitude
+  - Fixed bug which could result in runtime warning when excluding some tags
+    from being extracted
+
+Oct. 17, 2017 - Version 10.64
+
+  - Added a new Nikon LensID
+  - Added a new SonyModelID
+  - Added a new CanonModelID (thanks LibRaw)
+  - Added some new non-standard CustomRendered values
+  - Decode FrameRate from FLIR SEQ files (thanks Sebastian Hani)
+  - Enhanced shift feature to be able to shift some not-so-simple numerical
+    values (eg. GPSLatitude) with -TAG+=VALUE syntax
+  - Fixed problem with possible malformed UTF-8 when writing IPTC values that
+    require truncation
+  - Fixed incorrect Writable type for XMP-GSpherical:TimeStamp
+  - Fixed incorrect family 2 group name for Nikon HDRInfo tags
+
+Oct. 4, 2017 - Version 10.63
+
+  - Added a number of new Canon LensTypes (thanks Norbert Wasser for some)
+  - Added a new CanonModelID
+  - Added a new Olympus CameraType
+  - Decode MD5Signature in FLAC StreamInfo (thanks Tim Eliseo)
+  - Improved decoding of HEIC/HEIF metadata
+  - Removed useless write support for QuickTime date/time tags in HEIC/HEIF
+    images
+  - Fixed "Incorrect XMP stream length" problem when writing some INDD files
+
+Sept. 28, 2017 - Version 10.62
+
+  - Added preliminary support for HEIC/HEIF images
+  - Added support for Google depthmap metadata (XMP-GDepth)
+  - Added some new Sony/Minolta lenses (thanks LibRaw and Jos Roost)
+  - Added a new CanonModelID (thanks Norbert Wasser)
+  - Added a new Nikon LensID (thanks Michael Tapes)
+  - Decode a new Sony tag (thanks Jos Roost)
+  - Decode some new Nikon tags (thanks Warren Hatch)
+  - Decode maker notes from Leica TL2
+  - Enhanced ID3 -v2 output to show frame flags
+  - Fixed problem decoding Nikon D810 camera tilt angles
+  - Fixed problem where SphericalVideoXML metadata was deleted when writing XMP
+    to a QuickTime-format file containing this information
+
+Aug. 18, 2017 - Version 10.61
+
+  - Added a new Canon LensType (thanks LibRaw)
+  - Added a number of new Sigma, Nikon and Sony lenses (thanks Jos Roost)
+  - Added a new Nikon LensID (thanks Yang You)
+  - Decode a number of new Sony tags (thanks Jos Roost)
+  - Decode Panasonic FocusDistance (thanks David Ellsworth)
+  - Updated to the IPTC video metadata 1.1 specification
+  - Restored the ability to delete JpgFromRaw from RAW images (broken in 10.38)
+  - Fixed problem decoding maker notes from Pentax K-70 AVI videos
+  - Fixed problem conditionally replacing a tag if the value to be deleted was
+    taken from another tag while the new value was assigned directly
+
+July 21, 2017 - Version 10.60
+
+  - Added two new Sony/Minolta LensTypes (thanks Jos Roost)
+  - Added a new Pentax LensType (thanks Dieter Pearcey)
+  - Added new Composite UniquePathPoints tag to photoshop_paths.config
+  - Extract raw-data JFIF/JFXX thumbnails as ThumbnailTIFF
+  - Improved Sony LensSpec conversion
+  - Updated German translations (thanks Herbert Kauer)
+  - Set family 1 group name of JFXX ThumbnailImage to JFXX instead of JFIF
+  - Fixed problem with %C no longer incrementing properly
+
+July 7, 2017 - Version 10.59
+
+  - Added a new Canon LensType (thanks LibRaw)
+  - Added a new Nikon LensID
+  - Added "wrong extension" warning to experimental -validate feature
+  - Decode Pentax maker notes in Q-S1 AVI videos
+  - Updated iptc2exif.args and exif2iptc.args to support new EXIF OffsetTime
+    tags (thanks Herb)
+  - Patched potential problem with "Use of uninitialized value $pos" error when
+    importing malformed JSON data
+  - Patched to avoid runtime warning due to invalid Nikon ShutterCount value
+  - Raise an error if -b is used with the -csv option
+  - Changed PNG exIf chunk name to eXIf
+  - Fixed bug introduced in 10.26 which could cause hang when %C is used in an
+    output file name
+  - Fixed MWG:DateTimeOriginal and MWG:CreateDate to return XMP when EXIF and
+    IPTC don't exist
+
 June 29, 2017 - Version 10.58
 
   - Added read support for RIFF-format MBWF/RF64 files
   - Added write support for dji-drone XMP tags
   - Added a new Canon LensType (thanks Steve Bates)
   - Added a few new Sony/Minolta LensType values (thanks Jos Roost)
-  - Added a new Canon LensType
   - Added a couple of new CanonModelID values (thanks LibRaw and Norbert Wasser)
   - Decode some new FujiFilm tags (thanks Chris Schucker)
   - Enhanced FileSize print conversion to show in "GB" for large files

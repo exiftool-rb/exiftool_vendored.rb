@@ -48,7 +48,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 require Exporter;
 
-$VERSION = '3.04';
+$VERSION = '3.07';
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(EscapeXML UnescapeXML);
 
@@ -172,6 +172,7 @@ my %xmpNS = (
     GImage    => 'http://ns.google.com/photos/1.0/image/',
     GPano     => 'http://ns.google.com/photos/1.0/panorama/',
     GSpherical=> 'http://ns.google.com/videos/1.0/spherical/',
+    GDepth    => 'http://ns.google.com/photos/1.0/depthmap/',
     dwc       => 'http://rs.tdwg.org/dwc/index.htm',
     GettyImagesGIFT => 'http://xmp.gettyimages.com/gift/1.0/',
 );
@@ -731,6 +732,10 @@ my %sRetouchArea = (
     GSpherical => {
         Name => 'GSpherical',
         SubDirectory => { TagTable => 'Image::ExifTool::XMP::GSpherical' },
+    },
+    GDepth => {
+        Name => 'GDepth',
+        SubDirectory => { TagTable => 'Image::ExifTool::XMP::GDepth' },
     },
     dwc => {
         Name => 'dwc',
@@ -2042,9 +2047,8 @@ my %sPantryItem = (
         PrintConv => \&Image::ExifTool::Exif::PrintLensInfo,
         PrintConvInv => \&Image::ExifTool::Exif::ConvertLensInfo,
         Notes => q{
-            called LensSpecification by the spec.  Unfortunately the EXIF 2.3 for XMP
-            specification defined this new tag instead of using the existing
-            XMP-aux:LensInfo
+            unfortunately the EXIF 2.3 for XMP specification defined this new tag
+            instead of using the existing XMP-aux:LensInfo
         },
     },
     LensMake            => { },
@@ -2398,12 +2402,13 @@ sub IsUTF8($)
 }
 
 #------------------------------------------------------------------------------
-# Fix malformed UTF8 (by replacing bad bytes with '?')
-# Inputs: 0) string reference
+# Fix malformed UTF8 (by replacing bad bytes with specified character)
+# Inputs: 0) string reference, 1) string to replace each bad byte,
+#         may be '' to delete bad bytes, or undef to use '?'
 # Returns: true if string was fixed, and updates string
-sub FixUTF8($)
+sub FixUTF8($;$)
 {
-    my $strPt = shift;
+    my ($strPt, $bad) = @_;
     my $fixed;
     pos($$strPt) = 0; # start at beginning of string
     for (;;) {
@@ -2415,9 +2420,11 @@ sub FixUTF8($)
             my $n = $ch < 0xe0 ? 1 : ($ch < 0xf0 ? 2 : 3);
             next if $$strPt =~ /\G[\x80-\xbf]{$n}/g;
         }
-        # replace bad character with '?'
-        substr($$strPt, $pos-1, 1) = '?';
-        pos($$strPt) = $fixed = $pos;
+        # replace bad character
+        $bad = '?' unless defined $bad;
+        substr($$strPt, $pos-1, 1) = $bad;
+        pos($$strPt) = $pos-1 + length $bad;
+        $fixed = 1;
     }
     return $fixed;
 }
@@ -3610,6 +3617,8 @@ sub ProcessXMP($$;$)
                             $isSVG = 1;
                         } elsif ($1 eq 'plist') {
                             $type = 'PLIST';
+                        } elsif ($1 eq 'REDXIF') {
+                            $type = 'RMD';
                         } else {
                             return 0;
                         }
