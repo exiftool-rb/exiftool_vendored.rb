@@ -18,9 +18,11 @@ arg_files/xmp2pdf.args
 config_files/age.config
 config_files/bibble.config
 config_files/convert_regions.config
+config_files/dji.config
 config_files/example.config
 config_files/fotoware.config
 config_files/gps2utm.config
+config_files/nksc.config
 config_files/photoshop_paths.config
 config_files/picasa_faces.config
 config_files/time_zone.config
@@ -56,6 +58,7 @@ html/TagNames/DjVu.html
 html/TagNames/EXE.html
 html/TagNames/EXIF.html
 html/TagNames/Extra.html
+html/TagNames/FITS.html
 html/TagNames/FLAC.html
 html/TagNames/FLIF.html
 html/TagNames/FLIR.html
@@ -69,6 +72,7 @@ html/TagNames/GIF.html
 html/TagNames/GIMP.html
 html/TagNames/GPS.html
 html/TagNames/GeoTiff.html
+html/TagNames/GoPro.html
 html/TagNames/H264.html
 html/TagNames/HP.html
 html/TagNames/HTML.html
@@ -112,6 +116,7 @@ html/TagNames/Ogg.html
 html/TagNames/Olympus.html
 html/TagNames/OpenEXR.html
 html/TagNames/Opus.html
+html/TagNames/PCX.html
 html/TagNames/PDF.html
 html/TagNames/PGF.html
 html/TagNames/PICT.html
@@ -138,6 +143,7 @@ html/TagNames/Radiance.html
 html/TagNames/Rawzor.html
 html/TagNames/Real.html
 html/TagNames/Reconyx.html
+html/TagNames/Red.html
 html/TagNames/Ricoh.html
 html/TagNames/Samsung.html
 html/TagNames/Sanyo.html
@@ -153,6 +159,7 @@ html/TagNames/Torrent.html
 html/TagNames/Unknown.html
 html/TagNames/VCard.html
 html/TagNames/Vorbis.html
+html/TagNames/WTV.html
 html/TagNames/XMP.html
 html/TagNames/ZIP.html
 html/TagNames/iWork.html
@@ -245,6 +252,7 @@ lib/Image/ExifTool/DarwinCore.pm
 lib/Image/ExifTool/DjVu.pm
 lib/Image/ExifTool/EXE.pm
 lib/Image/ExifTool/Exif.pm
+lib/Image/ExifTool/FITS.pm
 lib/Image/ExifTool/FLAC.pm
 lib/Image/ExifTool/FLIF.pm
 lib/Image/ExifTool/FLIR.pm
@@ -260,6 +268,7 @@ lib/Image/ExifTool/GIMP.pm
 lib/Image/ExifTool/GPS.pm
 lib/Image/ExifTool/GeoTiff.pm
 lib/Image/ExifTool/Geotag.pm
+lib/Image/ExifTool/GoPro.pm
 lib/Image/ExifTool/H264.pm
 lib/Image/ExifTool/HP.pm
 lib/Image/ExifTool/HTML.pm
@@ -325,6 +334,7 @@ lib/Image/ExifTool/Ogg.pm
 lib/Image/ExifTool/Olympus.pm
 lib/Image/ExifTool/OpenEXR.pm
 lib/Image/ExifTool/Opus.pm
+lib/Image/ExifTool/PCX.pm
 lib/Image/ExifTool/PDF.pm
 lib/Image/ExifTool/PGF.pm
 lib/Image/ExifTool/PICT.pm
@@ -345,6 +355,7 @@ lib/Image/ExifTool/PostScript.pm
 lib/Image/ExifTool/PrintIM.pm
 lib/Image/ExifTool/Qualcomm.pm
 lib/Image/ExifTool/QuickTime.pm
+lib/Image/ExifTool/QuickTimeStream.pl
 lib/Image/ExifTool/README
 lib/Image/ExifTool/RIFF.pm
 lib/Image/ExifTool/RSRC.pm
@@ -353,6 +364,7 @@ lib/Image/ExifTool/Radiance.pm
 lib/Image/ExifTool/Rawzor.pm
 lib/Image/ExifTool/Real.pm
 lib/Image/ExifTool/Reconyx.pm
+lib/Image/ExifTool/Red.pm
 lib/Image/ExifTool/Ricoh.pm
 lib/Image/ExifTool/Samsung.pm
 lib/Image/ExifTool/Sanyo.pm
@@ -373,6 +385,7 @@ lib/Image/ExifTool/Unknown.pm
 lib/Image/ExifTool/VCard.pm
 lib/Image/ExifTool/Validate.pm
 lib/Image/ExifTool/Vorbis.pm
+lib/Image/ExifTool/WTV.pm
 lib/Image/ExifTool/WriteCanonRaw.pl
 lib/Image/ExifTool/WriteExif.pl
 lib/Image/ExifTool/WriteIPTC.pl
@@ -416,6 +429,8 @@ t/CanonRaw_4.out
 t/CanonRaw_5.out
 t/CanonRaw_6.out
 t/CanonRaw_7.out
+t/CanonRaw_8.out
+t/CanonRaw_9.out
 t/CanonVRD.t
 t/CanonVRD_11.out
 t/CanonVRD_12.out
@@ -485,6 +500,8 @@ t/ExifTool_6.out
 t/ExifTool_7.out
 t/ExifTool_8.out
 t/ExifTool_9.out
+t/FITS.t
+t/FITS_2.out
 t/FLAC.t
 t/FLAC_2.out
 t/FLAC_3.out
@@ -543,6 +560,8 @@ t/Geotag_6.out
 t/Geotag_7.out
 t/Geotag_8.out
 t/Geotag_9.out
+t/GoPro.t
+t/GoPro_2.out
 t/HTML.t
 t/HTML_2.out
 t/IPTC.t
@@ -646,6 +665,8 @@ t/OpenEXR.t
 t/OpenEXR_2.out
 t/Opus.t
 t/Opus_2.out
+t/PCX.t
+t/PCX_2.out
 t/PDF.t
 t/PDF_10.out
 t/PDF_11.out
@@ -672,6 +693,7 @@ t/PICT_2.out
 t/PLIST.t
 t/PLIST_2.out
 t/PLIST_3.out
+t/PLIST_4.out
 t/PLUS.t
 t/PLUS_2.out
 t/PNG.t
@@ -715,6 +737,10 @@ t/QuickTime_2.out
 t/QuickTime_3.out
 t/QuickTime_4.out
 t/QuickTime_5.out
+t/QuickTime_6.out
+t/QuickTime_7.out
+t/QuickTime_8.out
+t/QuickTime_9.out
 t/RIFF.t
 t/RIFF_2.out
 t/RIFF_3.out
@@ -727,6 +753,8 @@ t/Real.t
 t/Real_2.out
 t/Real_3.out
 t/Real_4.out
+t/Red.t
+t/Red_2.out
 t/Ricoh.t
 t/Ricoh_2.out
 t/Ricoh_3.out
@@ -754,6 +782,8 @@ t/VCard_2.out
 t/VCard_3.out
 t/Vorbis.t
 t/Vorbis_2.out
+t/WTV.t
+t/WTV_2.out
 t/Writer.t
 t/Writer_10.out
 t/Writer_11.out
@@ -839,6 +869,7 @@ t/XMP_42.out
 t/XMP_43.out
 t/XMP_44.out
 t/XMP_45.out
+t/XMP_46.out
 t/XMP_5.out
 t/XMP_6.out
 t/XMP_7.out
@@ -864,6 +895,7 @@ t/images/BigTIFF.btf
 t/images/Canon.jpg
 t/images/Canon1DmkIII.jpg
 t/images/CanonRaw.cr2
+t/images/CanonRaw.cr3
 t/images/CanonRaw.crw
 t/images/CanonVRD.dr4
 t/images/CanonVRD.vrd
@@ -885,6 +917,7 @@ t/images/EXE.so
 t/images/ExifTool.jpg
 t/images/ExifTool.tif
 t/images/ExtendedXMP.jpg
+t/images/FITS.fits
 t/images/FLAC.flac
 t/images/FLAC.ogg
 t/images/FLIF.flif
@@ -914,6 +947,7 @@ t/images/Geotag.log
 t/images/Geotag.xml
 t/images/Geotag2.log
 t/images/Geotag3.log
+t/images/GoPro.jpg
 t/images/HTML.html
 t/images/ICC_Profile.icc
 t/images/IPTC.jpg
@@ -952,12 +986,14 @@ t/images/OlympusE1.jpg
 t/images/OpenDoc.ods
 t/images/OpenEXR.exr
 t/images/Opus.opus
+t/images/PCX.pcx
 t/images/PDF.pdf
 t/images/PDF2.pdf
 t/images/PGF.pgf
 t/images/PICT.pict
 t/images/PLIST-bin.plist
 t/images/PLIST-xml.plist
+t/images/PLIST.aae
 t/images/PLUS.xmp
 t/images/PNG.png
 t/images/PPM.ppm
@@ -982,6 +1018,7 @@ t/images/Radiance.hdr
 t/images/Real.ra
 t/images/Real.ram
 t/images/Real.rm
+t/images/Red.r3d
 t/images/Ricoh.jpg
 t/images/Ricoh2.jpg
 t/images/Sanyo.jpg
@@ -995,6 +1032,7 @@ t/images/Unknown.jpg
 t/images/VCard.ics
 t/images/VCard.vcf
 t/images/Vorbis.ogg
+t/images/WTV.wtv
 t/images/Writer.jpg
 t/images/XMP.inx
 t/images/XMP.jpg

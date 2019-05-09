@@ -191,7 +191,7 @@ sub FormatIPTC($$$$$;$)
             my $len = length $$valPtr;
             $maxlen or $maxlen = $minlen;
             if ($len < $minlen) {
-                if ($et->Warn("String to short for IPTC:$$tagInfo{Name} (padded)", 2)) {
+                if ($et->Warn("String too short for IPTC:$$tagInfo{Name} (padded)", 2)) {
                     $$valPtr .= ' ' x ($minlen - $len);
                 }
             } elsif ($len > $maxlen) {
@@ -266,12 +266,12 @@ sub IptcTime($)
 
 #------------------------------------------------------------------------------
 # Inverse print conversion for IPTC date or time value
-# Inputs: 0) IPTC date or 'now'
+# Inputs: 0) ExifTool ref, 1) IPTC date or 'now'
 # Returns: IPTC date
-sub InverseDateOrTime($)
+sub InverseDateOrTime($$)
 {
-    my $val = shift;
-    return Image::ExifTool::TimeNow() if lc($val) eq 'now';
+    my ($et, $val) = @_;
+    return $et->TimeNow() if lc($val) eq 'now';
     return $val;
 }
 
@@ -715,7 +715,7 @@ seldom-used routines.
 
 =head1 AUTHOR
 
-Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2019, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
