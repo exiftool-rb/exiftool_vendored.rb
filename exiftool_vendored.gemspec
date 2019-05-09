@@ -6,11 +6,11 @@ require 'exiftool_vendored/version'
 Gem::Specification.new do |spec|
   spec.name          = 'exiftool_vendored'
   spec.version       = ExiftoolVendored::VERSION
-  spec.authors       = ['Matthew McEachen']
-  spec.email         = %w(matthew+github@mceachen.org)
+  spec.authors       = ['Matthew McEachen', 'Sergey Morozov']
+  spec.email         = %w(matthew+github@mceachen.org morozgrafix@gmail.com)
   spec.description   = %q{Vendored version of exiftool}
   spec.summary       = %q{Vendored version of exiftool}
-  spec.homepage      = 'https://github.com/mceachen/exiftool_vendored'
+  spec.homepage      = 'https://github.com/exiftool-rb/exiftool_vendored'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -- lib bin`.split($/)

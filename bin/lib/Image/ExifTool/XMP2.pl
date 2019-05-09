@@ -359,12 +359,13 @@ my %sEntityWithRole = (
     Name        => { Writable => 'lang-alt' },
     Role        => { List => 'Bag' },
 );
-my %sFrameSize = (
-    STRUCT_NAME => 'FrameSize',
-    NAMESPACE   => 'Iptc4xmpExt',
-    WidthPixels  => { Writable => 'integer' },
-    HeightPixels => { Writable => 'integer' },
-);
+# (no longer used)
+#my %sFrameSize = (
+#    STRUCT_NAME => 'FrameSize',
+#    NAMESPACE   => 'Iptc4xmpExt',
+#    WidthPixels  => { Writable => 'integer' },
+#    HeightPixels => { Writable => 'integer' },
+#);
 my %sRating = (
     STRUCT_NAME => 'Rating',
     NAMESPACE   => 'Iptc4xmpExt',
@@ -457,7 +458,7 @@ my %sLinkedImage = (
             AOCurrentLicensorName       => { },
             AOCurrentLicensorId         => { },
             AOCreatorId                 => { List => 'Seq' },
-            AOCircaDateCreated          => { Groups => { 2 => 'Time' } },
+            AOCircaDateCreated          => { Groups => { 2 => 'Time' }, Protected => 1 },
             AOStylePeriod               => { List => 'Bag' },
             AOSourceInvURL              => { },
             AOContentDescription        => { Writable => 'lang-alt' },
@@ -669,6 +670,21 @@ my %sLinkedImage = (
     # new IPTC video metadata 1.1 properties
     # (ref https://www.iptc.org/std/videometadatahub/recommendation/IPTC-VideoMetadataHub-props-Rec_1.1.html)
     SnapshotLink => { Groups => { 2 => 'Image' }, List => 'Bag', Struct => \%sLinkedImage, Name => 'Snapshot' },
+    # new IPTC video metadata 1.2 properties
+    # (ref http://www.iptc.org/std/videometadatahub/recommendation/IPTC-VideoMetadataHub-props-Rec_1.2.html)
+    RecDevice => {
+        Struct => {
+            STRUCT_NAME => 'Device',
+            NAMESPACE   => 'Iptc4xmpExt',
+            Manufacturer        => { },
+            ModelName           => { },
+            SerialNumber        => { },
+            AttLensDescription  => { },
+            OwnersDeviceId      => { },
+        },
+    },
+    PlanningRef         => { List => 'Bag', Struct => \%sEntityWithRole },
+    audioBitsPerSample  => { Writable => 'integer' },
 );
 
 #------------------------------------------------------------------------------
@@ -706,7 +722,7 @@ my %prismPublicationDate = (
         Publishing Requirements for Industry Standard Metadata 3.0 namespace
         tags.  (see L<http://www.prismstandard.org/>)
     },
-    acedemicField   => { }, # (3.0)
+    academicField   => { }, # (3.0)
     aggregateIssueNumber => { Writable => 'integer' }, # (3.0)
     aggregationType => { List => 'Bag' },
     alternateTitle  => {
@@ -1671,6 +1687,18 @@ my %sSubVersion = (
     ImageHeight => { Writable => 'real' },
 );
 
+# Google focus namespace
+%Image::ExifTool::XMP::GFocus = (
+    %xmpTableDefaults,
+    GROUPS => { 1 => 'XMP-GFocus', 2 => 'Image' },
+    NAMESPACE => 'GFocus',
+    NOTES => 'Focus information found in Google depthmap images.',
+    BlurAtInfinity  => { Writable => 'real' },
+    FocalDistance   => { Writable => 'real' },
+    FocalPointX     => { Writable => 'real' },
+    FocalPointY     => { Writable => 'real' },
+);
+
 # Getty Images namespace (ref PH)
 %Image::ExifTool::XMP::GettyImages = (
     %xmpTableDefaults,
@@ -1681,7 +1709,7 @@ my %sSubVersion = (
         prefix recorded in the file, but ExifTool shortens this for the family 1
         group name.
     },
-    Personality         => { },
+    Personality         => { List => 'Bag' },
     OriginalFilename    => { Name => 'OriginalFileName' },
     ParentMEID          => { },
     # the following from StarGeek
@@ -1702,6 +1730,22 @@ my %sSubVersion = (
     RoutingExclusions   => { List => 'Bag' },
     SecondaryFTP        => { List => 'Bag' },
     TimeShot            => { },
+);
+
+# RED smartphone images (ref PH)
+%Image::ExifTool::XMP::LImage = (
+    %xmpTableDefaults,
+    GROUPS => { 1 => 'XMP-LImage', 2 => 'Image' },
+    NAMESPACE => 'LImage',
+    NOTES => 'Tags written by RED smartphones.',
+    MajorVersion => { },
+    MinorVersion => { },
+    RightAlbedo => {
+        Notes => 'Right stereoscopic image',
+        Groups => { 2 => 'Preview' },
+        ValueConv => 'Image::ExifTool::XMP::DecodeBase64($val)',
+        ValueConvInv => 'Image::ExifTool::XMP::EncodeBase64($val)',
+    },
 );
 
 # SVG namespace properties (ref 9)
@@ -1754,7 +1798,7 @@ This file contains definitions for less common XMP namespaces.
 
 =head1 AUTHOR
 
-Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2019, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

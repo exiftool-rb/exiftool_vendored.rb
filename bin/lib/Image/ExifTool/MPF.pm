@@ -15,11 +15,11 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 
-$VERSION = '1.13';
+$VERSION = '1.14';
 
 sub ProcessMPImageList($$$);
 
-# Tags found in MPF APP2 segment in JPEG images
+# Tags found in APP2 MPF segment in JPEG images
 %Image::ExifTool::MPF::Main = (
     GROUPS => { 0 => 'MPF', 1 => 'MPF0', 2 => 'Image'},
     NOTES => q{
@@ -105,9 +105,9 @@ sub ProcessMPImageList($$$);
         Format => 'int32u',
         Mask => 0xf8000000,
         PrintConv => { BITMASK => {
-            29 => 'Representative image',
-            30 => 'Dependent child image',
-            31 => 'Dependent parent image',
+            2 => 'Representative image',
+            3 => 'Dependent child image',
+            4 => 'Dependent parent image',
         }},
     },
     0.2 => {
@@ -266,7 +266,7 @@ Format (MPF) information from JPEG images.
 
 =head1 AUTHOR
 
-Copyright 2003-2017, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2019, Phil Harvey (phil at owl.phy.queensu.ca)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
