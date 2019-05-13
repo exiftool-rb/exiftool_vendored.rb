@@ -41,7 +41,7 @@ task :update_exiftool do
   else
     puts "Downloading #{latest_url} to #{tgz}…"
     tgz.open('wb') do |io_out|
-      IO.open(latest_url, 'rb') do |io_in|
+      URI.parse(latest_url).open('rb') do |io_in|
         io_out.write(io_in.read)
       end
     end
