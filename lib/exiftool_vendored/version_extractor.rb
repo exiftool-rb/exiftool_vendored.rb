@@ -2,7 +2,7 @@
 
 # This is only used by the rake 'update_exiftool' task.
 module ExiftoolVendored
-  PATCHLEVEL = 0
+  PATCHLEVEL = 1
 
   def self.extract_version
     require 'exiftool'

@@ -21,3 +21,5 @@ test/version_tmp
 tmp
 bin/t
 bin/html
+coverage
+.DS_Store
