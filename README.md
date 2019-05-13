@@ -7,7 +7,7 @@
 
 This is
 * a vendored version of Phil Harvey's excellent [exiftool](http://www.sno.phy.queensu.ca/~phil/exiftool) library, and
-* a dependency on the [exiftool](https://github.com/exiftool-rb/exiftool) rubygem, and
+* a dependency on the [exiftool](https://github.com/exiftool-rb/exiftool.rb) rubygem, and
 * an autoload script that configures the Exiftool gem to use the vendored version of the exiftool library.
 
 ## Installation
