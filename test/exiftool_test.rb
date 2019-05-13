@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'test_helper'
 
 describe ExiftoolVendored do
-
   it 'raises NoSuchFile for missing files' do
     proc { Exiftool.new('no/such/file') }.must_raise Exiftool::NoSuchFile
   end
@@ -32,8 +33,8 @@ describe ExiftoolVendored do
   describe 'multi-get' do
     def test_multi_matches
       samples = %w[Canon.jpg NikonD70.jpg FujiFilm.jpg Olympus.jpg Panasonic.jpg Sony.jpg]
-      filenames = Dir['bin/*/t/images/*.jpg'].
-        select { |ea| samples.include?(File.basename(ea)) }
+      filenames = Dir['bin/*/t/images/*.jpg']
+                  .select { |ea| samples.include?(File.basename(ea)) }
       e = Exiftool.new(filenames)
       filenames.each { |f| validate_result(e.result_for(f), f) }
     end
@@ -42,59 +43,58 @@ describe ExiftoolVendored do
   def validate_result(result, filename)
     basename = File.basename(filename)
     yaml_file = "test/expected/#{basename}.yaml"
-    actual = result.to_hash.delete_if { |k, v| ignorable_key?(k) }
+    actual = result.to_hash.delete_if { |k, _v| ignorable_key?(k) }
     File.open(yaml_file, 'w') { |out| YAML.dump(actual, out) } if ENV['DUMP_RESULTS']
-    expected = File.open(yaml_file) { |f| YAML::load(f) }
-    expected.delete_if { |k, v| ignorable_key?(k) }
+    expected = File.open(yaml_file) { |f| YAML.safe_load(f) }
+    expected.delete_if { |k, _v| ignorable_key?(k) }
     expected.must_equal_hash(actual)
   end
 
   # These are expected to be different on travis, due to different paths, filesystems, or
   # exiftool version differences.
   # fov and hyperfocal_distance, for example, are different between v8 and v9.
-  IGNORABLE_KEYS = [
-    :circle_of_confusion,
-    :directory,
-    :exif_tool_version,
-    :file_access_date,
-    :file_access_date_civil,
-    :file_inode_change_date,
-    :file_inode_change_date_civil,
-    :file_modify_date,
-    :file_modify_date_civil,
-    :file_permissions,
-    :intelligent_contrast,
-    :max_focal_length,
-    :min_focal_length,
-    :source_file,
-    :thumbnail_image
-  ] + (newer_exiftool? ? [] : [
-    :af_area_mode, # This can be "Auto" or "Multi-point AF or AI AF" depending on exiftool version
-    :blue_trc,
-    :dof,
-    :file_type_extension,
-    :fov,
-    :green_trc,
-    :hyperfocal_distance,
-    :lens_type,
-    :long_focal,
-    :maker_note_unknown_binary,
-    :measurement_geometry,
-    :megapixels,
-    :nd_filter,
-    :red_trc,
-    :short_focal,
-    :strip_byte_counts,
-    :strip_offsets,
-    :warning
-  ])
+  IGNORABLE_KEYS = %i[
+    circle_of_confusion
+    directory
+    exif_tool_version
+    file_access_date
+    file_access_date_civil
+    file_inode_change_date
+    file_inode_change_date_civil
+    file_modify_date
+    file_modify_date_civil
+    file_permissions
+    intelligent_contrast
+    max_focal_length
+    min_focal_length
+    source_file
+    thumbnail_image
+    af_area_mode
+    blue_trc
+    dof
+    file_type_extension
+    fov
+    green_trc
+    hyperfocal_distance
+    lens_type
+    long_focal
+    maker_note_unknown_binary
+    measurement_geometry
+    megapixels
+    nd_filter
+    red_trc
+    short_focal
+    strip_byte_counts
+    strip_offsets
+    warning
+  ].freeze
 
   puts "Ignoring #{IGNORABLE_KEYS.size} keys."
 
   IGNORABLE_PATTERNS = [
     /.*\-ml-\w\w-\w\w$/, # < translatable
     /35efl$/ # < 35mm Effective focal length, whose calculation was changed between v8 and v9.
-  ]
+  ].freeze
 
   def ignorable_key?(key)
     IGNORABLE_KEYS.include?(key) || IGNORABLE_PATTERNS.any? { |ea| key.to_s =~ ea }

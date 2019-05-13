@@ -1,0 +1,12 @@
+AllCops:
+  TargetRubyVersion: 2.3
+  Exclude:
+    - 'bin/**/*'
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/BlockLength:
+  Exclude:
+    - 'Rakefile'
+    - 'test/exiftool_test.rb'

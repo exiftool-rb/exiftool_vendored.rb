@@ -1,4 +1,5 @@
-# coding: utf-8
+# frozen_string_literal: true
+
 require 'bundler/gem_tasks'
 
 require 'yard'
@@ -15,7 +16,7 @@ Rake::TestTask.new do |t|
   t.verbose = true
 end
 
-task :default => :test
+task default: :test
 
 desc 'Update the vendored Exiftool to the latest version'
 task :update_exiftool do
@@ -25,9 +26,9 @@ task :update_exiftool do
 
   doc = Nokogiri::HTML(open('http://owl.phy.queensu.ca/~phil/exiftool/rss.xml'))
   latest = doc.xpath('//rss/channel/item/enclosure').select do |ea|
-    ea[:url] && ea[:url].end_with?('.tar.gz')
-  end.sort.first
-  fail 'Failed to parse the exiftool/rss.xml' if latest.nil?
+    ea[:url]&.end_with?('.tar.gz')
+  end.min
+  raise 'Failed to parse the exiftool/rss.xml' if latest.nil?
 
   latest_url = latest[:url]
   basename = latest_url.split('/').last
@@ -35,18 +36,18 @@ task :update_exiftool do
   tgz = Pathname.new(File.expand_path("../downloads/#{basename}", __FILE__))
   tgz.parent.mkpath
 
-  if tgz.exist? && tgz.size > 0
+  if tgz.exist? && tgz.size.positive?
     puts "Assuming #{tgz} is valid…"
   else
     puts "Downloading #{latest_url} to #{tgz}…"
     tgz.open('wb') do |io_out|
-      open(latest_url, 'rb') do |io_in|
+      IO.open(latest_url, 'rb') do |io_in|
         io_out.write(io_in.read)
       end
     end
   end
 
-  dest_dir = File.expand_path('../bin', __FILE__)
+  dest_dir = File.expand_path('bin', __dir__)
   FileUtils.remove_entry_secure(dest_dir) if File.exist?(dest_dir)
   FileUtils.mkdir(dest_dir)
   `tar xzf #{tgz.realpath.to_s} -C #{dest_dir}`
@@ -58,13 +59,15 @@ task :update_exiftool do
   new_version = ExiftoolVendored.extract_version
   puts "New rubygem version is #{new_version}!"
 
-  ver_rb = Pathname.new(File.expand_path("../lib/exiftool_vendored/version.rb", __FILE__))
-  ver_rb.open("w") do |io|
-    io.write <<-EOF
-module ExiftoolVendored
-  VERSION = Gem::Version.new('#{new_version}')
-end
-    EOF
+  ver_rb = Pathname.new(File.expand_path('lib/exiftool_vendored/version.rb', __dir__))
+  ver_rb.open('w') do |io|
+    io.write <<~VERSION_FILE
+      # frozen_string_literal: true
+
+      module ExiftoolVendored
+        VERSION = Gem::Version.new('#{new_version}')
+      end
+    VERSION_FILE
   end
   `git add --all #{dest_dir}`
   puts "Added #{dest_dir}. Now `rake test`, `git commit -a` and `rake release`…"
