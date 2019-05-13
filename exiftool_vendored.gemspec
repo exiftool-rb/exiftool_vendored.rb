@@ -3,7 +3,6 @@
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'exiftool_vendored/version'
-require 'english'
 
 Gem::Specification.new do |spec|
   spec.name          = 'exiftool_vendored'
@@ -15,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/exiftool-rb/exiftool_vendored.rb'
   spec.license       = 'MIT'
 
-  spec.files         = `git ls-files -- lib bin`.split($INPUT_RECORD_SEPARATOR)
+  spec.files         = `git ls-files -- lib bin`.split($/)
 
   # We don't add any spec.executables, because it's for our eyes only.
 
