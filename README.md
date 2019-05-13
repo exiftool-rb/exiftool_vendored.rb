@@ -2,6 +2,8 @@
 
 [![Build Status](https://secure.travis-ci.org/exiftool-rb/exiftool_vendored.rb.svg?branch=master)](http://travis-ci.org/exiftool-rb/exiftool_vendored.rb)
 [![Gem Version](https://badge.fury.io/rb/exiftool_vendored.svg)](http://rubygems.org/gems/exiftool_vendored)
+![Gem Downloads](https://img.shields.io/gem/dt/exiftool_vendored.svg)
+![Gem Latest](https://img.shields.io/gem/dtv/exiftool_vendored.svg)
 
 This is
 * a vendored version of Phil Harvey's excellent [exiftool](http://www.sno.phy.queensu.ca/~phil/exiftool) library, and
