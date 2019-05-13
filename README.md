@@ -3,9 +3,9 @@
 [![Build Status](https://secure.travis-ci.org/exiftool-rb/exiftool_vendored.rb.svg?branch=master)](http://travis-ci.org/exiftool-rb/exiftool_vendored.rb)
 [![Gem Version](https://badge.fury.io/rb/exiftool_vendored.svg)](http://rubygems.org/gems/exiftool_vendored)
 [![Gem Downloads](https://img.shields.io/gem/dt/exiftool_vendored.svg)](http://rubygems.org/gems/exiftool_vendored)
-[![Gem Latest] (https://img.shields.io/gem/dtv/exiftool_vendored.svg)](http://rubygems.org/gems/exiftool_vendored)
-[![Code Climate] coverage(https://img.shields.io/codeclimate/coverage/exiftool-rb/exiftool_vendored.rb.svg)](https://codeclimate.com/github/exiftool-rb/exiftool_vendored.rb)
-[![Code Climate] maintainability(https://img.shields.io/codeclimate/maintainability/exiftool-rb/exiftool_vendored.rb.svg)](https://codeclimate.com/github/exiftool-rb/exiftool_vendored.rb)
+[![Gem Latest](https://img.shields.io/gem/dtv/exiftool_vendored.svg)](http://rubygems.org/gems/exiftool_vendored)
+[![Code Climate coverage](https://img.shields.io/codeclimate/coverage/exiftool-rb/exiftool_vendored.rb.svg)](https://codeclimate.com/github/exiftool-rb/exiftool_vendored.rb)
+[![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/exiftool-rb/exiftool_vendored.rb.svg)](https://codeclimate.com/github/exiftool-rb/exiftool_vendored.rb)
 
 This is
 * a vendored version of Phil Harvey's excellent [exiftool](http://www.sno.phy.queensu.ca/~phil/exiftool) library, and
