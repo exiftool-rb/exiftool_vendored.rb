@@ -6,6 +6,7 @@
 [![Gem Latest](https://img.shields.io/gem/dtv/exiftool_vendored.svg)](http://rubygems.org/gems/exiftool_vendored)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/57fa22bff558e49bf128/test_coverage)](https://codeclimate.com/github/exiftool-rb/exiftool_vendored.rb/test_coverage)
 [![Maintainability](https://api.codeclimate.com/v1/badges/57fa22bff558e49bf128/maintainability)](https://codeclimate.com/github/exiftool-rb/exiftool_vendored.rb/maintainability)
+
 This is
 * a vendored version of Phil Harvey's excellent [exiftool](http://www.sno.phy.queensu.ca/~phil/exiftool) library, and
 * a dependency on the [exiftool](https://github.com/exiftool-rb/exiftool.rb) rubygem, and
