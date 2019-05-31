@@ -23,7 +23,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Canon;
 
-$VERSION = '1.32';
+$VERSION = '1.33';
 
 sub ProcessCanonVRD($$;$);
 sub WriteCanonVRD($$;$);
@@ -1955,6 +1955,28 @@ sub WriteCanonVRD($$;$)
 }
 
 #------------------------------------------------------------------------------
+# Write DR4-type CanonVRD edit record
+# Inputs: 0) ExifTool object ref, 1) dirInfo ref, 2) tag table ref
+# Returns: VRD data block (may be empty if deleted, of undef on error)
+sub WriteCanonDR4($$;$)
+{
+    my ($et, $dirInfo, $tagTablePtr) = @_;
+    $et or return 1;    # allow dummy access
+    my $nvHash = $et->GetNewValueHash($Image::ExifTool::Extra{CanonDR4});
+    my $val = $et->GetNewValue($nvHash);
+    if (defined $val) {
+        return undef unless $et->IsOverwriting($nvHash, $val);
+        $et->VPrint(0, "  Writing CanonDR4 as a block\n");
+        ++$$et{CHANGED};
+        return WrapDR4($val);
+    }
+    my $buff = '';
+    $$dirInfo{OutFile} = \$buff;
+    return $buff if ProcessCanonVRD($et, $dirInfo, $tagTablePtr) > 0;
+    return undef;
+}
+
+#------------------------------------------------------------------------------
 # Read/write CanonVRD information (from VRD file or VRD trailer)
 # Inputs: 0) ExifTool object reference, 1) dirInfo reference
 # Returns: 1 on success, 0 not valid VRD, or -1 error writing
@@ -2015,7 +2037,7 @@ sub ProcessCanonVRD($$;$)
         # (so we must disable all Write() calls for this case)
         $dataPt = $outfile;
     }
-    if ($fromFile) {
+    if ($fromFile or $$dirInfo{DirStart}) {
         $dataPt = \$buff unless $dataPt;
         # read VRD data into memory if necessary
         unless ($raf->Read($$dataPt, $dirLen) == $dirLen) {

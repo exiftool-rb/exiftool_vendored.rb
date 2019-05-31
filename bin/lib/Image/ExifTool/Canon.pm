@@ -67,6 +67,7 @@
 #              51) http://u88.n24.queensu.ca/exiftool/forum/index.php/topic,4110.0.html
 #              52) Kai Harrekilde-Petersen private communication
 #              53) Anton Reiser private communication
+#              54) https://github.com/lclevy/canon_cr3
 #              IB) Iliah Borg private communication (LibRaw)
 #              JD) Jens Duttke private communication
 #              JR) Jos Roost private communication
@@ -87,7 +88,7 @@ sub ProcessCTMD($$$);
 sub ProcessExifInfo($$$);
 sub SwapWords($);
 
-$VERSION = '4.12';
+$VERSION = '4.14';
 
 # Note: Removed 'USM' from 'L' lenses since it is redundant - PH
 # (or is it?  Ref 32 shows 5 non-USM L-type lenses)
@@ -427,7 +428,8 @@ $VERSION = '4.12';
     250 => 'Canon EF 24mm f/1.4L II USM or Sigma Lens', #41
     250.1 => 'Sigma 20mm f/1.4 DG HSM | A', #IB
     250.2 => 'Sigma 20mm f/1.5 FF High-Speed Prime | 017', #IB
-    251 => 'Canon EF 70-200mm f/2.8L IS II USM',
+    250.3 => 'Tokina Opera 16-28mm f/2.8 FF', #IB
+    251 => 'Canon EF 70-200mm f/2.8L IS II USM', # (also version III, ref IB. May be distinguised by EXIF:LensModel "EF70-200mm f/2.8L IS III USM" -- add extra logic to LensID?)
     252 => 'Canon EF 70-200mm f/2.8L IS II USM + 1.4x', #50 (1.4x Mk II)
     253 => 'Canon EF 70-200mm f/2.8L IS II USM + 2x', #PH (NC)
     # 253.1 => 'Tamron SP 70-200mm f/2.8 Di VC USD G2 (A025) + 2x', #forum9367
@@ -8396,7 +8398,7 @@ my %filterConv = (
         },
     },
     # CTBO - (CR3 files) int32u entry count N, N x (int32u index, int64u offset, int64u size)
-    #        index 1=XMP, 2=PRVW, 3=mdat
+    #        index: 1=XMP, 2=PRVW, 3=mdat, 4=?, 5=?
     CMT1 => { # (CR3 files)
         Name => 'IFD0',
         SubDirectory => {
@@ -8442,6 +8444,18 @@ my %filterConv = (
     },
 );
 
+# Canon top-level uuid atoms (ref PH, written by DPP4)
+%Image::ExifTool::Canon::uuid2 = (
+    WRITE_PROC => 'Image::ExifTool::QuickTime::WriteQuickTime',
+    CNOP => {
+        Name => 'CanonVRD',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::CanonVRD::Main',
+            WriteProc => 'Image::ExifTool::CanonVRD::WriteCanonDR4',
+        },
+    },
+);
+
 %Image::ExifTool::Canon::UnknownIFD = (
     GROUPS => { 0 => 'MakerNotes', 2 => 'Camera' },
 );
@@ -8452,10 +8466,30 @@ my %filterConv = (
     # CCDT - int32u[3]: 0. 0, 1. decoder type?, 2. 0, 3. index
 );
 
+# 'CMP1' atom information (ref 54, CR3 files)
+%Image::ExifTool::Canon::CMP1 = (
+    PROCESS_PROC => \&Image::ExifTool::ProcessBinaryData,
+    GROUPS => { 0 => 'MakerNotes', 1 => 'Canon', 2 => 'Image' },
+    FORMAT => 'int16u',
+    FIRST_ENTRY => 0,
+    PRIORITY => 0,
+    8  => { Name => 'ImageWidth',  Format => 'int32u' },
+    10 => { Name => 'ImageHeight', Format => 'int32u' },
+    # (the rest of the documented tags don't seem to produced good values with my samples - PH)
+);
+
 # 'CDI1' atom information (ref PH, CR3 files)
 %Image::ExifTool::Canon::CDI1 = (
-    GROUPS => { 0 => 'QuickTime', 1 => 'Canon', 2 => 'Image' },
-    # IAD1 - 32/48 bytes
+    GROUPS => { 0 => 'MakerNotes', 1 => 'Canon', 2 => 'Image' },
+    IAD1 => { Name => 'IAD1', SubDirectory => { TagTable => 'Image::ExifTool::Canon::IAD1' } },
+);
+
+# 'IAD1' atom information (ref 54, CR3 files)
+%Image::ExifTool::Canon::IAD1 = (
+    PROCESS_PROC => \&Image::ExifTool::ProcessBinaryData,
+    GROUPS => { 0 => 'MakerNotes', 1 => 'Canon', 2 => 'Image' },
+    FORMAT => 'int16u',
+    FIRST_ENTRY => 0,
 );
 
 # Canon Timed MetaData (ref PH, CR3 files)
