@@ -916,6 +916,20 @@ TAG: foreach $tagInfo (@matchingTags) {
                     next;
                 }
             }
+            # set group delete flag if this tag represents an entire group
+            if ($$tagInfo{DelGroup} and not $options{DelValue}) {
+                my @del = ( $tag );
+                $$self{DEL_GROUP}{$tag} = 1;
+                # delete extra groups if necessary
+                if ($delMore{$tag}) {
+                    $$self{DEL_GROUP}{$_} = 1, push(@del,$_) foreach @{$delMore{$tag}};
+                }
+                # remove all of this group from previous new values
+                $self->RemoveNewValuesForGroup($tag);
+                $verbose and print $out "  Deleting tags in: @del\n";
+                ++$numSet;
+                next;
+            }
             $noConv = 1;    # value is not defined, so don't do conversion
         }
         # apply inverse PrintConv and ValueConv conversions
@@ -3875,6 +3889,9 @@ sub InitWriteDirs($$;$$)
                     }
                 }
                 $dirName = shift @dirNames;
+            } elsif ($dirName eq 'QuickTime') {
+                # write to specific QuickTime group
+                $dirName = $self->GetGroup($tagInfo, 1);
             }
             while ($dirName) {
                 my $parent = $$fileDirs{$dirName};
