@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module ExiftoolVendored
-  VERSION = Gem::Version.new('11.67.0')
+  VERSION = Gem::Version.new('11.68.0')
 end
