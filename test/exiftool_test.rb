@@ -4,21 +4,21 @@ require 'test_helper'
 
 describe ExiftoolVendored do
   it 'raises NoSuchFile for missing files' do
-    proc { Exiftool.new('no/such/file') }.must_raise Exiftool::NoSuchFile
+    _ { Exiftool.new('no/such/file') }.must_raise Exiftool::NoSuchFile
   end
 
   it 'raises NotAFile for directories' do
-    proc { Exiftool.new(File.dirname(__FILE__)) }.must_raise Exiftool::NotAFile
+    _ { Exiftool.new(File.dirname(__FILE__)) }.must_raise Exiftool::NotAFile
   end
 
   it 'no-ops with no files' do
     e = Exiftool.new([])
-    e.errors?.must_be_false
+    value(e.errors?).must_be_false
   end
 
   it 'has errors with files without EXIF headers' do
     e = Exiftool.new('Gemfile')
-    e.errors?.must_be_true
+    value(e.errors?).must_be_true
   end
 
   describe 'single-get' do
