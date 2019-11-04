@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'test_helper'
+require 'pry-byebug'
 
 describe ExiftoolVendored do
   it 'raises NoSuchFile for missing files' do
@@ -16,14 +17,15 @@ describe ExiftoolVendored do
     value(e.errors?).must_be_false
   end
 
-  it 'has errors with files without EXIF headers' do
-    e = Exiftool.new('Gemfile')
-    value(e.errors?).must_be_true
+  it 'has no errors with files without EXIF headers' do
+    e = Exiftool.new('LICENSE.txt')
+    validate_result(e, 'LICENSE.txt')
   end
 
   describe 'single-get' do
     it 'responds with known correct responses' do
-      Dir['test/*.jpg'].each do |filename|
+      samples = %w[Canon.jpg NikonD70.jpg FujiFilm.jpg Olympus.jpg Panasonic.jpg Sony.jpg]
+      Dir['bin/t/images/*.jpg'].select { |ea| samples.include?(File.basename(ea)) }.each do |filename|
         e = Exiftool.new(filename)
         validate_result(e, filename)
       end
@@ -33,7 +35,7 @@ describe ExiftoolVendored do
   describe 'multi-get' do
     def test_multi_matches
       samples = %w[Canon.jpg NikonD70.jpg FujiFilm.jpg Olympus.jpg Panasonic.jpg Sony.jpg]
-      filenames = Dir['bin/*/t/images/*.jpg']
+      filenames = Dir['bin/t/images/*.jpg']
                   .select { |ea| samples.include?(File.basename(ea)) }
       e = Exiftool.new(filenames)
       filenames.each { |f| validate_result(e.result_for(f), f) }
@@ -45,9 +47,9 @@ describe ExiftoolVendored do
     yaml_file = "test/expected/#{basename}.yaml"
     actual = result.to_hash.delete_if { |k, _v| ignorable_key?(k) }
     File.open(yaml_file, 'w') { |out| YAML.dump(actual, out) } if ENV['DUMP_RESULTS']
-    expected = File.open(yaml_file) { |f| YAML.safe_load(f) }
+    expected = File.open(yaml_file) { |f| YAML.safe_load(f, [Symbol, Date, Rational]) }
     expected.delete_if { |k, _v| ignorable_key?(k) }
-    expected.must_equal_hash(actual)
+    _(expected).must_equal_hash(actual)
   end
 
   # These are expected to be different on travis, due to different paths, filesystems, or
