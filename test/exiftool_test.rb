@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'test_helper'
-require 'pry-byebug'
 
 describe ExiftoolVendored do
   it 'raises NoSuchFile for missing files' do
