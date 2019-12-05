@@ -24,7 +24,7 @@ task :update_exiftool do
   require 'nokogiri'
   require 'pathname'
 
-  doc = Nokogiri::HTML(open('http://owl.phy.queensu.ca/~phil/exiftool/rss.xml'))
+  doc = Nokogiri::HTML(open('https://exiftool.org/rss.xml'))
   latest = doc.xpath('//rss/channel/item/enclosure').select do |ea|
     ea[:url]&.end_with?('.tar.gz')
   end.min
