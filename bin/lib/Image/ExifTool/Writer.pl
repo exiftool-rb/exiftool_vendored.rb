@@ -280,8 +280,8 @@ my %ignorePrintConv = map { $_ => 1 } qw(OTHER BITMASK Notes);
 #        each value in the list.  Internally, the new information is stored in
 #        the following members of the $$self{NEW_VALUE}{$tagInfo} hash:
 #           TagInfo - tag info ref
-#           DelValue - list ref for values to delete
-#           Value - list ref for values to add (not defined if deleting the tag)
+#           DelValue - list ref for raw values to delete
+#           Value - list ref for raw values to add (not defined if deleting the tag)
 #           IsCreating - must be set for the tag to be added for the standard file types,
 #                        otherwise just changed if it already exists.  This may be
 #                        overridden for file types with a PREFERRED metadata type.
@@ -4763,7 +4763,7 @@ TryLib: for ($lib=$strptimeLib; ; $lib='') {
                 if (not $tz) {
                     if (eval { require Time::Local }) {
                         # determine timezone offset for this time
-                        my @args = ($a[4],$a[3],$a[2],$a[1],$a[0]-1,$yr-1900);
+                        my @args = ($a[4],$a[3],$a[2],$a[1],$a[0]-1,$yr);
                         my $diff = Time::Local::timegm(@args) - TimeLocal(@args);
                         $tz = TimeZoneString($diff / 60);
                     } else {
@@ -6890,7 +6890,7 @@ used routines.
 
 =head1 AUTHOR
 
-Copyright 2003-2019, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2020, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

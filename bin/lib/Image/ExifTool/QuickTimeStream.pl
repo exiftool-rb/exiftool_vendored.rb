@@ -1,7 +1,7 @@
 #------------------------------------------------------------------------------
 # File:         QuickTimeStream.pl
 #
-# Description:  Extract embedded information from QuickTime movie data
+# Description:  Extract embedded information from QuickTime media data
 #
 # Revisions:    2018-01-03 - P. Harvey Created
 #
@@ -85,7 +85,7 @@ my %insvLimit = (
 %Image::ExifTool::QuickTime::Stream = (
     GROUPS => { 2 => 'Location' },
     NOTES => q{
-        Timed metadata extracted from QuickTime movie data and some AVI videos when
+        Timed metadata extracted from QuickTime media data and some AVI videos when
         the ExtractEmbedded option is used.
     },
     VARS => { NO_ID => 1 },
@@ -1217,7 +1217,7 @@ sub ProcessFreeGPS2($$$)
     my ($et, $dirInfo, $tagTbl) = @_;
     my $dataPt = $$dirInfo{DataPt};
     my $dirLen = $$dirInfo{DirLen};
-    my ($yr, $mon, $day, $hr, $min, $sec, $pos);
+    my ($yr, $mon, $day, $hr, $min, $sec, $pos, @acc);
     my ($lat, $latRef, $lon, $lonRef, $spd, $trk, $alt, $ddd, $unk);
 
     return 0 if $dirLen < 82;   # minimum size of block with a single GPS record
@@ -1356,12 +1356,14 @@ ATCRec: for ($recPos = 0x30; $recPos + 52 < $dirLen; $recPos += 52) {
         # 0x70 - int32u year - 2000
         # 0x74 - int32u month
         # 0x78 - int32u day
+        # 0x7c - int32s[3] accelerometer * 1000
         ($latRef, $lonRef) = ($1, $2);
-        ($hr,$min,$sec,$yr,$mon,$day) = unpack('x48V3x52V3', $$dataPt);
+        ($hr,$min,$sec,$yr,$mon,$day,@acc) = unpack('x48V3x52V6', $$dataPt);
         $lat = GetDouble($dataPt, 0x40);
         $lon = GetDouble($dataPt, 0x50);
         $spd = GetDouble($dataPt, 0x60) * $knotsToKph;
         $trk = GetDouble($dataPt, 0x68);
+        map { $_ = $_ - 4294967296 if $_ >= 0x80000000; $_ /= 1000 } @acc;
 
     } elsif ($$dataPt =~ /^.{72}A([NS])([EW])/s) {
 
@@ -1481,6 +1483,7 @@ ATCRec: for ($recPos = 0x30; $recPos + 52 < $dirLen; $recPos += 52) {
     if (defined $alt) {
         $et->HandleTag($tagTbl, GPSAltitude  => $alt);
     }
+    $et->HandleTag($tagTbl, Accelerometer => "@acc") if @acc;
     return 1;
 }
 
@@ -2069,9 +2072,9 @@ sub ProcessINSVTrailer($)
 }
 
 #------------------------------------------------------------------------------
-# Scan movie data for "freeGPS" metadata if not found already (ref PH)
+# Scan media data for "freeGPS" metadata if not found already (ref PH)
 # Inputs: 0) ExifTool ref
-sub ScanMovieData($)
+sub ScanMediaData($)
 {
     my $et = shift;
     my $raf = $$et{RAF} or return;
@@ -2079,9 +2082,9 @@ sub ScanMovieData($)
     my ($pos, $buf2) = (0, '');
 
     # don't rescan for freeGPS if we already found embedded metadata
-    my $dataPos = $$et{VALUE}{MovieDataOffset};
+    my $dataPos = $$et{VALUE}{MediaDataOffset};
     if ($dataPos and not $$et{DOC_COUNT}) {
-        $dataLen = $$et{VALUE}{MovieDataSize};
+        $dataLen = $$et{VALUE}{MediaDataSize};
         if ($dataLen) {
             if ($raf->Seek($dataPos, 0)) {
                 $$et{FreeGPS2} = { };   # initialize variable space for FreeGPS2()
@@ -2091,7 +2094,7 @@ sub ScanMovieData($)
         }
     }
 
-    # loop through 'mdat' movie data looking for GPS information
+    # loop through 'mdat' media data looking for GPS information
     while ($dataLen) {
         last if $pos + $gpsBlockSize > $dataLen;
         last unless $raf->Read($buff, $gpsBlockSize);
@@ -2156,7 +2159,7 @@ __END__
 
 =head1 NAME
 
-Image::ExifTool::QuickTime - Extract embedded information from movie data
+Image::ExifTool::QuickTime - Extract embedded information from media data
 
 =head1 SYNOPSIS
 
@@ -2165,11 +2168,11 @@ These routines are autoloaded by Image::ExifTool::QuickTime.
 =head1 DESCRIPTION
 
 This file contains routines used by Image::ExifTool to extract embedded
-information like GPS tracks from MOV, MP4 and INSV movie data.
+information like GPS tracks from MOV, MP4 and INSV media data.
 
 =head1 AUTHOR
 
-Copyright 2003-2019, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2020, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

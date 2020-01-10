@@ -10,7 +10,7 @@
 use strict;
 require 5.004;
 
-my $version = '11.80';
+my $version = '11.84';
 
 # add our 'lib' directory to the include list BEFORE 'use Image::ExifTool'
 my $exeDir;
@@ -65,7 +65,7 @@ sub MyConvertFileName($$);
 sub SuggestedExtension($$$);
 sub LoadPrintFormat($);
 sub FilenameSPrintf($;$@);
-sub NextUnusedFilename($;$$);
+sub NextUnusedFilename($;$);
 sub CreateDirectory($);
 sub OpenOutputFile($;@);
 sub AcceptFile($);
@@ -197,6 +197,7 @@ my $validFile;      # flag indicating we processed a valid file
 my $verbose;        # verbose setting
 my $vout;           # verbose output file reference (\*STDOUT or \*STDERR)
 my $windowTitle;    # title for console window
+my $isBinary;       # true if value is a SCALAR ref
 my $xml;            # flag for XML-formatted output
 
 # flag to keep the input -@ argfile open:
@@ -2186,8 +2187,10 @@ sub GetImageInfo($$)
 TAG:    foreach $tag (@foundTags) {
             my $tagName = GetTagName($tag);
             my ($group, $valList);
-            # make sure this tag has a value
+            # get the value for this tag
             my $val = $$info{$tag};
+            # set flag if this is binary data
+            $isBinary = (ref $val eq 'SCALAR' and defined $binaryOutput);
             if (ref $val) {
                 # happens with -X, -j or -php when combined with -b:
                 if (defined $binaryOutput and not $binaryOutput and $$et{TAG_INFO}{$tag}{Protected}) {
@@ -3050,7 +3053,7 @@ sub DoHardLink($$$$$)
         }
     }
     if (defined $testName) {
-        $testName = NextUnusedFilename($testName, $src, 1);
+        $testName = NextUnusedFilename($testName, $src);
         if ($usedFileName{$testName}) {
             $et->Warn("File '${testName}' would exist");
         } elsif ($et->SetFileName($src, $testName, 'Test', $usedFileName{$testName}) == 1) {
@@ -3149,7 +3152,6 @@ sub EscapeJSON($;$)
     if ($json < 2 and defined $binaryOutput and Image::ExifTool::XMP::IsUTF8(\$str) < 0) {
         return '"base64:' . Image::ExifTool::XMP::EncodeBase64($str, 1) . '"';
     }
-    $str =~ s/\0+$//;   # remove trailing nulls
     # escape special characters
     $str =~ s/(["\t\n\r\\])/\\$jsonChar{$1}/sg;
     if ($json < 2) { # JSON
@@ -3159,6 +3161,7 @@ sub EscapeJSON($;$)
         # JSON strings must be valid UTF8
         Image::ExifTool::XMP::FixUTF8(\$str) unless $altEnc;
     } else { # PHP
+        $str =~ s/\0+$// unless $isBinary;  # remove trailing nulls unless binary
         # must escape "$" too for PHP
         $str =~ s/\$/\\\$/sg;
         # escape other control characters with \x
@@ -3195,7 +3198,8 @@ sub FormatJSON($$$)
         print $fp $bra;
         foreach (sort keys %$val) {
             print $fp ',' if $comma;
-            print $fp qq(\n$ind  "$_"$sep );
+            my $key = EscapeJSON($_, 1);
+            print $fp qq(\n$ind  $key$sep );
             # hack to force decimal id's to be printed as strings with -H
             if ($showTagID and $_ eq 'id' and $showTagID eq 'H' and $$val{$_} =~ /^\d+\.\d+$/) {
                 print $fp qq{"$$val{$_}"};
@@ -3901,11 +3905,10 @@ sub Num2Alpha($)
 #------------------------------------------------------------------------------
 # Expand '%c' and '%C' codes if filename to get next unused file name
 # Inputs: 0) file name format string, 1) filename ok to use even if it exists
-#         2) dry run (won't really be renaming file)
 # Returns: new file name
-sub NextUnusedFilename($;$$)
+sub NextUnusedFilename($;$)
 {
-    my ($fmt, $okfile, $dryRun) = @_;
+    my ($fmt, $okfile) = @_;
     return $fmt unless $fmt =~ /%[-+]?\d*\.?\d*[lun]?[cC]/;
     my %sep = ( '-' => '-', '+' => '_' );
     my ($copy, $alpha) = (0, 'a');
@@ -4288,46 +4291,46 @@ supported by ExifTool (r = read, w = write, c = create):
 
   File Types
   ------------+-------------+-------------+-------------+------------
-  3FR   r     | DSS   r     | JNG   r/w   | ODT   r     | RTF   r
-  3G2   r/w   | DV    r     | JP2   r/w   | OFR   r     | RW2   r/w
-  3GP   r/w   | DVB   r/w   | JPEG  r/w   | OGG   r     | RWL   r/w
-  A     r     | DVR-MS r    | JSON  r     | OGV   r     | RWZ   r
-  AA    r     | DYLIB r     | K25   r     | OPUS  r     | RM    r
-  AAE   r     | EIP   r     | KDC   r     | ORF   r/w   | SEQ   r
-  AAX   r/w   | EPS   r/w   | KEY   r     | OTF   r     | SKETCH r
-  ACR   r     | EPUB  r     | LA    r     | PAC   r     | SO    r
-  AFM   r     | ERF   r/w   | LFP   r     | PAGES r     | SR2   r/w
-  AI    r/w   | EXE   r     | LNK   r     | PBM   r/w   | SRF   r
-  AIFF  r     | EXIF  r/w/c | LRV   r/w   | PCD   r     | SRW   r/w
-  APE   r     | EXR   r     | M2TS  r     | PCX   r     | SVG   r
-  ARQ   r/w   | EXV   r/w/c | M4A/V r/w   | PDB   r     | SWF   r
-  ARW   r/w   | F4A/V r/w   | MAX   r     | PDF   r/w   | THM   r/w
-  ASF   r     | FFF   r/w   | MEF   r/w   | PEF   r/w   | TIFF  r/w
-  AVI   r     | FITS  r     | MIE   r/w/c | PFA   r     | TORRENT r
-  AVIF  r/w   | FLA   r     | MIFF  r     | PFB   r     | TTC   r
-  AZW   r     | FLAC  r     | MKA   r     | PFM   r     | TTF   r
-  BMP   r     | FLIF  r/w   | MKS   r     | PGF   r     | TXT   r
-  BPG   r     | FLV   r     | MKV   r     | PGM   r/w   | VCF   r
-  BTF   r     | FPF   r     | MNG   r/w   | PLIST r     | VRD   r/w/c
-  CHM   r     | FPX   r     | MOBI  r     | PICT  r     | VSD   r
-  COS   r     | GIF   r/w   | MODD  r     | PMP   r     | WAV   r
-  CR2   r/w   | GPR   r/w   | MOI   r     | PNG   r/w   | WDP   r/w
-  CR3   r/w   | GZ    r     | MOS   r/w   | PPM   r/w   | WEBP  r
-  CRM   r/w   | HDP   r/w   | MOV   r/w   | PPT   r     | WEBM  r
-  CRW   r/w   | HDR   r     | MP3   r     | PPTX  r     | WMA   r
-  CS1   r/w   | HEIC  r/w   | MP4   r/w   | PS    r/w   | WMV   r
-  DCM   r     | HEIF  r/w   | MPC   r     | PSB   r/w   | WTV   r
-  DCP   r/w   | HTML  r     | MPG   r     | PSD   r/w   | WV    r
-  DCR   r     | ICC   r/w/c | MPO   r/w   | PSP   r     | X3F   r/w
-  DFONT r     | ICS   r     | MQV   r/w   | QTIF  r/w   | XCF   r
-  DIVX  r     | IDML  r     | MRW   r/w   | R3D   r     | XLS   r
-  DJVU  r     | IIQ   r/w   | MXF   r     | RA    r     | XLSX  r
-  DLL   r     | IND   r/w   | NEF   r/w   | RAF   r/w   | XMP   r/w/c
-  DNG   r/w   | INSV  r     | NRW   r/w   | RAM   r     | ZIP   r
-  DOC   r     | INX   r     | NUMBERS r   | RAR   r     |
-  DOCX  r     | ISO   r     | O     r     | RAW   r/w   |
-  DPX   r     | ITC   r     | ODP   r     | RIFF  r     |
-  DR4   r/w/c | J2C   r     | ODS   r     | RSRC  r     |
+  3FR   r     | DSS   r     | J2C   r     | ODS   r     | RSRC  r
+  3G2   r/w   | DV    r     | JNG   r/w   | ODT   r     | RTF   r
+  3GP   r/w   | DVB   r/w   | JP2   r/w   | OFR   r     | RW2   r/w
+  A     r     | DVR-MS r    | JPEG  r/w   | OGG   r     | RWL   r/w
+  AA    r     | DYLIB r     | JSON  r     | OGV   r     | RWZ   r
+  AAE   r     | EIP   r     | K25   r     | OPUS  r     | RM    r
+  AAX   r/w   | EPS   r/w   | KDC   r     | ORF   r/w   | SEQ   r
+  ACR   r     | EPUB  r     | KEY   r     | OTF   r     | SKETCH r
+  AFM   r     | ERF   r/w   | LA    r     | PAC   r     | SO    r
+  AI    r/w   | EXE   r     | LFP   r     | PAGES r     | SR2   r/w
+  AIFF  r     | EXIF  r/w/c | LNK   r     | PBM   r/w   | SRF   r
+  APE   r     | EXR   r     | LRV   r/w   | PCD   r     | SRW   r/w
+  ARQ   r/w   | EXV   r/w/c | M2TS  r     | PCX   r     | SVG   r
+  ARW   r/w   | F4A/V r/w   | M4A/V r/w   | PDB   r     | SWF   r
+  ASF   r     | FFF   r/w   | MAX   r     | PDF   r/w   | THM   r/w
+  AVI   r     | FITS  r     | MEF   r/w   | PEF   r/w   | TIFF  r/w
+  AVIF  r/w   | FLA   r     | MIE   r/w/c | PFA   r     | TORRENT r
+  AZW   r     | FLAC  r     | MIFF  r     | PFB   r     | TTC   r
+  BMP   r     | FLIF  r/w   | MKA   r     | PFM   r     | TTF   r
+  BPG   r     | FLV   r     | MKS   r     | PGF   r     | TXT   r
+  BTF   r     | FPF   r     | MKV   r     | PGM   r/w   | VCF   r
+  CHM   r     | FPX   r     | MNG   r/w   | PLIST r     | VRD   r/w/c
+  COS   r     | GIF   r/w   | MOBI  r     | PICT  r     | VSD   r
+  CR2   r/w   | GPR   r/w   | MODD  r     | PMP   r     | WAV   r
+  CR3   r/w   | GZ    r     | MOI   r     | PNG   r/w   | WDP   r/w
+  CRM   r/w   | HDP   r/w   | MOS   r/w   | PPM   r/w   | WEBP  r
+  CRW   r/w   | HDR   r     | MOV   r/w   | PPT   r     | WEBM  r
+  CS1   r/w   | HEIC  r/w   | MP3   r     | PPTX  r     | WMA   r
+  DCM   r     | HEIF  r/w   | MP4   r/w   | PS    r/w   | WMV   r
+  DCP   r/w   | HTML  r     | MPC   r     | PSB   r/w   | WTV   r
+  DCR   r     | ICC   r/w/c | MPG   r     | PSD   r/w   | WV    r
+  DFONT r     | ICS   r     | MPO   r/w   | PSP   r     | X3F   r/w
+  DIVX  r     | IDML  r     | MQV   r/w   | QTIF  r/w   | XCF   r
+  DJVU  r     | IIQ   r/w   | MRW   r/w   | R3D   r     | XLS   r
+  DLL   r     | IND   r/w   | MXF   r     | RA    r     | XLSX  r
+  DNG   r/w   | INSP  r/w   | NEF   r/w   | RAF   r/w   | XMP   r/w/c
+  DOC   r     | INSV  r     | NRW   r/w   | RAM   r     | ZIP   r
+  DOCX  r     | INX   r     | NUMBERS r   | RAR   r     |
+  DPX   r     | ISO   r     | O     r     | RAW   r/w   |
+  DR4   r/w/c | ITC   r     | ODP   r     | RIFF  r     |
 
   Meta Information
   ----------------------+----------------------+---------------------
@@ -5190,7 +5193,7 @@ with this command:
 
 produces output like this:
 
-    -- Generated by ExifTool 11.80 --
+    -- Generated by ExifTool 11.84 --
     File: a.jpg - 2003:10:31 15:44:19
     (f/5.6, 1/60s, ISO 100)
     File: b.jpg - 2006:05:23 11:57:38
@@ -5867,7 +5870,7 @@ available).  When writing, causes compressed information to be written if
 supported by the metadata format (eg. compressed textual metadata in PNG),
 disables the recommended padding in embedded XMP (saving 2424 bytes when
 writing XMP in a file), and writes XMP in shorthand format -- the equivalent
-of setting the API Compress and Compact="Padding,Shorthand".
+of setting the API Compress=1 and Compact="NoPadding,Shorthand".
 
 =back
 
@@ -5982,11 +5985,12 @@ from the track log, and they are supported by the destination metadata
 format):  GPSLatitude, GPSLatitudeRef, GPSLongitude, GPSLongitudeRef,
 GPSAltitude, GPSAltitudeRef, GPSDateStamp, GPSTimeStamp, GPSDateTime,
 GPSTrack, GPSTrackRef, GPSSpeed, GPSSpeedRef, GPSImgDirection,
-GPSImgDirectionRef, GPSPitch, GPSRoll and AmbientTemperature.  By default,
-tags are created in EXIF, and updated in XMP only if they already exist. 
-However, C<EXIF:Geotime> or C<XMP:Geotime> may be specified to write only
-EXIF or XMP tags respectively.  Note that GPSPitch and GPSRoll are
-non-standard, and require user-defined tags in order to be written.
+GPSImgDirectionRef, GPSPitch, GPSRoll, AmbientTemperature and
+CameraElevationAngle.  By default, tags are created in EXIF, and updated in
+XMP only if they already exist.  However, C<EXIF:Geotime> or C<XMP:Geotime>
+may be specified to write only EXIF or XMP tags respectively.  Note that
+GPSPitch and GPSRoll are non-standard, and require user-defined tags in
+order to be written.
 
 The C<Geosync> tag may be used to specify a time correction which is applied
 to each C<Geotime> value for synchronization with GPS time.  For example,
@@ -6036,11 +6040,11 @@ I<SHIFT> string.  For example:
 Add features from specified plug-in I<MODULE>.  Currently, the MWG module is
 the only plug-in module distributed with exiftool.  This module adds
 read/write support for tags as recommended by the Metadata Working Group. 
-To save typing, C<-use MWG> is assumed if the C<MWG> group is specified for
-any tag on the command line.  See the
-L<MWG Tags documentation|Image::ExifTool::TagNames/MWG Tags> for more
-details.  Note that this option is not reversible, and remains in effect
-until the application terminates, even across the C<-execute> option.
+As a convenience, C<-use MWG> is assumed if the C<MWG> group is specified
+for any tag on the command line.  See the L<MWG Tags
+documentation|Image::ExifTool::TagNames/MWG Tags> for more details.  Note
+that this option is not reversible, and remains in effect until the
+application terminates, even across the C<-execute> option.
 
 =back
 
@@ -6920,7 +6924,7 @@ the commands if B<-execute> was used).
 
 =head1 AUTHOR
 
-Copyright 2003-2019, Phil Harvey
+Copyright 2003-2020, Phil Harvey
 
 This is free software; you can redistribute it and/or modify it under the
 same terms as Perl itself.

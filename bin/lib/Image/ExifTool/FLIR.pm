@@ -1400,7 +1400,6 @@ sub ProcessMeasInfo($$$)
     my $dirStart = $$dirInfo{DirStart} || 0;
     my $dataPos = $$dirInfo{DataPos};
     my $dirEnd = $dirStart + $$dirInfo{DirLen};
-    my $verbose = $et->Options('Verbose');
 
     my $pos = $dirStart + 12;
     return 0 if $pos > $dirEnd;
@@ -1595,7 +1594,7 @@ Systems Inc. thermal image files (FFF, FPF and JPEG format).
 
 =head1 AUTHOR
 
-Copyright 2003-2019, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2020, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

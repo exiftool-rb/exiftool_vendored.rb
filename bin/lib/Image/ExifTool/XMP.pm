@@ -1471,6 +1471,15 @@ my %sPantryItem = (
     UprightFourSegmentsCount            => { Writable => 'integer' },
     AutoTone                            => { Writable => 'boolean' },
     Texture                             => { Writable => 'integer' },
+    # more stuff (ref forum10721)
+    OverrideLookVignette                => { Writable => 'boolean' },
+    Look => {
+        Struct => {
+            STRUCT_NAME => 'Look',
+            NAMESPACE   => 'crs',
+            Name   => { },
+        }
+    },
 );
 
 # Tiff namespace properties (tiff)
@@ -2017,6 +2026,7 @@ my %sPantryItem = (
         PrintConvInv => '$val=~s/\s*m$//; $val',
     },
     NativeDigest => { }, #PH
+    # new Exif
 );
 
 # Exif extended properties (exifEX, ref 12)
@@ -4055,7 +4065,7 @@ information.
 
 =head1 AUTHOR
 
-Copyright 2003-2019, Phil Harvey (phil at owl.phy.queensu.ca)
+Copyright 2003-2020, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
