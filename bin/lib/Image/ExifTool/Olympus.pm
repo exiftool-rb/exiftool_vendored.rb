@@ -21,7 +21,7 @@
 #              13) Chris Shaw private communication (E-3)
 #              14) Viktor Lushnikov private communication (E-400)
 #              15) Yrjo Rauste private communication (E-30)
-#              16) Godfrey DiGiorgi private communcation (E-P1) + http://forums.dpreview.com/forums/read.asp?message=33187567
+#              16) Godfrey DiGiorgi private communication (E-P1) + http://forums.dpreview.com/forums/read.asp?message=33187567
 #              17) Martin Hibers private communication
 #              18) Tomasz Kawecki private communication
 #              19) Brad Grier private communication
@@ -39,7 +39,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::APP12;
 
-$VERSION = '2.63';
+$VERSION = '2.64';
 
 sub PrintLensInfo($$$);
 
@@ -109,6 +109,7 @@ my %olympusLensTypes = (
     '0 32 10' => 'Olympus M.Zuiko Digital ED 12-200mm F3.5-6.3', #IB
     '0 33 00' => 'Olympus Zuiko Digital 25mm F2.8', #PH
     '0 34 00' => 'Olympus Zuiko Digital ED 9-18mm F4.0-5.6', #7
+    '0 34 10' => 'Olympus M.Zuiko Digital ED 12-45mm F4.0 Pro', #IB
     '0 35 00' => 'Olympus Zuiko Digital 14-54mm F2.8-3.5 II', #PH
     # Sigma lenses
     '1 01 00' => 'Sigma 18-50mm F3.5-5.6 DC', #8
@@ -418,6 +419,7 @@ my %olympusCameraTypes = (
     S0080 => 'E-M1X', #IB
     S0085 => 'E-PL10', #IB
     S0089 => 'E-M5MarkIII',
+    S0092 => 'E-M1MarkIII', #IB
     SR45 => 'D220',
     SR55 => 'D320L',
     SR83 => 'D340L',

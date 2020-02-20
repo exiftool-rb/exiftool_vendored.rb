@@ -28,7 +28,7 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %mimeType $swapBytes $swapWords $currentByteOrder %unpackStd
             %jpegMarker %specialTags %fileTypeLookup $testLen);
 
-$VERSION = '11.86';
+$VERSION = '11.88';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -251,6 +251,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     CRM  => ['MOV',  'Canon RAW Movie'],
     CRW  => ['CRW',  'Canon RAW format'],
     CS1  => ['PSD',  'Sinar CaptureShop 1-Shot RAW'],
+    CSV  => ['TXT',  'Comma-Separated Values'],
     DC3  =>  'DICM',
     DCM  =>  'DICM',
     DCP  => ['TIFF', 'DNG Camera Profile'],
@@ -577,6 +578,7 @@ my %fileDescription = (
     CR3  => 'image/x-canon-cr3',
     CRM  => 'video/x-canon-crm',
     CRW  => 'image/x-canon-crw',
+    CSV  => 'text/csv',
     DCP  => 'application/octet-stream', #PH (NC)
     DCR  => 'image/x-kodak-dcr',
     DCX  => 'image/dcx',
@@ -1043,7 +1045,7 @@ my %systemTagsNotes = (
     # accept either scalar or scalar reference
     RawConv => '$self->ValidateImage(ref $val ? $val : \$val, $tag)',
     # we allow preview image to be set to '', but we don't want a zero-length value
-    # in the IFD, so set it temorarily to 'none'.  Note that the length is <= 4,
+    # in the IFD, so set it temporarily to 'none'.  Note that the length is <= 4,
     # so this value will fit in the IFD so the preview fixup won't be generated.
     ValueConvInv => '$val eq "" and $val="none"; $val',
 );
@@ -1711,7 +1713,13 @@ my %systemTagsNotes = (
             multiple values may be separated with commas, eg. C<-ForceWrite=exif,xmp>
         },
     },
-    EmbeddedVideo => { Groups => { 2 => 'Video' } },
+    EmbeddedVideo => { Groups => { 0 => 'Trailer', 2 => 'Video' } },
+    Trailer => {
+        Groups => { 0 => 'Trailer' },
+        Notes => 'the full JPEG trailer data block.  Extracted only if specifically requested',
+        Writable => 1,
+        Protected => 1,
+    },
 );
 
 # YCbCrSubSampling values (used by JPEG SOF, EXIF and XMP)
@@ -3250,7 +3258,7 @@ sub GetDescription($$)
 # Returns: Scalar context: group name (for family 0 if not otherwise specified)
 #          List context: group name if family specified, otherwise list of
 #          group names for each family.  Returns '' for undefined tag.
-# Notes: Mutiple families may be specified with ':' in family argument (eg. '1:2')
+# Notes: Multiple families may be specified with ':' in family argument (eg. '1:2')
 sub GetGroup($$;$)
 {
     local $_;
@@ -5604,7 +5612,10 @@ sub GetUnixTime($;$)
     }
     $tm[1] -= 1;        # convert month
     @tm = reverse @tm;  # change to order required by timelocal()
-    return $isLocal ? TimeLocal(@tm) : Time::Local::timegm(@tm) - $tzSec;
+    my $val = $isLocal ? TimeLocal(@tm) : Time::Local::timegm(@tm) - $tzSec;
+    # handle fractional seconds
+    $val += $1 if $tzStr and $tzStr =~ /^(\.\d+)/;
+    return $val;
 }
 
 #------------------------------------------------------------------------------
@@ -6093,6 +6104,20 @@ sub ProcessJPEG($$)
             } else {
                 $self->Warn('Missing JPEG SOS');
             }
+            if ($$self{REQ_TAG_LOOKUP}{trailer}) {
+                # read entire trailer into memory
+                if ($raf->Seek(0,2)) {
+                    my $len = $raf->Tell() - $pos;
+                    if ($len) {
+                        my $buff;
+                        $raf->Seek($pos, 0);
+                        $self->FoundTag(Trailer => \$buff) if $raf->Read($buff,$len) == $len;
+                        $raf->Seek($pos, 0);
+                    }
+                } else {
+                    $self->Warn('Error seeking in file');
+                }
+            }
             # we are here because we are looking for trailer information
             if ($wantTrailer) {
                 my $start = $$self{PreviewImageStart};
@@ -6213,7 +6238,7 @@ sub ProcessJPEG($$)
                 next if $trailInfo or $wantTrailer or $verbose > 2 or $htmlDump;
             }
             # must scan to EOI if Validate or JpegCompressionFactor used
-            next if $$options{Validate} or $calcImageLen;
+            next if $$options{Validate} or $calcImageLen or $$self{REQ_TAG_LOOKUP}{trailer};
             # nothing interesting to parse after start of scan (SOS)
             $success = 1;
             last;   # all done parsing file
@@ -7081,7 +7106,7 @@ sub DoProcessTIFF($$;$)
         # don't process file if FastScan == 3
         return 1 if not $outfile and $$self{OPTIONS}{FastScan} and $$self{OPTIONS}{FastScan} == 3;
     }
-    # (accomodate CR3 images which have a TIFF directory with ExifIFD at the top level)
+    # (accommodate CR3 images which have a TIFF directory with ExifIFD at the top level)
     my $ifdName = ($$dirInfo{DirName} and $$dirInfo{DirName} =~ /^(ExifIFD|GPS)$/) ? $1 : 'IFD0';
     if (not $tagTablePtr or $$tagTablePtr{GROUPS}{0} eq 'EXIF') {
         $self->FoundTag('ExifByteOrder', $byteOrder) unless $outfile;

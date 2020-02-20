@@ -35,7 +35,7 @@ use Image::ExifTool::Sony;
 use Image::ExifTool::Validate;
 use Image::ExifTool::MacOS;
 
-$VERSION = '3.32';
+$VERSION = '3.34';
 @ISA = qw(Exporter);
 
 sub NumbersFirst($$);
@@ -1170,7 +1170,7 @@ TagID:  foreach $tagID (@keys) {
                             my $n = scalar @values;
                             my ($bits, $i, $v);
                             foreach (@pk) {
-                                next if $_ eq '';
+                                next if $_ eq '' and $$printConv{$_} eq '';
                                 $_ eq 'BITMASK' and $bits = $$printConv{$_}, next;
                                 $_ eq 'OTHER' and next;
                                 my $index;
@@ -1474,7 +1474,7 @@ TagID:  foreach $tagID (@keys) {
         my $tag;
         foreach $tag (sort keys %$struct) {
             my $tagInfo = $$struct{$tag};
-            next unless ref $tagInfo eq 'HASH';
+            next unless ref $tagInfo eq 'HASH' and $tag ne 'NAMESPACE';
             my $writable = $$tagInfo{Writable};
             my @vals;
             unless ($writable) {
