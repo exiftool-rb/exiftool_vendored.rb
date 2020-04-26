@@ -24,7 +24,7 @@ task :update_exiftool do
   require 'nokogiri'
   require 'pathname'
 
-  doc = Nokogiri::HTML(open('https://exiftool.org/rss.xml'))
+  doc = Nokogiri::HTML(URI.parse('https://exiftool.org/rss.xml').open)
   latest = doc.xpath('//rss/channel/item/enclosure').select do |ea|
     ea[:url]&.end_with?('.tar.gz')
   end.min
@@ -50,7 +50,7 @@ task :update_exiftool do
   dest_dir = File.expand_path('bin', __dir__)
   FileUtils.remove_entry_secure(dest_dir) if File.exist?(dest_dir)
   FileUtils.mkdir(dest_dir)
-  `tar xzf #{tgz.realpath.to_s} -C #{dest_dir}`
+  `tar xzf #{tgz.realpath} -C #{dest_dir}`
   # Move contents out of the subdirectory and into bin directly:
   `mv #{dest_dir}/Image-ExifTool-*/* #{dest_dir}`
   `rmdir #{dest_dir}/Image-ExifTool-*`

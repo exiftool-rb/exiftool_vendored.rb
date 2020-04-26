@@ -3,10 +3,10 @@ env:
     - CC_TEST_REPORTER_ID=5eb18755d37a922854aca7f2b807e1ef00d4300eacb6eace8ae6060b9d3aed97
 language: ruby
 rvm:
-  - 2.6.5
-  - 2.5.7
-  - 2.4.9
-  - 2.3.8
+  - 2.7.1
+  - 2.6.6
+  - 2.5.8
+  - 2.4.10
 sudo: false
 cache: bundler
 before_script:

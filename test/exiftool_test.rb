@@ -46,7 +46,7 @@ describe ExiftoolVendored do
     yaml_file = "test/expected/#{basename}.yaml"
     actual = result.to_hash.delete_if { |k, _v| ignorable_key?(k) }
     File.open(yaml_file, 'w') { |out| YAML.dump(actual, out) } if ENV['DUMP_RESULTS']
-    expected = File.open(yaml_file) { |f| YAML.safe_load(f, [Symbol, Date, Rational]) }
+    expected = File.open(yaml_file) { |f| YAML.safe_load(f, permitted_classes: [Symbol, Date, Rational]) }
     expected.delete_if { |k, _v| ignorable_key?(k) }
     _(expected).must_equal_hash(actual)
   end
