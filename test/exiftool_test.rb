@@ -41,15 +41,22 @@ describe ExiftoolVendored do
     end
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def validate_result(result, filename)
     basename = File.basename(filename)
     yaml_file = "test/expected/#{basename}.yaml"
     actual = result.to_hash.delete_if { |k, _v| ignorable_key?(k) }
     File.open(yaml_file, 'w') { |out| YAML.dump(actual, out) } if ENV['DUMP_RESULTS']
-    expected = File.open(yaml_file) { |f| YAML.safe_load(f, permitted_classes: [Symbol, Date, Rational]) }
+    # have to deal with psych permitted_classes in different ruby versions
+    expected = if Gem::Version.new(RUBY_VERSION.to_s) > Gem::Version.new('2.6')
+                 File.open(yaml_file) { |f| YAML.safe_load(f, permitted_classes: [Symbol, Date, Rational]) }
+               else
+                 File.open(yaml_file) { |f| YAML.safe_load(f, [Symbol, Date, Rational]) }
+               end
     expected.delete_if { |k, _v| ignorable_key?(k) }
     _(expected).must_equal_hash(actual)
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # These are expected to be different on travis, due to different paths, filesystems, or
   # exiftool version differences.
