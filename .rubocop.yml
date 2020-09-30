@@ -3,6 +3,7 @@ AllCops:
   NewCops: enable
   Exclude:
     - 'bin/**/*'
+    - 'vendor/**/*'
 
 Layout/LineLength:
   Max: 120
