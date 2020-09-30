@@ -36,6 +36,7 @@
 #   24) https://github.com/sergiomb2/libmp4v2/wiki/iTunesMetadata
 #   25) https://cconcolato.github.io/mp4ra/atoms.html
 #   26) https://github.com/SamsungVR/android_upload_sdk/blob/master/SDKLib/src/main/java/com/samsung/msca/samsungvr/sdk/UserVideo.java
+#   27) https://exiftool.org/forum/index.php?topic=11517.0
 #------------------------------------------------------------------------------
 
 package Image::ExifTool::QuickTime;
@@ -46,7 +47,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.49';
+$VERSION = '2.52';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -105,7 +106,9 @@ my %mimeLookup = (
     MQV  => 'video/quicktime',
     HEIC => 'image/heic',
     HEVC => 'image/heic-sequence',
+    HEICS=> 'image/heic-sequence',
     HEIF => 'image/heif',
+    HEIFS=> 'image/heif-sequence',
     AVIF => 'image/avif', #PH (NC)
     CRX  => 'video/x-canon-crx',    # (will get overridden)
 );
@@ -418,7 +421,8 @@ my %eeBox = (
     sbtl => { %eeStd },
     data => { %eeStd },
     camm => { %eeStd }, # (Insta360)
-    ''   => { 'gps ' => 'moov' }, # (no handler -- in top level 'moov' box)
+    ctbx => { %eeStd }, # (GM cars)
+    ''   => { 'gps ' => 'moov', 'GPS ' => 'main' }, # (no handler -- in top level 'moov' box, and main)
 );
 
 # QuickTime atoms
@@ -555,6 +559,20 @@ my %eeBox = (
                 Start => 16,
             },
         },
+        { # (ref https://github.com/JamesHeinrich/getID3/blob/master/getid3/module.audio-video.quicktime.php)
+            Name => 'SensorData', # sensor data for the 360Fly
+            Condition => '$$valPt=~/^\xef\xe1\x58\x9a\xbb\x77\x49\xef\x80\x95\x27\x75\x9e\xb1\xdc\x6f/ and $$self{OPTIONS}{ExtractEmbedded}',
+            SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::Tags360Fly' },
+        },
+        {
+            Name => 'SensorData',
+            Condition => '$$valPt=~/^\xef\xe1\x58\x9a\xbb\x77\x49\xef\x80\x95\x27\x75\x9e\xb1\xdc\x6f/',
+            Notes => 'raw 360Fly sensor data without ExtractEmbedded option',
+            RawConv => q{
+                $self->WarnOnce('Use the ExtractEmbedded option to decode timed SensorData',3);
+                return \$val;
+            },
+        },
         { #PH (Canon CR3)
             Name => 'PreviewImage',
             Condition => '$$valPt=~/^\xea\xf4\x2b\x5e\x1c\x98\x4b\x88\xb9\xfb\xb7\xdc\x40\x6e\x4d\x16/',
@@ -667,6 +685,11 @@ my %eeBox = (
     },
     # gpsa - seen hex "01 20 00 00" (DuDuBell M1, VSYS M6L)
     # gsea - 20 bytes hex "05 00's..." (DuDuBell M1) "05 08 02 01 ..." (VSYS M6L)
+   'GPS ' => {  # GPS data written by 70mai dashcam (parsed in QuickTimeStream.pl)
+        Name => 'GPSDataList2',
+        Unknown => 1,
+        Binary => 1,
+    },
 );
 
 # MPEG-4 'ftyp' atom
@@ -962,7 +985,7 @@ my %eeBox = (
 %Image::ExifTool::QuickTime::CleanAperture = (
     PROCESS_PROC => \&Image::ExifTool::ProcessBinaryData,
     GROUPS => { 2 => 'Video' },
-    FORMAT => 'rational64u',
+    FORMAT => 'rational64s',
     0 => 'CleanApertureWidth',
     1 => 'CleanApertureHeight',
     2 => 'CleanApertureOffsetX',
@@ -1307,6 +1330,7 @@ my %eeBox = (
         Format => 'fixed32s[9]',
         Notes => 'writable for the video track via the Composite Rotation tag',
         Writable => 1,
+        Protected => 1,
         Permanent => 1,
         # only set rotation if image size is non-zero
         RawConvInv => \&GetMatrixStructure,
@@ -1371,8 +1395,8 @@ my %eeBox = (
         },
         ValueConvInv => q{
             require Image::ExifTool::XMP;
-            $val =  Image::ExifTool::XMP::FormatXMPDate($val);
-            $val =~ s/([-+]\d{2}):(\d{2})$/$1$2/; # remove time zone colon
+            my $tmp = Image::ExifTool::XMP::FormatXMPDate($val);
+            ($val = $tmp) =~ s/([-+]\d{2}):(\d{2})$/$1$2/ if defined $tmp; # remove time zone colon
             return $val;
         },
         PrintConv => '$self->ConvertDateTime($val)',
@@ -1634,7 +1658,7 @@ my %eeBox = (
         Groups => { 2 => 'Time' },
         Notes => q{
             Apple Photos has been reported to show a crazy date/time for some MP4 files
-            containing this tag
+            containing this tag, but perhaps only if it is missing a time zone
         }, #forum10690/11125
         Shift => 'Time',
         ValueConv => q{
@@ -1857,6 +1881,25 @@ my %eeBox = (
             ByteOrder => 'LittleEndian',
         },
     },
+    # ---- Garmin ---- (ref PH)
+    uuid => [{
+        Name => 'GarminSoftware', # (NC)
+        Condition => '$$valPt =~ /^VIRBactioncamera/',
+        RawConv => 'substr($val, 16)',
+        RawConvInv => '"VIRBactioncamera$val"',
+    },{
+        # have seen "28 f3 11 e2 b7 91 4f 6f 94 e2 4f 5d ea cb 3c 01" for RicohThetaZ1 accelerometer RADT data (not yet decoded)
+        Name => 'UUID-Unknown',
+        Writable => 0,
+        %unknownInfo,
+    }],
+    pmcc => {
+        Name => 'GarminSettings',
+        ValueConv => 'substr($val, 4)',
+        ValueConvInv => '"\0\0\0\x01$val"',
+    },
+    # hmtp - "\0\0\0\x01" followed by 408 bytes of zero
+    # vrin - "\0\0\0\x01" followed by 8 bytes of zero
     # ---- GoPro ---- (ref PH)
     GoPr => 'GoProType', # (Hero3+)
     FIRM => { Name => 'FirmwareVersion', Avoid => 1 }, # (Hero4)
@@ -2040,6 +2083,63 @@ my %eeBox = (
             ProcessProc => \&Image::ExifTool::ProcessTIFF, # (because ProcessMOV is default)
         },
     },
+    '@mak' => { Name => 'Make',     Avoid => 1 },
+    '@mod' => { Name => 'Model',    Avoid => 1 },
+    '@swr' => { Name => 'SoftwareVersion', Avoid => 1 },
+    '@day' => {
+        Name => 'ContentCreateDate',
+        Notes => q{
+            some stupid Ricoh programmer used the '@' symbol instead of the copyright
+            symbol in these tag ID's for the Ricoh Theta Z1 and maybe other models
+        },
+        Groups => { 2 => 'Time' },
+        Shift => 'Time',
+        Avoid => 1,
+        # handle values in the form "2010-02-12T13:27:14-0800"
+        ValueConv => q{
+            require Image::ExifTool::XMP;
+            $val =  Image::ExifTool::XMP::ConvertXMPDate($val);
+            $val =~ s/([-+]\d{2})(\d{2})$/$1:$2/; # add colon to timezone if necessary
+            return $val;
+        },
+        ValueConvInv => q{
+            require Image::ExifTool::XMP;
+            my $tmp = Image::ExifTool::XMP::FormatXMPDate($val);
+            ($val = $tmp) =~ s/([-+]\d{2}):(\d{2})$/$1$2/ if defined $tmp; # remove time zone colon
+            return $val;
+        },
+        PrintConv => '$self->ConvertDateTime($val)',
+        PrintConvInv => '$self->InverseDateTime($val)',
+    },
+    '@xyz' => { #PH (iPhone 3GS)
+        Name => 'GPSCoordinates',
+        Groups => { 2 => 'Location' },
+        Avoid => 1,
+        ValueConv => \&ConvertISO6709,
+        ValueConvInv => \&ConvInvISO6709,
+        PrintConv => \&PrintGPSCoordinates,
+        PrintConvInv => \&PrintInvGPSCoordinates,
+    },
+    # RDT1 - pairs of int32u_BE, starting at byte 8: "458275 471846"
+    # RDT2 - pairs of int32u_BE, starting at byte 8: "472276 468526"
+    # RDT3 - pairs of int32u_BE, starting at byte 8: "876603 482191"
+    # RDT4 - pairs of int32u_BE, starting at byte 8: "1955 484612"
+    # RDT6 - empty
+    # RDT7 - empty
+    # RDT8 - empty
+    # RDT9 - only 16-byte header?
+    # the boxes below all have a similar header (little-endian):
+    #  0 int32u - number of records
+    #  4 ? - "1e 00"
+    #  6 int16u - record length in bytes
+    #  8 ? - "23 01 00 00 00 00 00 00"
+    #  16 - start of records (each record ends in an int64u timestamp in ns)
+    # RDTA - float[4],ts: "-0.31289672 -0.2245330 11.303817 0 775.780"
+    # RDTB - float[4],ts: "-0.04841613 -0.2166595 0.0724792 0 775.780"
+    # RDTC - float[4],ts: "27.60925 -27.10037 -13.27285 0 775.829"
+    # RDTD - int16s[3],ts: "353 -914 16354 0 775.829"
+    # RDTG - ts: "775.825"
+    # RDTI - float[4],ts: "0.00165951 0.005770059 0.06838259 0.1744695 775.862"
     # ---- Samsung ----
     vndr => 'Vendor', #PH (Samsung PL70)
     SDLN => 'PlayMode', #PH (NC, Samsung ST80 "SEQ_PLAY")
@@ -2516,6 +2616,7 @@ my %eeBox = (
         Name => 'Rotation',
         Format => 'int8u',
         Writable => 'int8u',
+        Protected => 1,
         ValueConv => '$val * 90',
         ValueConvInv => 'int($val / 90 + 0.5)',
     },
@@ -2547,6 +2648,7 @@ my %eeBox = (
         Name => 'PixelAspectRatio',
         Format => 'int32u',
         Writable => 'int32u',
+        Protected => 1,
     },
     rloc => {
         Name => 'RelativeLocation',
@@ -2555,7 +2657,7 @@ my %eeBox = (
     },
     clap => {
         Name => 'CleanAperture',
-        Format => 'rational64u',
+        Format => 'rational64s',
         Notes => '4 numbers: width, height, left and top',
     },
     hvcC => {
@@ -2893,10 +2995,25 @@ my %eeBox = (
     "\xa9grp" => 'Grouping',
     "\xa9lyr" => 'Lyrics',
     "\xa9nam" => 'Title',
-    # "\xa9st3" ? #10
     "\xa9too" => 'Encoder',
     "\xa9trk" => 'Track',
     "\xa9wrt" => 'Composer',
+#
+# the following tags written by AtomicParsley 0.9.6
+# (ref https://exiftool.org/forum/index.php?topic=11455.0)
+#
+    "\xa9st3" => 'Subtitle',
+    "\xa9con" => 'Conductor',
+    "\xa9sol" => 'Soloist',
+    "\xa9arg" => 'Arranger',
+    "\xa9ope" => 'OriginalArtist',
+    "\xa9dir" => 'Director',
+    "\xa9ard" => 'ArtDirector',
+    "\xa9sne" => 'SoundEngineer',
+    "\xa9prd" => 'Producer',
+    "\xa9xpd" => 'ExecutiveProducer',
+    sdes      => 'StoreDescription',
+#
     '----' => {
         Name => 'iTunesInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::iTunesInfo' },
@@ -2905,18 +3022,29 @@ my %eeBox = (
     covr => { Name => 'CoverArt',    Groups => { 2 => 'Preview' } },
     cpil => { #10
         Name => 'Compilation',
-        Format => 'int8u', #23
+        Format => 'int8u', #27 (ref 23 contradicts what AtomicParsley actually writes, which is int8s)
+        Writable => 'int8s',
         PrintConv => { 0 => 'No', 1 => 'Yes' },
     },
     disk => {
         Name => 'DiskNumber',
         Format => 'undef',  # (necessary to prevent decoding as string!)
-        ValueConv => 'length($val) >= 6 ? join(" of ",unpack("x2nn",$val)) : \$val',
-        ValueConvInv => 'my @a = split / of /, $val; @a==2 ? pack("n3",0,@a) : undef',
+        ValueConv => q{
+            return \$val unless length($val) >= 6;
+            my @a = unpack 'x2nn', $val;
+            return $a[1] ? join(' of ', @a) : $a[0];
+        },
+        ValueConvInv => q{
+            my @a = $val =~ /\d+/g;
+            return undef if @a == 0 or @a > 2;
+            push @a, 0 if @a == 1;
+            return pack('n3', 0, @a);
+        },
     },
     pgap => { #10
         Name => 'PlayGap',
         Format => 'int8u', #23
+        Writable => 'int8s', #27
         PrintConv => {
             0 => 'Insert Gap',
             1 => 'No Gap',
@@ -2924,13 +3052,26 @@ my %eeBox = (
     },
     tmpo => {
         Name => 'BeatsPerMinute',
-        Format => 'int16u', # marked as boolean but really int16u in my sample
+        # marked as boolean but really int16u in my sample
+        # (but written as int16s by iTunes and AtomicParsley, ref forum11506)
+        Format => 'int16u',
+        Writable => 'int16s',
     },
     trkn => {
         Name => 'TrackNumber',
         Format => 'undef',  # (necessary to prevent decoding as string!)
-        ValueConv => 'length($val) >= 6 ? join(" of ",unpack("x2nn",$val)) : \$val',
-        ValueConvInv => 'my @a = split / of /, $val; @a==2 ? pack("n3",0,@a) : undef',
+        ValueConv => q{
+            return \$val unless length($val) >= 6;
+            my @a = unpack 'x2nn', $val;
+            return $a[1] ? join(' of ', @a) : $a[0];
+        },
+        # (see forum11501 for discussion about the format used)
+        ValueConvInv => q{
+            my @a = $val =~ /\d+/g;
+            return undef if @a == 0 or @a > 2;
+            push @a, 0 if @a == 1;
+            return pack('n4', 0, @a, 0);
+        },
     },
 #
 # Note: it is possible that the tags below are not being decoded properly
@@ -2939,6 +3080,7 @@ my %eeBox = (
     akID => { #10
         Name => 'AppleStoreAccountType',
         Format => 'int8u', #24
+        Writable => 'int8s', #27
         PrintConv => {
             0 => 'iTunes',
             1 => 'AOL',
@@ -2949,12 +3091,14 @@ my %eeBox = (
     atID => { #10 (or TV series)
         Name => 'AlbumTitleID',
         Format => 'int32u',
+        Writable => 'int32s', #27
     },
     auth => { Name => 'Author', Groups => { 2 => 'Author' } },
     catg => 'Category', #7
     cnID => { #10
         Name => 'AppleStoreCatalogID',
         Format => 'int32u',
+        Writable => 'int32s', #27
     },
     cprt => { Name => 'Copyright', Groups => { 2 => 'Author' } },
     dscp => { Name => 'Description', Avoid => 1 },
@@ -2962,22 +3106,28 @@ my %eeBox = (
     gnre => { #10
         Name => 'Genre',
         Avoid => 1,
-        # (Note: not written as int16u if numerical, although it should be)
+        # (Note: see https://exiftool.org/forum/index.php?topic=11537.0)
+        Format => 'undef',
+        ValueConv => 'unpack("n",$val)',
+        ValueConvInv => '$val =~ /^\d+$/ ? pack("n",$val) : undef',
         PrintConv => q{
             return $val unless $val =~ /^\d+$/;
             require Image::ExifTool::ID3;
             Image::ExifTool::ID3::PrintGenre($val - 1); # note the "- 1"
         },
         PrintConvInv => q{
+            return $val if $val =~ /^[0-9]+$/;
             require Image::ExifTool::ID3;
             my $id = Image::ExifTool::ID3::GetGenreID($val);
-            return defined $id ? $id : $val;
-        },
+            return unless defined $id and $id =~ /^\d+$/;
+            return $id + 1;
+        }, 
     },
     egid => 'EpisodeGlobalUniqueID', #7
     geID => { #10
         Name => 'GenreID',
         Format => 'int32u',
+        Writable => 'int32s', #27
         SeparateTable => 1,
         # the following lookup is based on http://itunes.apple.com/WebObjects/MZStoreServices.woa/ws/genres
         # (see scripts/parse_genre to parse genre JSON file from above)
@@ -5630,6 +5780,7 @@ my %eeBox = (
     hdvd => { #10
         Name => 'HDVideo',
         Format => 'int8u', #24
+        Writable => 'int8s', #27
         PrintConv => { 0 => 'No', 1 => 'Yes' },
     },
     keyw => 'Keyword', #7
@@ -5637,18 +5788,21 @@ my %eeBox = (
     pcst => { #7
         Name => 'Podcast',
         Format => 'int8u', #23
+        Writable => 'int8s', #27
         PrintConv => { 0 => 'No', 1 => 'Yes' },
     },
     perf => 'Performer',
     plID => { #10 (or TV season)
         Name => 'PlayListID',
         Format => 'int8u',  # actually int64u, but split it up
+        Writable => 'int32s', #27
     },
     purd => 'PurchaseDate', #7
     purl => 'PodcastURL', #7
     rtng => { #10
         Name => 'Rating',
         Format => 'int8u', #23
+        Writable => 'int8s', #27
         PrintConv => {
             0 => 'none',
             1 => 'Explicit',
@@ -5659,6 +5813,7 @@ my %eeBox = (
     sfID => { #10
         Name => 'AppleStoreCountry',
         Format => 'int32u',
+        Writable => 'int32s', #27
         SeparateTable => 1,
         PrintConv => { #21
             143441 => 'United States', # US
@@ -5827,6 +5982,7 @@ my %eeBox = (
     stik => { #10
         Name => 'MediaType',
         Format => 'int8u', #23
+        Writable => 'int8s', #27
         PrintConvColumns => 2,
         PrintConv => { #(http://weblog.xanga.com/gryphondwb/615474010/iphone-ringtones---what-did-itunes-741-really-do.html)
             0 => 'Movie (old)', #forum9059 (was Movie)
@@ -5848,6 +6004,7 @@ my %eeBox = (
     tves => { #7/10
         Name => 'TVEpisode',
         Format => 'int32u',
+        Writable => 'int32s', #27
     },
     tvnn => 'TVNetworkName', #7
     tvsh => 'TVShow', #10
@@ -5858,7 +6015,8 @@ my %eeBox = (
     yrrc => 'Year', #(ffmpeg source)
     itnu => { #PH (iTunes 10.5)
         Name => 'iTunesU',
-        Format => 'int8s',
+        Format => 'int8u', #27
+        Writable => 'int8s', #27
         Description => 'iTunes U',
         PrintConv => { 0 => 'No', 1 => 'Yes' },
     },
@@ -5915,15 +6073,18 @@ my %eeBox = (
     "\xa9mvn" => 'MovementName', #PH
     "\xa9mvi" => { #PH
         Name => 'MovementNumber',
-        Format => 'int16s',
+        Format => 'int16u', #27
+        Writable => 'int16s', #27
     },
     "\xa9mvc" => { #PH
         Name => 'MovementCount',
-        Format => 'int16s',
+        Format => 'int16u', #27
+        Writable => 'int16s', #27
     },
     shwm => { #PH
         Name => 'ShowMovement',
-        Format => 'int8s',
+        Format => 'int8u', #27
+        Writable => 'int8s', #27
         PrintConv => { 0 => 'No', 1 => 'Yes' },
     },
 );
@@ -6737,6 +6898,7 @@ my %eeBox = (
     # alac - 28 bytes
     # adrm - AAX DRM atom? 148 bytes
     # aabd - AAX unknown 17kB (contains 'aavd' strings)
+    # SA3D - written by Garmin VIRB360
 );
 
 # AMR decode config box (ref 3)
@@ -7223,6 +7385,20 @@ my %eeBox = (
 #
     ftab => { Name => 'FontTable',  Format => 'undef', ValueConv => 'substr($val, 5)' },
     name => { Name => 'OtherName',  Format => 'undef', ValueConv => 'substr($val, 4)' },
+    # mrlh = GM header?
+    # mrlv = GM data
+    # mrld = GM data (448-byte records):
+    #            0 - int32u count
+    #            4 - int32u ? (related to units) 0=none,1=m/km,2=L,3=kph,4=C,7=deg,8=rpm,9=kPa,10=G,11=V,15=Nm,16=%
+    #            8 - int32u ? (0,1,3,4,5)
+    #           12 - string[64] units
+    #           76 - int32u ? (1,3,7,15)
+    #           80 - int32u 0
+    #           84 - undef[4] ?
+    #           88 - int16u[6] ?
+    #           100 - undef[32] ?
+    #           132 - string[64] measurement name
+    #           196 - string[64] measurement name
 );
 
 # MP4 data information box (ref 5)
@@ -7519,6 +7695,7 @@ my %eeBox = (
             1 => 'QuickTime:HandlerType',
         },
         Writable => 1,
+        Protected => 1,
         WriteAlso => {
             MatrixStructure => 'Image::ExifTool::QuickTime::GetRotationMatrix($val)',
         },
@@ -8353,7 +8530,7 @@ sub EEWarn($)
 #------------------------------------------------------------------------------
 # Get quicktime format from flags word
 # Inputs: 0) quicktime atom flags, 1) data length
-# Returns: Exiftool format string
+# Returns: ExifTool format string
 sub QuickTimeFormat($$)
 {
     my ($flags, $len) = @_;
@@ -8580,7 +8757,7 @@ sub ProcessKeys($$$)
         my $ns  = substr($$dataPt, $pos + 4, 4);
         my $tag = substr($$dataPt, $pos + 8, $len - 8);
         $tag =~ s/\0.*//s; # truncate at null
-        $tag =~ s/^com\.apple\.quicktime\.// if $ns eq 'mdta'; # remove apple quicktime domain
+        $tag =~ s/^com\.(apple\.quicktime\.)?// if $ns eq 'mdta'; # remove apple quicktime domain
         $tag = "Tag_$ns" unless $tag;
         # (I have some samples where the tag is a reversed ItemList or UserData tag ID)
         my $tagInfo = $et->GetTagInfo($tagTablePtr, $tag);
@@ -9091,10 +9268,10 @@ ItemID:         foreach $id (keys %$items) {
                             }
                         }
                         if ($ctry or $lang) {
-                            $lang = GetLangCode($lang, $ctry);
-                            if ($lang) {
+                            my $langCode = GetLangCode($lang, $ctry);
+                            if ($langCode) {
                                 # get tagInfo for other language
-                                $langInfo = GetLangInfoQT($et, $tagInfo, $lang);
+                                $langInfo = GetLangInfoQT($et, $tagInfo, $langCode);
                                 # save other language tag ID's so we can delete later if necessary
                                 if ($langInfo) {
                                     $$tagInfo{OtherLang} or $$tagInfo{OtherLang} = [ ];
@@ -9111,7 +9288,7 @@ ItemID:         foreach $id (keys %$items) {
                             Size    => $len,
                             Format  => $format,
                             Index   => $index,
-                            Extra   => sprintf(", Type='${type}', Flags=0x%x%s",$flags,($lang ? ", Lang=$lang" : '')),
+                            Extra   => sprintf(", Type='${type}', Flags=0x%x, Lang=0x%.4x",$flags,$lang),
                         ) if $verbose;
                         # use "Keys" in path instead of ItemList if this was defined by a Keys tag
                         my $isKey = $$tagInfo{Groups} && $$tagInfo{Groups}{1} && $$tagInfo{Groups}{1} eq 'Keys';

@@ -4,8 +4,124 @@ ExifTool Version History
 
 RSS feed: https://exiftool.org/rss.xml
 
-Note: The most recent production release is Version 11.85. (Other versions are
+Note: The most recent production release is Version 12.00. (Other versions are
 considered development releases, and are not uploaded to CPAN.)
+
+(I'll be on vacation from Aug 26 to Sep 3, 2020 so don't expect any
+forum or email responses from me during this time - Phil H.)
+
+Sept. 11, 2020 - Version 12.06
+
+  - Added read support for Lyrics3 metadata (and fixed problem where APE
+    metadata may be ignored if Lyrics3 exists)
+  - Added a new Panasonic VideoBurstMode value (thanks Klaus Homeister)
+  - Added a new Olympus MultipleExposureMode value
+  - Added a new Nikon LensID
+  - Added back conversions for XMP-dwc EventTime that were removed in 12.04 with
+    a patch to allow time-only values
+  - Decode GIF AspectRatio
+  - Decode Olympus FocusBracketStepSize (thanks Karsten)
+  - Extract PNG iDOT chunk in Binary format with the name AppleDataOffsets
+  - Process PNG images which do not start with mandatory IHDR chunk
+
+Aug. 24, 2020 - Version 12.05
+
+  - Added a new Panasonic SelfTimer value (thanks Herb)
+  - Decode a few more DPX tags (thanks Harry Mallon)
+  - Extract AIFF APPL tag as ApplicationData
+  - Fixed bug writing QuickTime ItemList 'gnre' Genre values
+  - Fixed an incorrect value for Panasonic VideoBurstResolution (thanks Herb)
+  - Fixed problem when applying a time shift to some invalid makernote date/time
+    values
+
+Aug. 10, 2020 - Version 12.04
+
+  - Added read support for Zeiss ZISRAW CZI files
+  - Added some new values for a couple of Olympus tags (thanks Sebastian)
+  - Decode a number of new tags for the Sony ILCE-7SM3 (thanks Jos Roost)
+  - Removed formatting restrictions on XMP-dwc:EventTime to allow a time-only
+    value to be written
+  - Moved new QuckTime ItemList tags added in version 12.02 to the proper group
+    (they were incorrectly added to the Keys group)
+  - Improved QuickTime -v3 output to show default language codes
+  - Patched -lang option to work for the values of somet tags with coded
+    translations
+  - Patched the format of a number of QuickTime tags when writing for improved
+    compatibility with iTunes and AtomicParsley
+  - Patched to write a default QuickTime language code of 0x0000 (null) instead
+    of 0x55c4 ('und')
+
+July 29, 2020 - Version 12.03
+
+  - Added family 7 group names to allow tag ID's to be specified when reading
+    and writing
+  - Fixed a couple of typos in tag values (thanks Herb)
+  - API Changes:
+      - Added HexTagIDs option
+      - Enhanced GetNewValue() to allow family 7 groups names to be used
+  - Internal Changes:
+      - Changed Composite tag ID's to use "-" instead of "::" as a separator
+
+July 27, 2020 - Version 12.02
+
+  - Added support for a number of new QuickTime ItemList tags
+  - Added support for writing XMP-xmp:RatingPercent
+  - Added a new Sony LensType (thanks Jos Roost and LibRaw)
+  - Added a new Pentax LensType (thanks James O'Neill)
+  - Decode barcodes from Ricoh APP5 RMETA segment
+  - Decode a few new QuickTime tags written by Ricoh and Garmin cameras
+  - Decode timed GPS from Sony A7R IV MP4 videos
+  - Decode timed GPS from 70mai dashcam videos
+  - Decode a few new Panasonic tags (thanks Klaus Homeister)
+  - Decode altitude and more accurate latitude/longitude from Transcend Driver
+    Pro 230 MP4 videos
+  - Improved decoding of some Canon EOS 1DXmkIII custom functions
+  - Allow integer QuickTime TrackNumber and DiskNumber values
+  - Relax validity check of QuickTime:ContentCreateDate when writing with -n
+  - Removed "Com" from the start of some unknown ItemList tag names
+  - Patched CanonCustom decoding for bug in Canon EOS-1DX firmware
+  - Changed QuickTime CleanAperture tags decode as signed rationals
+
+June 24, 2020 - Version 12.01
+
+  - Added a new NEFCompression value (thanks Warren Hatch)
+  - Added a new Sony LensType (thanks Jos Roost)
+  - Decode timed GPS from Rove Stealth 4K dashcam videos
+  - Fixed bug which would corrupt TIFF images with 16-bit image data offsets
+    when writing (these are very rare)
+
+June 11, 2020 - Version 12.00 (production release)
+
+  - Added two new Olympus LensTypes (thanks Don Komarechka for one)
+  - Added two new Sony LensType values (thanks Jos Roost)
+  - Added a few new Nikon LensID's (thanks Mathieu Carbou)
+  - Added support for the Sony ZV-1 (thanks Jos Roost)
+  - Added a new CanonModelID (thanks Jos Roost)
+  - Added missing MimeType values for HEICS and HEIFS files
+  - Added definitions for a number of new XMP-crs tags
+  - Recognize WOFF and WOFF2 font files
+  - Decode streaming GPS from Roadhawk, EEEkit and 360Fly MP4 videos
+  - Decode a number of new tags for the Nikon D6 (thanks Warren Hatch)
+  - Decode a couple more AF tags for the D500/D850
+  - Decode a number of new Panasonic tags
+  - Improved Composite LensID logic (thanks Matt Stancliff)
+  - Enhanced -v option to state when a directory has 0 entries
+  - Removed a couple of incorrect Validate warnings for bilevel TIFF images
+  - Drop ContrastCurve tag when copying from NEF to JPEG
+  - Changed -csv output to add "Unknown" group name to column headings for
+    missing tags when -f and -G options are used
+  - Patched to support new XMP LensID format for Nikon cameras as written by
+    Apple Photos (thanks Mattsta)
+  - Fixed problem extracting metadata from Sigma DP2 Quattro X3F files
+  - Fixed End() and EndDir() functions so they work when writing and when the -v
+    option is used
+  - Fixed problem recognizing some PGM files
+  - Fixed bug in offsets for some Photoshop information in -v3 output
+  - Fixed problem writing a list containing empty elements inside an XMP
+    structure
+  - API Changes:
+      - Added NoMultiExif option
+      - Changed FilterW option to not write tag if $_ is set to undef
 
 May 11, 2020 - Version 11.99
 
@@ -44,7 +160,8 @@ Apr. 24, 2020 - Version 11.96
 
 Apr. 23, 2020 - Version 11.95
 
-  - Added Exit() and ExitDir() functions for use in -if conditions
+  - Added Exit() and ExitDir() functions for use in -if conditions (NOTE: these
+    function names changed to End() and EndDir() in ExifTool 11.96)
   - Enhanced -geotag feature to support a more flexible input CSV file format
   - Enhanced -if and API Filter options to allow access to ExifTool object via
     $self

@@ -49,7 +49,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 require Exporter;
 
-$VERSION = '3.32';
+$VERSION = '3.35';
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(EscapeXML UnescapeXML);
 
@@ -889,6 +889,7 @@ my %sRetouchArea = (
     ModifyDate  => { Groups => { 2 => 'Time' }, %dateTimeInfo, Priority => 0 },
     Nickname    => { },
     Rating      => { Writable => 'real', Notes => 'a value from 0 to 5, or -1 for "rejected"' },
+    RatingPercent=>{ Writable => 'real', Avoid => 1, Notes => 'non-standard' },
     Thumbnails  => {
         FlatName => 'Thumbnail',
         Struct => \%sThumbnail,
@@ -1483,8 +1484,35 @@ my %sPantryItem = (
             STRUCT_NAME => 'Look',
             NAMESPACE   => 'crs',
             Name   => { },
+            Amount => { },
+            Cluster=> { },
+            UUID   => { },
+            SupportsMonochrome => { },
         }
     },
+    # more again (ref forum11258)
+    GrainSeed => { },
+    ClipboardOrientation => { Writable => 'integer' },
+    ClipboardAspectRatio => { Writable => 'integer' },
+    PresetType  => { },
+    Cluster     => { },
+    UUID        => { Avoid => 1 },
+    SupportsAmount          => { Writable => 'boolean' },
+    SupportsColor           => { Writable => 'boolean' },
+    SupportsMonochrome      => { Writable => 'boolean' },
+    SupportsHighDynamicRange=> { Writable => 'boolean' },
+    SupportsNormalDynamicRange=> { Writable => 'boolean' },
+    SupportsSceneReferred   => { Writable => 'boolean' },
+    SupportsOutputReferred  => { Writable => 'boolean' },
+    CameraModelRestriction  => { },
+    Copyright   => { Avoid => 1 },
+    ContactInfo => { },
+    GrainSeed   => { Writable => 'integer' },
+    Name        => { Writable => 'lang-alt', Avoid => 1 },
+    ShortName   => { Writable => 'lang-alt' },
+    SortName    => { Writable => 'lang-alt' },
+    Group       => { Writable => 'lang-alt', Avoid => 1 },
+    Description => { Writable => 'lang-alt', Avoid => 1 },
 );
 
 # Tiff namespace properties (tiff)
@@ -2935,13 +2963,15 @@ sub PrintLensID(@)
             # for Pentax, CS4 stores an int16u, but we use 2 x int8u
             $id = join(' ', unpack('C*', pack('n', $id)));
         }
-        my $str = $$printConv{$id} || "Unknown ($id)";
         # Nikon is a special case because Adobe doesn't store the full LensID
+        # (Apple Photos does, but we have to convert back to hex)
         if ($mk eq 'Nikon') {
-            my $hex = sprintf("%.2X", $id);
+            $id = sprintf('%X', $id);
+            $id = "0$id" if length($id) & 0x01;     # pad with leading 0 if necessary
+            $id =~ s/(..)/$1 /g and $id =~ s/ $//;  # put spaces between bytes
             my (%newConv, %used);
             my $i = 0;
-            foreach (grep /^$hex /, keys %$printConv) {
+            foreach (grep /^$id/, keys %$printConv) {
                 my $lens = $$printConv{$_};
                 next if $used{$lens}; # avoid duplicates
                 $used{$lens} = 1;
@@ -2950,6 +2980,7 @@ sub PrintLensID(@)
             }
             $printConv = \%newConv;
         }
+        my $str = $$printConv{$id} || "Unknown ($id)";
         return Image::ExifTool::Exif::PrintLensID($et, $str, $printConv,
                     undef, $id, $focalLength, $sa, $maxAv, $sf, $lf, $lensModel);
     }
@@ -3187,6 +3218,7 @@ NoLoop:
         #} elsif (grep / /, @$props) {
         #    $$tagInfo{List} = 1;
         }
+        #PHIL why flat tag added here???? (try a.xmp)
         AddTagToTable($tagTablePtr, $tagID, $tagInfo);
         $added = 1;
         last;
@@ -3530,6 +3562,11 @@ sub ParseXMPElement($$$;$$$$)
             if ($prop eq 'svg' or $prop eq 'metadata') {
                 # add svg namespace prefix if missing to ignore these entries in the tag name
                 $$propList[-1] = "svg:$prop";
+            }
+        } elsif ($$et{XmpIgnoreProps}) { # ignore specified properties for tag name
+            foreach (@{$$et{XmpIgnoreProps}}) {
+                last unless @$propList;
+                pop @$propList if $_ eq $$propList[0];
             }
         }
 

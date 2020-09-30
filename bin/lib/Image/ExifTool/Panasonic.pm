@@ -37,7 +37,7 @@ use vars qw($VERSION %leicaLensTypes);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 
-$VERSION = '2.09';
+$VERSION = '2.13';
 
 sub ProcessLeicaLEIC($$$);
 sub WhiteBalanceConv($;$$);
@@ -259,6 +259,7 @@ my %shootingMode = (
     88 => 'Clear Sports Shot', #18
     89 => 'Monochrome', #18
     90 => 'Creative Control', #18
+    92 => 'Handheld Night Shot', #forum11523
 );
 
 %Image::ExifTool::Panasonic::Main = (
@@ -366,7 +367,9 @@ my %shootingMode = (
                 '32 2'  => '3-area (center)?', # (DMC-L1 guess)
                 '32 3'  => '3-area (right)?', # (DMC-L1 guess)
                 '64 0'  => 'Face Detect',
-                '128 0' => 'Spot Focusing 2', #18
+                '64 1' => 'Face Detect (animal detect on)', #forum11194
+                '64 2' => 'Face Detect (animal detect off)', #forum11194
+                '128 0' => 'Pinpoint focus', #18/forum11194
                 '240 0' => 'Tracking', #22
             },
         },
@@ -375,14 +378,17 @@ my %shootingMode = (
         Name => 'ImageStabilization',
         Writable => 'int16u',
         PrintConv => {
-            2 => 'On, Mode 1',
+            2 => 'On, Optical',
             3 => 'Off',
             4 => 'On, Mode 2',
-            5 => 'Panning', #18
+            5 => 'On, Optical Panning', #18
             # GF1 also has a "Mode 3" - PH
-            6 => 'On, Mode 3', #PH (GX7, sensor shift?)
+            6 => 'On, Body-only', #PH (GX7, sensor shift?)
+            7 => 'On, Body-only Panning', #forum11194
             9 => 'Dual IS', #20
+            10 => 'Dual IS Panning', #forum11194
             11 => 'Dual2 IS', #forum9298
+            12 => 'Dual2 IS Panning', #forum11194
         },
     },
     0x1c => {
@@ -453,7 +459,15 @@ my %shootingMode = (
         Name => 'PanasonicExifVersion',
         Writable => 'undef',
     },
-    # 0x27 - values: 0 (LZ6,FX10K)
+    0x27 => {
+        Name => 'VideoFrameRate',
+        Writable => 'int16u',
+        Notes => 'only valid for older models',
+        PrintConv => {
+            OTHER => sub { shift },
+            0 => 'n/a',
+        },
+    },
     0x28 => {
         Name => 'ColorEffect',
         Writable => 'int16u',
@@ -515,9 +529,11 @@ my %shootingMode = (
             0 => 'Off',
             1 => 'On', #PH (TZ5) [was "Low/High Quality" from ref 4]
             2 => 'Auto Exposure Bracketing (AEB)', #17
+            3 => 'Focus Bracketing', #forum11194
             4 => 'Unlimited', #PH (TZ5)
             8 => 'White Balance Bracketing', #18
             17 => 'On (with flash)', #forum5597
+            18 => 'Aperture Bracketing', #forum11194
         },
     },
     0x2b => { #4
@@ -542,13 +558,15 @@ my %shootingMode = (
                 # 0x03 - observed with LZ6 and TZ5 in Fireworks mode
                 #        and GX7 in Fantasy/Retro/OldDays/HighKey - PH
                 # 0x04 - observed in MP4 movie with GM1 (EXIF and 0x39 Contrast "Normal") - PH
-                # 0x05 - observed with FX01, FX40 and FP8 (EXIF contrast "Normal") - PH
+                0x05 => 'Normal 2', #forum1194
                 0x06 => 'Medium Low', #PH (FZ18)
                 0x07 => 'Medium High', #PH (FZ18)
                 # 0x08 - GX7 in DynamicMonochrome mode
                 0x0d => 'High Dynamic', #PH (FZ47 in ?)
                 # 0x13 - seen for LX100 (PH)
-                # 0x18 - seen for FZ2500 (PH)
+                0x18 => 'Dynamic Range (film-like)', #forum11194
+                0x2e => 'Match Filter Effects Toy', #forum11194
+                0x37 => 'Match Photo Style L. Monochrome', #forum11194
                 # DMC-LC1 values:
                 0x100 => 'Low',
                 0x110 => 'Normal',
@@ -653,11 +671,14 @@ my %shootingMode = (
         Name => 'SelfTimer',
         Writable => 'int16u',
         PrintConv => {
+            0 => 'Off (0)', #forum11529
             1 => 'Off',
             2 => '10 s',
             3 => '2 s',
             4 => '10 s / 3 pictures', #17
-            # 258 - seen for FZ2500,TZ90,LeicaCLux (PH)
+            258 => '2 s after shutter pressed', #forum11194
+            266 => '10 s after shutter pressed', #forum11194
+            778 => '3 photos after 10 s', #forum11194
         },
     },
     # 0x2f - values: 1 (LZ6,FX10K)
@@ -725,8 +746,20 @@ my %shootingMode = (
         PrintConvInv => '$val =~ /(\d+)/ ? $1 : $val',
     },
     # 0x37 - values: 0,1,2 (LZ6, 0 for movie preview); 257 (FX10K); 0,256 (TZ5, 0 for movie preview)
-    # 0x38 - values: 0,1,2 (LZ6, same as 0x37); 1,2 (FX10K); 0,256 (TZ5, 0 for movie preview)
-    #        - changes with noise reduction for DC-S1
+    #        --> may indicate battery power (forum11388)
+    0x38 => { #forum11388
+        Name => 'BatteryLevel',
+        Writable => 'int16u',
+        PrintConv => {
+            1 => 'Full',
+            2 => 'Medium',
+            3 => 'Low',
+            4 => 'Near Empty',
+            7 => 'Near Full',
+            8 => 'Medium Low',
+            256 => 'n/a',
+        },
+    },
     0x39 => { #7 (L1/L10)
         Name => 'Contrast',
         Format => 'int16s',
@@ -761,6 +794,7 @@ my %shootingMode = (
         Name => 'AdvancedSceneType',
         Writable => 'int16u',
         Notes => 'used together with SceneMode to derive Composite AdvancedSceneMode',
+        # see forum11194 for more info
     },
     0x3e => { #PH (TZ5/FS7)
         # (tags 0x3b, 0x3e, 0x8008 and 0x8009 have the same values in all my samples - PH)
@@ -853,7 +887,7 @@ my %shootingMode = (
         },
     },
     0x49 => { #19
-        Name => 'LongExposureNoiseReduction',
+        Name => 'LongExposureNoiseReduction', # (indicates availability, forum11194)
         Writable => 'int16u',
         PrintConv => {
             1 => 'Off',
@@ -1092,6 +1126,10 @@ my %shootingMode = (
             4 => 'Monochrome',
             5 => 'Scenery',
             6 => 'Portrait',
+            8 => 'Cinelike D', #forum11194
+            9 => 'Cinelike V', #forum11194
+            11 => 'L. Monochrome', #forum11194
+            15 => 'L. Monochrome D', #forum11194
         },
     },
     0x8a => { #18
@@ -1154,7 +1192,7 @@ my %shootingMode = (
         ValueConv => '-$val / 10',
         ValueConvInv => '-$val * 10',
     },
-    0x92 => { #21 (forum9453)
+    0x92 => { #21 (forum9453) (more to decode in forum11194)
         Name => 'WBShiftCreativeControl',
         Writable => 'int8u',
         Format => 'int8s',
@@ -1182,6 +1220,7 @@ my %shootingMode = (
             0 => 'Off',
             1 => 'Time Lapse',
             2 => 'Stop-motion Animation',
+            3 => 'Focus Bracketing', #forum11194
         },
     },
     0x9d => { #18
@@ -1211,6 +1250,36 @@ my %shootingMode = (
         },
     },
     # 0xa0 - undef[32]: AWB gains and black levels (ref forum9303)
+    0xa1 => { #forum11194
+        Name => 'FilterEffect',
+        Writable => 'rational64u',
+        Format => 'int32u',
+        PrintConv => {
+            '0 0' => 'Expressive',
+            # '0 1' => have seen this for XS1 (PH)
+            '0 2' => 'Retro',
+            '0 4' => 'High Key',
+            '0 8' => 'Sepia',
+            '0 16' => 'High Dynamic',
+            '0 32' => 'Miniature Effect',
+            '0 256' => 'Low Key',
+            '0 512' => 'Toy Effect',
+            '0 1024' => 'Dynamic Monochrome',
+            '0 2048' => 'Soft Focus',
+            '0 4096' => 'Impressive Art',
+            '0 8192' => 'Cross Process',
+            '0 16384' => 'One Point Color',
+            '0 32768' => 'Star Filter',
+            '0 524288' => 'Old Days',
+            '0 1048576' => 'Sunshine',
+            '0 2097152' => 'Bleach Bypass',
+            '0 4194304' => 'Toy Pop',
+            '0 8388608' => 'Fantasy',
+            '0 33554432' => 'Monochrome',
+            '0 67108864' => 'Rough Monochrome',
+            '0 134217728' => 'Silky Monochrome',
+        },
+    },
     0xa3 => { #18
         Name => 'ClearRetouchValue',
         Writable => 'rational64u',
@@ -1230,9 +1299,15 @@ my %shootingMode = (
         Writable => 'int16u',
         PrintConv => { 0 => 'Off', 1 => 'On' },
     },
+    0xac => { #forum11194
+        Name => 'MonochromeFilterEffect',
+        Writable => 'int16u',
+        PrintConv => { 0 => 'Off', 1 => 'Yellow', 2 => 'Orange', 3 => 'Red', 4 => 'Green' },
+    },
     0xad => { #forum9360
         Name => 'HighlightShadow',
         Writable => 'int16u',
+        Format => 'int16s', #forum11194
         Count => 2,
     },
     0xaf => { #PH (is this in UTC maybe? -- sometimes different time zone other times)
@@ -1242,6 +1317,11 @@ my %shootingMode = (
         Shift => 'Time',
         PrintConv => '$self->ConvertDateTime($val)',
         PrintConvInv => '$self->InverseDateTime($val)',
+    },
+    0xb3 => { #forum11194
+        Name => 'VideoBurstResolution',
+        Writable => 'int16u',
+        PrintConv => { 1 => 'Off or 4K', 4 => '6K' },
     },
     0xb4 => { #forum9429
         Name => 'MultiExposure',
@@ -1264,12 +1344,46 @@ my %shootingMode = (
             0x28 => '4K Burst (Start/Stop)',
             0x48 => '4K Pre-burst',
             0x108 => 'Loop Recording',
+            0x810 => '6K Burst',
+            0x820 => '6K Burst (Start/Stop)',
+            0x408 => 'Focus Stacking', #forum11563
+            0x1001 => 'High Resolution Mode',
         },
     },
     0xbc => { #forum9282
         Name => 'DiffractionCorrection',
         Writable => 'int16u',
         PrintConv => { 0 => 'Off', 1 => 'Auto' },
+    },
+    0xbd => { #forum11194
+        Name => 'FocusBracket',
+        Notes => 'positive is further, negative is closer',
+        Writable => 'int16u',
+        Format => 'int16s',
+    },
+    0xbe => { #forum11194
+        Name => 'LongExposureNRUsed',
+        Writable => 'int16u',
+        PrintConv => { 0 => 'No', 1 => 'Yes' },
+    },
+    0xbf => { #forum11194
+        Name => 'PostFocusMerging',
+        Format => 'int32u',
+        Count => 2,
+        PrintConv => { '0 0' => 'Post Focus Auto Merging or None' },
+    },
+    0xc1 => { #forum11194
+        Name => 'VideoPreburst',
+        Writable => 'int16u',
+        PrintConv => { 0 => 'No', 1 => '4K or 6K' },
+    },
+    0xca => { #forum11459
+        Name => 'SensorType',
+        Writable => 'int16u',
+        PrintConv => {
+            0 => 'Multi-aspect',
+            1 => 'Standard',
+        },
     },
     # Note: LensTypeMake and LensTypeModel are combined into a Composite LensType tag
     # defined in Olympus.pm which has the same values as Olympus:LensType
@@ -1294,6 +1408,16 @@ my %shootingMode = (
         Name => 'ISO',
         RawConv => '$val > 0xfffffff0 ? undef : $val',
         Writable => 'int32u',
+    },
+    0xd2 => { #forum11194
+        Name => 'MonochromeGrainEffect',
+        Writable => 'int16u',
+        PrintConv => {
+            0 => 'Off',
+            1 => 'Low',
+            2 => 'Standard',
+            3 => 'High',
+        },
     },
     0xd6 => { #PH (DC-S1)
         Name => 'NoiseReductionStrength',
@@ -2418,6 +2542,16 @@ my %shootingMode = (
             'DMC-TZ40 90 10' => 'Toy Effect',
             'DMC-TZ40 90 11' => 'Dynamic Monochrome',
             'DMC-TZ40 90 12' => 'Soft',
+            # some TZ5 modes are different (forum11523)
+            # (these may be the same for the  TZ4, TZ11 and TZ15)
+            'DMC-TZ5 18 1' => 'High Sensitivity',
+            'DMC-TZ5 26 1' => 'High-speed Burst (shot 1)',
+            'DMC-TZ5 27 1' => 'High-speed Burst (shot 2)',
+            'DMC-TZ5 29 1' => 'Snow',
+            'DMC-TZ5 30 1' => 'Starry Sky',
+            'DMC-TZ5 31 1' => 'Beach',
+            'DMC-TZ5 36 1' => 'High-speed Burst (shot 3)',
+            'DMC-TZ5 39 1' => 'Aerial Photo / Underwater / Multi-aspect',
         },
     },
 );

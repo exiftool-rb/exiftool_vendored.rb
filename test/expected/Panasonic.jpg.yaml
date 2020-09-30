@@ -47,6 +47,7 @@
 :flash_bias: 0
 :internal_serial_number: "(S00) 2004:07:19 no. 0102"
 :panasonic_exif_version: '0100'
+:video_frame_rate: 'n/a'
 :color_effect: 'Off'
 :time_since_power_on: '00:00:06.96'
 :burst_mode: 'Off'
