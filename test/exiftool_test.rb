@@ -2,6 +2,50 @@
 
 require 'test_helper'
 
+# These are expected to be different on travis, due to different paths, filesystems, or
+# exiftool version differences.
+# fov and hyperfocal_distance, for example, are different between v8 and v9.
+IGNORABLE_KEYS = %i[
+  circle_of_confusion
+  directory
+  exif_tool_version
+  file_access_date
+  file_access_date_civil
+  file_inode_change_date
+  file_inode_change_date_civil
+  file_modify_date
+  file_modify_date_civil
+  file_permissions
+  intelligent_contrast
+  max_focal_length
+  min_focal_length
+  source_file
+  thumbnail_image
+  af_area_mode
+  blue_trc
+  dof
+  file_type_extension
+  fov
+  green_trc
+  hyperfocal_distance
+  lens_type
+  long_focal
+  maker_note_unknown_binary
+  measurement_geometry
+  megapixels
+  nd_filter
+  red_trc
+  short_focal
+  strip_byte_counts
+  strip_offsets
+  warning
+].freeze
+
+IGNORABLE_PATTERNS = [
+  /.*-ml-\w\w-\w\w$/,     # < translatable
+  /35efl$/                # < 35mm Effective focal length, whose calculation was changed between v8 and v9.
+].freeze
+
 describe ExiftoolVendored do
   it 'raises NoSuchFile for missing files' do
     _ { Exiftool.new('no/such/file') }.must_raise Exiftool::NoSuchFile
@@ -58,51 +102,7 @@ describe ExiftoolVendored do
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-  # These are expected to be different on travis, due to different paths, filesystems, or
-  # exiftool version differences.
-  # fov and hyperfocal_distance, for example, are different between v8 and v9.
-  IGNORABLE_KEYS = %i[
-    circle_of_confusion
-    directory
-    exif_tool_version
-    file_access_date
-    file_access_date_civil
-    file_inode_change_date
-    file_inode_change_date_civil
-    file_modify_date
-    file_modify_date_civil
-    file_permissions
-    intelligent_contrast
-    max_focal_length
-    min_focal_length
-    source_file
-    thumbnail_image
-    af_area_mode
-    blue_trc
-    dof
-    file_type_extension
-    fov
-    green_trc
-    hyperfocal_distance
-    lens_type
-    long_focal
-    maker_note_unknown_binary
-    measurement_geometry
-    megapixels
-    nd_filter
-    red_trc
-    short_focal
-    strip_byte_counts
-    strip_offsets
-    warning
-  ].freeze
-
   puts "Ignoring #{IGNORABLE_KEYS.size} keys."
-
-  IGNORABLE_PATTERNS = [
-    /.*\-ml-\w\w-\w\w$/, # < translatable
-    /35efl$/ # < 35mm Effective focal length, whose calculation was changed between v8 and v9.
-  ].freeze
 
   def ignorable_key?(key)
     IGNORABLE_KEYS.include?(key) || IGNORABLE_PATTERNS.any? { |ea| key.to_s =~ ea }
