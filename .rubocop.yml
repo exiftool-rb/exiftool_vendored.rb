@@ -1,8 +1,9 @@
 AllCops:
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 2.4
   NewCops: enable
   Exclude:
     - 'bin/**/*'
+    - 'vendor/**/*'
 
 Layout/LineLength:
   Max: 120
