@@ -98,7 +98,7 @@ describe ExiftoolVendored do
                  File.open(yaml_file) { |f| YAML.safe_load(f, [Symbol, Date, Rational]) }
                end
     expected.delete_if { |k, _v| ignorable_key?(k) }
-    _(expected).must_equal_hash(actual)
+    _(actual).must_equal_hash(expected)
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
