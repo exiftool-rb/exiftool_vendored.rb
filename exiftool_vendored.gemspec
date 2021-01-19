@@ -15,6 +15,16 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
 
   spec.required_ruby_version = '>= 2.4'
+  spec.post_install_message = '
+    ***********************
+    * Ruby Support Notice *
+    ***********************
+
+    Starting March 31, 2021 releases of `exiftool_vendored` Gem will no longer support following
+    Ruby Versions due to their End Of Life (https://www.ruby-lang.org/en/downloads/branches/)
+    - Ruby 2.4 (EOL 2020-03-31)
+    - Ruby 2.5 (EOL 2021-03-31)
+  '
 
   spec.files         = `git ls-files -- lib bin`.split($/)
 
