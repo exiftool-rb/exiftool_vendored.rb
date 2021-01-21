@@ -12,6 +12,13 @@ This is
 * a dependency on the [exiftool](https://github.com/exiftool-rb/exiftool.rb) rubygem, and
 * an autoload script that configures the Exiftool gem to use the vendored version of the exiftool library.
 
+##  Ruby Support Deprecation Notice
+
+Starting March 31, 2021 future releases of `exiftool_vendored` Gem will no longer support following
+Ruby Versions due to their [End Of Life](https://www.ruby-lang.org/en/downloads/branches/) announcements:
+- Ruby 2.4 (EOL 2020-03-31)
+- Ruby 2.5 (EOL 2021-03-31)
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -27,9 +34,9 @@ Add this line to your application's Gemfile:
 irb(main):001:0> require 'exiftool_vendored'
 => true
 irb(main):002:0> Exiftool.command
-=> "/Users/mrm/.rbenv/versions/1.9.3-p429/lib/ruby/gems/1.9.1/gems/exiftool_vendored-9.33/bin/Image-ExifTool-9.33/exiftool"
+=> "/Users/sergey/.rbenv/versions/2.7.2/lib/ruby/gems/2.7.0/gems/exiftool_vendored-12.15.0/bin/exiftool"
 irb(main):003:0> Exiftool.exiftool_version
-=> 9.33
+=> "12.15"
 ```
 
 ## Versioning
