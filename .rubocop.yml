@@ -12,6 +12,7 @@ Metrics/BlockLength:
   Exclude:
     - 'Rakefile'
     - 'test/exiftool_test.rb'
+    - 'exiftool_vendored.gemspec'
 
 Style/SpecialGlobalVars:
   Exclude:
