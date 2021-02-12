@@ -44,5 +44,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop-rake'
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'simplecov-console'
+  spec.add_development_dependency 'simplecov_json_formatter'
   spec.add_development_dependency 'yard'
 end

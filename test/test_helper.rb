@@ -11,6 +11,7 @@ require 'yaml'
 require 'pathname'
 require 'exiftool_vendored'
 require 'simplecov-console'
+require 'simplecov_json_formatter'
 
 # We need a predictable timezone offset so non-tz-offset timestamps are comparable:
 ENV['TZ'] = 'UTC'
@@ -23,7 +24,8 @@ end
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
   [
     SimpleCov::Formatter::HTMLFormatter,
-    SimpleCov::Formatter::Console
+    SimpleCov::Formatter::Console,
+    SimpleCov::Formatter::JSONFormatter
   ]
 )
 
