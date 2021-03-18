@@ -88,7 +88,7 @@ sub ProcessCTMD($$$);
 sub ProcessExifInfo($$$);
 sub SwapWords($);
 
-$VERSION = '4.44';
+$VERSION = '4.46';
 
 # Note: Removed 'USM' from 'L' lenses since it is redundant - PH
 # (or is it?  Ref 32 shows 5 non-USM L-type lenses)
@@ -589,6 +589,8 @@ $VERSION = '4.44';
     61182.18 => 'Canon RF 100-500mm F4.5-7.1L IS USM',
     61182.19 => 'Canon RF 100-500mm F4.5-7.1L IS USM + RF1.4x',
     61182.20 => 'Canon RF 100-500mm F4.5-7.1L IS USM + RF2x',
+    61182.21 => 'Canon RF 70-200mm F4L IS USM', #42
+    61182.22 => 'Canon RF 50mm F1.8 STM', #42
     65535 => 'n/a',
 );
 
@@ -945,6 +947,7 @@ $VERSION = '4.44';
     0x80000437 => 'EOS 90D', #IB
     0x80000453 => 'EOS R6', #PH
     0x80000467 => 'PowerShot ZOOM',
+    0x80000468 => 'EOS M50 Mark II / Kiss M2', #IB
     0x80000520 => 'EOS D2000C', #IB
     0x80000560 => 'EOS D6000C', #PH (guess)
 );
@@ -6754,6 +6757,8 @@ my %ciMaxFocal = (
             275 => 'Canon RF 100-500mm F4.5-7.1L IS USM',
             276 => 'Canon RF 100-500mm F4.5-7.1L IS USM + RF1.4x',
             277 => 'Canon RF 100-500mm F4.5-7.1L IS USM + RF2x',
+            278 => 'Canon RF 70-200mm F4L IS USM', #42
+            280 => 'Canon RF 50mm F1.8 STM', #42
             # Note: add new RF lenses to %canonLensTypes with ID 61182
         },
     },

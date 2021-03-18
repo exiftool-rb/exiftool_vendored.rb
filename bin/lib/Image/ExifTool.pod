@@ -627,8 +627,9 @@ Flag to extract information from embedded documents in EPS files, embedded
 EPS information and JPEG and Jpeg2000 images in PDF files, embedded MPF
 images in JPEG and MPO files, timed metadata in videos, and the resource
 fork of Mac OS files.  A setting of 2 also causes the H264 video stream in
-MP4 files to be parsed until the first SEI message is decoded, or 3 to
-parse the entire stream.  Default is undef.
+MP4 files to be parsed until the first SEI message is decoded, or 3 to parse
+the entire H264 stream in MP4 videos and the entire M2TS file to look for
+any unlisted program containing GPS metadata.  Default is undef.
 
 =item FastScan
 
@@ -737,8 +738,8 @@ group names.
 
 =item HexTagIDs
 
-Use hexadecimal instead of decimal for the family 7 group names of tags with
-numerical ID's.
+Return hexadecimal instead of decimal for the family 7 group names of tags
+with numerical ID's.
 
 =item HtmlDump
 
@@ -843,8 +844,9 @@ print conversion for writing.  Default is 1.
 
 Flag set to add an 'mdir' Handler to a newly created Meta box when adding
 QuickTime ItemList tags.  Adobe Bridge does not add this Handler, but it is
-commonly found in samples from other software, so it is possible that this
-could affect the interoperability of ItemList tags.  Default is undef.
+commonly found in samples from other software, and it has been reported that
+Apple QuickTime Player and Photos.apps will ignore ItemList tags if this is
+missing.  Default is 1.
 
 =item QuickTimeUTC
 
@@ -2049,6 +2051,7 @@ The group family numbers are currently available:
     4) Instance Number          (eg. Copy1, Copy2, Copy3...)
     5) Metadata Path            (eg. JPEG-APP1-IFD0-ExifIFD)
     6) EXIF/TIFF Format         (eg. int8u, int32u, undef, string)
+    7) Tag ID                   (eg. ID-271, ID-rights, ID-a9aut)
 
 Families 0 and 1 are based on the file structure, and are similar except
 that family 1 is more specific and sub-divides some groups to give more
@@ -2092,13 +2095,14 @@ Family 6 is currently used only for EXIF/TIFF metadata, and gives the format
 type of the extracted value.  Generated only if the L</SaveFormat> option is
 used when extracting.
 
-Family 7 is used for tag ID's.  The group names are "ID-" followed by the
-tag ID with characters other than [-_A-Za-z0-9] converted to hex.  Numerical
-tag ID's are given in hex if the L</HexTagIDs> option is set.  When
-specifying a family 7 group name, numerical ID's may be in hex or decimal,
-and non-numercal ID's may or may not have characters other than
-[-_A-Za-z0-9] converted to hex.  Note that unlike other group names, family
-7 group names are case sensitive (except for the leading "ID-").
+Family 7 is used for tag ID's.  The group names are the actual tag ID's,
+with a leading "ID-" string.  Non-numerical ID's have characters other than
+[-_A-Za-z0-9] converted to hex.  Numerical tag ID's are returned in hex if
+the L</HexTagIDs> option is set, otherwise decimal is used.  When specifying
+a family 7 group name, numerical ID's may be in hex or decimal, and
+non-numerical ID's may or may not have characters other than [-_A-Za-z0-9]
+converted to hex.  Note that unlike other group names, the tag ID's of
+family 7 group names are case sensitive (but the leading "ID-" is not).
 
 See L</GetAllGroups [static]> for complete lists of group names.
 
@@ -2255,7 +2259,7 @@ Get list of all group names in specified family.
 
 =item Inputs:
 
-0) Group family number (0-4)
+0) Group family number (0-7)
 
 =item Return Values:
 
@@ -2344,11 +2348,15 @@ rational64s, float, double, ifd, unicode, complex, int64u, int64s, ifd64
 
 =item Family 7 (Tag ID):
 
-ID-xxx (where xxx is the tag ID.  Numerical ID's are given in hex with a
-leading "0x" if the HexTagIDs option is set, as are characters in
-non-numerical ID's which are not valid in a group name)
+ID-xxx (Where xxx is the tag ID.  Numerical ID's are returned in hex with a
+leading "0x" if the HexTagIDs option is set, or decimal otherwise. 
+Characters in non-numerical ID's which are not valid in a group name are
+returned as 2 hex digits.)
 
 =back
+
+Note:  This function may also be called as an ExifTool member function to
+allow the HexTagIDs option to be set when retrieving family 7 group names.
 
 =head2 GetDeleteGroups [static]
 
@@ -2367,14 +2375,14 @@ None.
 A list of deletable group names in alphabetical order.  The current list of
 deletable group names is:
 
-AFCP, APP0, APP1, APP10, APP11, APP12, APP13, APP14, APP15, APP2, APP3,
-APP4, APP5, APP6, APP7, APP8, APP9, Adobe, Audio, Author, CIFF, Camera,
-CanonVRD, Document, Ducky, EXIF, ExifIFD, ExifTool, File, FlashPix,
-FotoStation, GPS, GlobParamIFD, ICC_Profile, IFD0, IFD1, IPTC, Image,
-InteropIFD, JFIF, Jpeg2000, Location, MIE, MPF, MakerNotes, Meta, MetaIFD,
-NikonCapture, Other, PDF, PDF-update, PNG, PNG-pHYs, PhotoMechanic,
-Photoshop, Preview, PrintIM, Printing, RMETA, RSRC, SubIFD, Time, Trailer,
-Video, XML, XML-*, XMP, XMP-*
+Adobe, AFCP, APP0, APP1, APP10, APP11, APP12, APP13, APP14, APP15, APP2,
+APP3, APP4, APP5, APP6, APP7, APP8, APP9, Audio, Author, Camera, CanonVRD,
+CIFF, Document, Ducky, EXIF, ExifIFD, ExifTool, File, FlashPix, FotoStation,
+GlobParamIFD, GPS, ICC_Profile, IFD0, IFD1, Image, Insta360, InteropIFD,
+IPTC, ItemList, JFIF, Jpeg2000, Keys, Location, MakerNotes, Meta, MetaIFD,
+Microsoft, MIE, MPF, NikonCapture, Other, PDF, PDF-update, PhotoMechanic,
+Photoshop, PNG, PNG-pHYs, Preview, PrintIM, Printing, QuickTime, RMETA,
+RSRC, SubIFD, Time, Trailer, UserData, Video, XML, XML-*, XMP, XMP-*
 
 To schedule a group for deletion, call L</SetNewValue> with a tag name like
 'EXIF:*' and an undefined tag value.

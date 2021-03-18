@@ -135,10 +135,10 @@ my %rawType = (
 my @delGroups = qw(
     Adobe AFCP APP0 APP1 APP2 APP3 APP4 APP5 APP6 APP7 APP8 APP9 APP10 APP11
     APP12 APP13 APP14 APP15 CanonVRD CIFF Ducky EXIF ExifIFD File FlashPix
-    FotoStation GlobParamIFD GPS ICC_Profile IFD0 IFD1 Insta360 InteropIFD IPTC
-    ItemList JFIF Jpeg2000 Keys MakerNotes Meta MetaIFD MIE MPF NikonCapture PDF
-    PDF-update PhotoMechanic Photoshop PNG PNG-pHYs PrintIM QuickTime RMETA RSRC
-    SubIFD Trailer UserData XML XML-* XMP XMP-*
+    FotoStation GlobParamIFD GPS ICC_Profile IFD0 IFD1 Insta360 InteropIFD
+    IPTC ItemList JFIF Jpeg2000 Keys MakerNotes Meta MetaIFD Microsoft MIE
+    MPF NikonCapture PDF PDF-update PhotoMechanic Photoshop PNG PNG-pHYs
+    PrintIM QuickTime RMETA RSRC SubIFD Trailer UserData XML XML-* XMP XMP-*
 );
 # family 2 group names that we can delete
 my @delGroup2 = qw(
@@ -2639,12 +2639,14 @@ GWTInfo:    foreach $tagInfo (@infoArray) {
 
 #------------------------------------------------------------------------------
 # Get list of all group names
-# Inputs: 0) Group family number
+# Inputs: 0) [optional] ExifTool ref, 1) Group family number
 # Returns: List of group names (sorted alphabetically)
-sub GetAllGroups($)
+sub GetAllGroups($;$)
 {
     local $_;
     my $family = shift || 0;
+    my $self;
+    ref $family and $self = $family, $family = shift || 0;
 
     $family == 3 and return('Doc#', 'Main');
     $family == 4 and return('Copy#');
@@ -2663,9 +2665,23 @@ sub GetAllGroups($)
         $allGroups{$grp} = 1 if ($grps = $$table{GROUPS}) and ($grp = $$grps{$family});
         foreach $tag (TagTableKeys($table)) {
             my @infoArray = GetTagInfoList($table, $tag);
-            foreach $tagInfo (@infoArray) {
-                next unless ($grps = $$tagInfo{Groups}) and ($grp = $$grps{$family});
-                $allGroups{$grp} = 1;
+            if ($family == 7) {
+                foreach $tagInfo (@infoArray) {
+                    my $id = $$tagInfo{TagID};
+                    if (not defined $id) {
+                        $id = '';   # (just to be safe)
+                    } elsif ($id =~ /^\d+$/) {
+                        $id = sprintf('0x%x', $id) if $self and $$self{OPTIONS}{HexTagIDs};
+                    } else {
+                        $id =~ s/([^-_A-Za-z0-9])/sprintf('%.2x',ord $1)/ge;
+                    }
+                    $allGroups{'ID-' . $id} = 1;
+                }
+            } else {
+                foreach $tagInfo (@infoArray) {
+                    next unless ($grps = $$tagInfo{Groups}) and ($grp = $$grps{$family});
+                    $allGroups{$grp} = 1;
+                }
             }
         }
     }
@@ -4935,6 +4951,12 @@ sub Set64u(@)
     $_[1] and substr(${$_[1]}, $_[2], length($val)) = $val;
     return $val;
 }
+sub Set64s(@)
+{
+    my $val = shift;
+    $val < 0 and $val += 4294967296 * 4294967296; # (temporary hack won't really work due to round-off errors)
+    return Set64u($val, @_);
+}
 sub SetRational64u(@) {
     my ($numer,$denom) = Rationalize($_[0],0xffffffff);
     my $val = Set32u($numer) . Set32u($denom);
@@ -4996,6 +5018,7 @@ my %writeValueProc = (
     int16uRev => \&Set16uRev,
     int32s => \&Set32s,
     int32u => \&Set32u,
+    int64s => \&Set64s,
     int64u => \&Set64u,
     rational32s => \&SetRational32s,
     rational32u => \&SetRational32u,
@@ -6632,7 +6655,17 @@ sub SetFileTime($$;$$$$)
     # open file by name if necessary
     unless (ref $file) {
         # (file will be automatically closed when *FH goes out of scope)
-        $self->Open(\*FH, $file, '+<') or $self->Warn('Error opening file for update'), return 0;
+        unless ($self->Open(\*FH, $file, '+<')) {
+            my $success;
+            if (defined $atime or defined $mtime) {
+                my ($a, $m, $c) = $self->GetFileTime($file);
+                $atime = $a unless defined $atime;
+                $mtime = $m unless defined $mtime;
+                $success = eval { utime($atime, $mtime, $file) } if defined $atime and defined $mtime;
+            }
+            $self->Warn('Error opening file for update') unless $success;
+            return $success;
+        }
         $saveFile = $file;
         $file = \*FH;
     }

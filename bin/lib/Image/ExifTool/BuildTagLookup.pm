@@ -35,7 +35,7 @@ use Image::ExifTool::Sony;
 use Image::ExifTool::Validate;
 use Image::ExifTool::MacOS;
 
-$VERSION = '3.41';
+$VERSION = '3.44';
 @ISA = qw(Exporter);
 
 sub NumbersFirst($$);
@@ -141,6 +141,9 @@ my %formatOK = (
     signed      => 1,
     unsigned    => 1,
     utf8        => 1,
+    Unicode     => 1, # (Microsoft Xtra)
+    GUID        => 1, # (Microsoft Xtra)
+    vt_filetime => 1, # (Microsoft Xtra)
 );
 
 # Descriptions for the TagNames documentation
@@ -431,11 +434,13 @@ L<UserData|Image::ExifTool::TagNames/QuickTime UserData Tags>, and
 finally in L<Keys|Image::ExifTool::TagNames/QuickTime Keys Tags>,
 but this order may be changed by setting the PREFERRED level of the
 appropriate table in the config file (see
-L<example.config|../config.html#PREF> in the full distribution for
-an example).  ExifTool currently writes only top-level metadata in
-QuickTime-based files; it extracts other track-specific and timed
-metadata, but can not yet edit tags in these locations (with the
-exception of track-level date/time tags).
+L<example.config|../config.html#PREF> in the full distribution for an
+example).  Note that some tags with the same name but different ID's may
+exist in the same location, but the family 7 group names may be used to
+differentiate these.  ExifTool currently writes only top-level metadata in
+QuickTime-based files; it extracts other track-specific and timed metadata,
+but can not yet edit tags in these locations (with the exception of
+track-level date/time tags).
 
 Alternate language tags may be accessed for
 L<ItemList|Image::ExifTool::TagNames/QuickTime ItemList Tags> and
@@ -460,8 +465,8 @@ local time when extracting.
 
 When writing string-based date/time tags, the system time zone is added if
 the PrintConv option is enabled and no time zone is specified.  This is
-because Apple software may display a crazy values if the time zone is
-missing for some tags.
+because Apple software may display crazy values if the time zone is missing
+for some tags.
 
 See
 L<https://developer.apple.com/library/archive/documentation/QuickTime/QTFF/>
@@ -699,10 +704,14 @@ my %shortcutNotes = (
         large binary data tags which may be excluded to reduce memory usage if
         memory limitations are a problem
     },
+   'ls-l' => q{
+        mimics columns shown by Unix "ls -l" command.  Includes some tags which are
+        extracted only if the API L<SystemTags|../ExifTool.html#SystemTags> option
+        is enabled
+    },
 );
 
-
-# same thing for RIFF INFO tags found in the EXIF spec
+# lookup for RIFF INFO tags which are found in the EXIF spec
 my %riffSpec = (
     IARL => 1,  ICRD => 1,  IGNR => 1,  IPLT => 1,  ISRC => 1,
     IART => 1,  ICRP => 1,  IKEY => 1,  IPRD => 1,  ISRF => 1,
@@ -1320,6 +1329,7 @@ TagID:  foreach $tagID (@keys) {
                         my $count = $$tagInfo{Count} || 1;
                         # adjust count to Writable size if different than Format
                         if ($writable and $format and $writable ne $format and
+                            $writable ne 'string' and $format ne 'string' and
                             $Image::ExifTool::Exif::formatNumber{$writable} and
                             $Image::ExifTool::Exif::formatNumber{$format})
                         {

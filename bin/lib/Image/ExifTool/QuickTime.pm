@@ -47,7 +47,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.58';
+$VERSION = '2.61';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -243,7 +243,11 @@ my %timeInfo = (
     },
     # (all CR3 files store UTC times - PH)
     ValueConv => 'ConvertUnixTime($val, $self->Options("QuickTimeUTC") || $$self{FileType} eq "CR3")',
-    ValueConvInv => 'GetUnixTime($val, $self->Options("QuickTimeUTC")) + (66 * 365 + 17) * 24 * 3600',
+    ValueConvInv => q{
+        $val = GetUnixTime($val, $self->Options("QuickTimeUTC"));
+        return undef unless defined $val;
+        return $val + (66 * 365 + 17) * 24 * 3600;
+    },
     PrintConv => '$self->ConvertDateTime($val)',
     PrintConvInv => '$self->InverseDateTime($val)',
     # (can't put Groups here because they aren't constant!)
@@ -1994,7 +1998,11 @@ my %eeBox2 = (
     # ---- Microsoft ----
     Xtra => { #PH (microsoft)
         Name => 'MicrosoftXtra',
-        SubDirectory => { TagTable => 'Image::ExifTool::Microsoft::Xtra' },
+        WriteGroup => 'Microsoft',
+        SubDirectory => {
+            DirName => 'Microsoft',
+            TagTable => 'Image::ExifTool::Microsoft::Xtra',
+        },
     },
     # ---- Minolta ----
     MMA0 => { #PH (DiMage 7Hi)
@@ -3000,9 +3008,9 @@ my %eeBox2 = (
         3-character ISO 639-2 language code and an optional ISO 3166-1 alpha 2
         country code to the tag name (eg. "ItemList:Title-fra" or
         "ItemList::Title-fra-FR").  When creating a new Meta box to contain the
-        ItemList directory, by default ExifTool does not specify a
-        L<Handler|Image::ExifTool::TagNames/QuickTime Handler Tags>, but the
-        API L<QuickTimeHandler|../ExifTool.html#QuickTimeHandler> option may be used to include an 'mdir' Handler box.
+        ItemList directory, by default ExifTool adds an 'mdir' (Metadata) Handler
+        box because Apple software may ignore ItemList tags otherwise, but the API
+        L<QuickTimeHandler|../ExifTool.html#QuickTimeHandler> option may be set to 0 to avoid this.
     },
     # in this table, binary 1 and 2-byte "data"-type tags are interpreted as
     # int8u and int16u.  Multi-byte binary "data" tags are extracted as binary data.
@@ -6163,13 +6171,12 @@ my %eeBox2 = (
     PROCESS_PROC => \&ProcessKeys,
     WRITE_PROC => \&WriteKeys,
     CHECK_PROC => \&CheckQTValue,
-    VARS => { LONG_TAGS => 3 },
+    VARS => { LONG_TAGS => 7 },
     WRITABLE => 1,
     # (not PREFERRED when writing)
     GROUPS => { 1 => 'Keys' },
     WRITE_GROUP => 'Keys',
     LANG_INFO => \&GetLangInfo,
-    FORMAT => 'string',
     NOTES => q{
         This directory contains a list of key names which are used to decode tags
         written by the "mdta" handler.  Also in this table are a few tags found in
@@ -6271,6 +6278,11 @@ my %eeBox2 = (
         PrintConv => '$self->ConvertDateTime($val)',
         PrintConvInv => '$self->InverseDateTime($val,1)', # (add time zone if it didn't exist)
     },
+    'location.accuracy.horizontal' => { Name => 'LocationAccuracyHorizontal' },
+    'live-photo.auto'           => { Name => 'LivePhotoAuto', Writable => 'int8u' },
+    'live-photo.vitality-score' => { Name => 'LivePhotoVitalityScore', Writable => 'float' },
+    'live-photo.vitality-scoring-version' => { Name => 'LivePhotoVitalityScoringVersion', Writable => 'int64s' },
+    'apple.photos.variation-identifier'   => { Name => 'ApplePhotosVariationIdentifier',  Writable => 'int64s' },
     'direction.facing' => { Name => 'CameraDirection', Groups => { 2 => 'Location' } },
     'direction.motion' => { Name => 'CameraMotion',    Groups => { 2 => 'Location' } },
     'location.body'    => { Name => 'LocationBody',    Groups => { 2 => 'Location' } },
@@ -6306,11 +6318,15 @@ my %eeBox2 = (
     # com.divergentmedia.clipwrap.manufacturer     ('Sony')
     # com.divergentmedia.clipwrap.originalDateTime ('2013/2/6 10:30:40+0200')
 #
-# seen in timed metadata (mebx), and added dynamically to the table
-# via SaveMetaKeys().  NOTE: these tags are not writable!
+# seen in timed metadata (mebx), and added dynamically to the table via SaveMetaKeys()
+# NOTE: these tags are not writable! (timed metadata cannot yet be written)
 #
     # (mdta)com.apple.quicktime.video-orientation (dtyp=66, int16s)
-    'video-orientation' => { Name => 'VideoOrientation', Writable => 0 },
+    'video-orientation' => {
+        Name => 'VideoOrientation',
+        Writable => 0,
+        PrintConv => \%Image::ExifTool::Exif::orientation, #PH (NC)
+    },
     # (mdta)com.apple.quicktime.live-photo-info (dtyp=com.apple.quicktime.com.apple.quicktime.live-photo-info)
     'live-photo-info' => {
         Name => 'LivePhotoInfo',
@@ -8580,7 +8596,7 @@ sub QuickTimeFormat($$)
     my ($flags, $len) = @_;
     my $format;
     if ($flags == 0x15 or $flags == 0x16) {
-        $format = { 1=>'int8', 2=>'int16', 4=>'int32' }->{$len};
+        $format = { 1=>'int8', 2=>'int16', 4=>'int32', 8=>'int64' }->{$len};
         $format .= $flags == 0x15 ? 's' : 'u' if $format;
     } elsif ($flags == 0x17) {
         $format = 'float';

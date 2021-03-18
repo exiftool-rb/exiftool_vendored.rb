@@ -12,7 +12,7 @@ meta information extracted from or written to a file.
 =head1 TAG TABLES
 
 The tables listed below give the names of all tags recognized by ExifTool.
-They contain a total of 24077 tags, with 15588 unique tag names.
+They contain a total of 24094 tags, with 15597 unique tag names.
 
 B<Tag ID>, B<Index#> or B<Sequence> is given in the first column of each
 table.  A B<Tag ID> is the computer-readable equivalent of a tag name, and
@@ -5886,7 +5886,7 @@ Tags extracted from the maker notes of iPhone images.
   0x0008   AccelerationVector                   rational64s[3]
   0x000a   HDRImageType                         int32s
   0x000b   BurstUUID                            string
-  0x0011   ContentIdentifier                    string
+  0x0011   MediaGroupUUID                       string
   0x0015   ImageUniqueID                        string
 
 =head3 Apple RunTime Tags
@@ -19200,6 +19200,11 @@ some models when the ExtractEmbedded option is used.
 
   Tag ID   Tag Name                             Writable
   ------   --------                             --------
+  0x8000   FNumber                              no
+  0x8109   ExposureTime                         no
+  0x810a   MasterGainAdjustment                 no
+  0x810b   ISO                                  no
+  0x810c   ElectricalExtenderMagnification      no
   0x8500   GPSVersionID                         no
   0x8501   GPSLatitudeRef                       no
   0x8502   GPSLatitude                          no
@@ -19210,6 +19215,7 @@ some models when the ExtractEmbedded option is used.
   0x850a   GPSMeasureMode                       no
   0x8512   GPSMapDatum                          no
   0x851d   GPSDateStamp                         no
+  0xe303   WhiteBalance                         no
   0xe304   DateTime                             no
 
 =head2 SonyIDC Tags
@@ -22509,8 +22515,13 @@ Windows Live Photo Gallery.
 
 =head3 Microsoft Xtra Tags
 
-Tags extracted from the Microsoft "Xtra" atom of QuickTime videos.  Tag ID's
-are not shown because some are unruly GUID's.
+Tags found in the Microsoft "Xtra" atom of QuickTime videos.  Tag ID's are
+not shown because some are unruly GUID's.  Currently most of these tags are
+not writable because the Microsoft documentation is poor and samples were
+not available, but more tags may be made writable in the future if samples
+are provided.  Note that writable tags in this table are are flagged to
+"Avoid", which means that other more common tags will be written instead if
+possible unless the Microsoft group is specified explicitly.
 
   Tag Name                                      Writable
   --------                                      --------
@@ -22522,13 +22533,13 @@ are not shown because some are unruly GUID's.
   AcquisitionTimeYear                           no
   AcquisitionTimeYearMonth                      no
   AcquisitionTimeYearMonthDay                   no
-  AlbumArtist                                   no
+  AlbumArtist                                   Unicode/
   AlbumArtist                                   no
   AlbumArtistSortOrder                          no
-  AlbumCoverURL                                 no
+  AlbumCoverURL                                 Unicode/
   AlbumID                                       no
   AlbumIDAlbumArtist                            no
-  AlbumTitle                                    no
+  AlbumTitle                                    Unicode/
   AlbumTitle                                    no
   AlbumTitleSortOrder                           no
   AlternateSourceURL                            no
@@ -22545,6 +22556,7 @@ are not shown because some are unruly GUID's.
   Author                                        no
   Author                                        no
   AuthorSortOrder                               no
+  AuthorURL                                     Unicode/
   AutoSummary                                   no
   AverageLevel                                  no
   BccAddresses                                  no
@@ -22577,7 +22589,7 @@ are not shown because some are unruly GUID's.
   CameraModel                                   no
   CameraModel                                   no
   CarPhone                                      no
-  Category                                      no
+  Category                                      Unicode/+
   Category                                      no
   CcAddresses                                   no
   CcNames                                       no
@@ -22596,13 +22608,13 @@ are not shown because some are unruly GUID's.
   Company                                       no
   CompanyMainPhone                              no
   Complete                                      no
-  Composer                                      no
+  Composer                                      Unicode/
   Composers                                     no
   Computer                                      no
-  Conductor                                     no
+  Conductor                                     Unicode/+
   Conductors                                    no
   ContactNames                                  no
-  ContentDistributor                            no
+  ContentDistributor                            Unicode/
   ContentDistributorDuration                    no
   ContentDistributorType                        no
   ContentGroupDescription                       no
@@ -22625,7 +22637,7 @@ are not shown because some are unruly GUID's.
   DataRate                                      no
   Date                                          no
   DateAccessed                                  no
-  DateAcquired                                  no
+  DateAcquired                                  vt_filetime/
   DateArchived                                  no
   DateCompleted                                 no
   DateCreated                                   no
@@ -22642,7 +22654,7 @@ are not shown because some are unruly GUID's.
   Description                                   no
   Description                                   no
   Dimensions                                    no
-  Director                                      no
+  Director                                      Unicode/+
   Directors                                     no
   DisplayArtist                                 no
   Division                                      no
@@ -22656,8 +22668,9 @@ are not shown because some are unruly GUID's.
   E-mailAddress                                 no
   E-mailDisplayName                             no
   E-mailList                                    no
+  EncodedBy                                     Unicode/
   EncodedBy                                     no
-  EncodingTime                                  no
+  EncodingTime                                  date/
   EndDate                                       no
   EntryType                                     no
   EpisodeName                                   no
@@ -22715,7 +22728,7 @@ are not shown because some are unruly GUID's.
   ISOSpeed                                      no
   Importance                                    no
   Incomplete                                    no
-  InitialKey                                    no
+  InitialKey                                    Unicode/
   InitialKey                                    no
   Initials                                      no
   IsAttachment                                  no
@@ -22749,8 +22762,8 @@ are not shown because some are unruly GUID's.
   MCDI                                          no
   MailingAddress                                no
   MaxAperture                                   no
-  MediaClassPrimaryID                           no
-  MediaClassSecondaryID                         no
+  MediaClassPrimaryID                           GUID/
+  MediaClassSecondaryID                         GUID/
   MediaContentTypes                             no
   MediaCreated                                  no
   MediaOriginalBroadcastDateTime                no
@@ -22761,7 +22774,7 @@ are not shown because some are unruly GUID's.
   MiddleName                                    no
   Mileage                                       no
   ModifiedBy                                    no
-  Mood                                          no
+  Mood                                          Unicode/
   Mood                                          no
   MoreInfo                                      no
   Name                                          no
@@ -22774,9 +22787,9 @@ are not shown because some are unruly GUID's.
   OrganizerAddress                              no
   OrganizerName                                 no
   Orientation                                   no
-  OriginalAlbumTitle                            no
-  OriginalArtist                                no
-  OriginalLyricist                              no
+  OriginalAlbumTitle                            Unicode/
+  OriginalArtist                                Unicode/
+  OriginalLyricist                              Unicode/
   OtherAddress                                  no
   OtherCity                                     no
   OtherCountry-Region                           no
@@ -22788,7 +22801,7 @@ are not shown because some are unruly GUID's.
   POBox                                         no
   Pager                                         no
   Pages                                         no
-  ParentalRating                                no
+  ParentalRating                                Unicode/
   ParentalRating                                no
   ParentalRatingReason                          no
   PartOfSet                                     no
@@ -22798,7 +22811,7 @@ are not shown because some are unruly GUID's.
   Path                                          no
   PeakValue                                     no
   PerceivedType                                 no
-  Period                                        no
+  Period                                        Unicode/
   Period                                        no
   PersonalTitle                                 no
   PixelAspectRatioX                             no
@@ -22808,7 +22821,7 @@ are not shown because some are unruly GUID's.
   PrimaryE-mail                                 no
   PrimaryPhone                                  no
   Priority                                      no
-  Producer                                      no
+  Producer                                      Unicode/+
   Producers                                     no
   ProductName                                   no
   ProductVersion                                no
@@ -22817,15 +22830,16 @@ are not shown because some are unruly GUID's.
   ProgramMode                                   no
   ProgramName                                   no
   Project                                       no
+  PromotionURL                                  Unicode/
   Protected                                     no
   ProtectionType                                no
   Provider                                      no
-  Provider                                      no
+  Provider                                      Unicode/
   ProviderLogoURL                               no
   ProviderRating                                no
   ProviderStyle                                 no
   ProviderURL                                   no
-  Publisher                                     no
+  Publisher                                     Unicode/
   Publisher                                     no
   RadioBand                                     no
   RadioFormat                                   no
@@ -22859,7 +22873,7 @@ are not shown because some are unruly GUID's.
   Sensitivity                                   no
   ShadowFilePath                                no
   Shared                                        no
-  SharedUserRating                              no
+  SharedUserRating                              int64u/
   SharedWith                                    no
   Size                                          no
   Slides                                        no
@@ -22880,7 +22894,7 @@ are not shown because some are unruly GUID's.
   Subject                                       no
   SubjectDistance                               no
   SubscriptionContentID                         no
-  Subtitle                                      no
+  Subtitle                                      Unicode/
   Subtitle                                      no
   SubtitleDescription                           no
   Suffix                                        no
@@ -22959,7 +22973,7 @@ are not shown because some are unruly GUID's.
   WhiteBalance                                  no
   WindowsFileName                               no
   WordCount                                     no
-  Writer                                        no
+  Writer                                        Unicode/
   Writers                                       no
   Year                                          no
   Year                                          no
@@ -25697,11 +25711,13 @@ L<UserData|Image::ExifTool::TagNames/QuickTime UserData Tags>, and
 finally in L<Keys|Image::ExifTool::TagNames/QuickTime Keys Tags>,
 but this order may be changed by setting the PREFERRED level of the
 appropriate table in the config file (see
-example.config in the full distribution for
-an example).  ExifTool currently writes only top-level metadata in
-QuickTime-based files; it extracts other track-specific and timed
-metadata, but can not yet edit tags in these locations (with the
-exception of track-level date/time tags).
+example.config in the full distribution for an
+example).  Note that some tags with the same name but different ID's may
+exist in the same location, but the family 7 group names may be used to
+differentiate these.  ExifTool currently writes only top-level metadata in
+QuickTime-based files; it extracts other track-specific and timed metadata,
+but can not yet edit tags in these locations (with the exception of
+track-level date/time tags).
 
 Alternate language tags may be accessed for
 L<ItemList|Image::ExifTool::TagNames/QuickTime ItemList Tags> and
@@ -25726,8 +25742,8 @@ local time when extracting.
 
 When writing string-based date/time tags, the system time zone is added if
 the PrintConv option is enabled and no time zone is specified.  This is
-because Apple software may display a crazy values if the time zone is
-missing for some tags.
+because Apple software may display crazy values if the time zone is missing
+for some tags.
 
 See
 L<https://developer.apple.com/library/archive/documentation/QuickTime/QTFF/>
@@ -25801,7 +25817,7 @@ Tags found in Pittasoft Blackvue dashcam "free" data.
 
 Timed metadata extracted from QuickTime media data and some AVI videos when
 the ExtractEmbedded option is used.  Although most of these tags are
-combined into the single table below, ExifTool currently reads 49 different
+combined into the single table below, ExifTool currently reads 51 different
 formats of timed GPS metadata from video files.
 
   Tag Name                                      Writable
@@ -25991,66 +26007,75 @@ either of these tables, either the "Keys" location must be specified (eg.
 C<-Keys:Author=Phil> on the command line), or the PREFERRED level must be
 changed via the config file.
 
-  Tag ID                  Tag Name              Writable
-  ------                  --------              --------
-  'Encoded_With'          EncodedWith           string
-  'album'                 Album                 string
-  'artist'                Artist                string
-  'artwork'               Artwork               string
-  'author'                Author                string
+  Tag ID        Tag Name                        Writable
+  ------        --------                        --------
+  'Encoded_With' EncodedWith                    yes
+  'album'       Album                           yes
+  'apple.photos.variation-identifier'
+                ApplePhotosVariationIdentifier  int64s
+  'artist'      Artist                          yes
+  'artwork'     Artwork                         yes
+  'author'      Author                          yes
   'camera.framereadouttimeinmicroseconds'
-                          FrameReadoutTime      string
-  'camera.identifier'     CameraIdentifier      string
-  'collection.user'       UserCollection        string
-  'com.android.version'   AndroidVersion        string
-  'com.apple.photos.captureMode' CaptureMode    string
-  'comment'               Comment               string
-  'copyright'             Copyright             string
-  'creationdate'          CreationDate          string
-  'description'           Description           string
-  'detected-face'         FaceInfo              QuickTime FaceInfo
-  'detected-face.bounds'  DetectedFaceBounds    no
+                FrameReadoutTime                yes
+  'camera.identifier' CameraIdentifier          yes
+  'collection.user' UserCollection              yes
+  'com.android.version' AndroidVersion          yes
+  'com.apple.photos.captureMode' CaptureMode    yes
+  'comment'     Comment                         yes
+  'copyright'   Copyright                       yes
+  'creationdate' CreationDate                   yes
+  'description' Description                     yes
+  'detected-face' FaceInfo                      QuickTime FaceInfo
+  'detected-face.bounds' DetectedFaceBounds     no
   'detected-face.face-id' DetectedFaceID        no
   'detected-face.roll-angle'
-                          DetectedFaceRollAngle no
+                DetectedFaceRollAngle           no
   'detected-face.yaw-angle'
-                          DetectedFaceYawAngle  no
-  'direction.facing'      CameraDirection       string
-  'direction.motion'      CameraMotion          string
-  'director'              Director              string
-  'displayname'           DisplayName           string
-  'genre'                 Genre                 string
-  'information'           Information           string
-  'keywords'              Keywords              string
-  'live-photo-info'       LivePhotoInfo         no
-  'location.ISO6709'      GPSCoordinates        string
-  'location.body'         LocationBody          string
-  'location.date'         LocationDate          string
-  'location.name'         LocationName          string
-  'location.note'         LocationNote          string
-  'location.role'         LocationRole          string
-  'make'                  Make                  string
-  'model'                 Model                 string
-  'player.movie.audio.balance' Balance          string
-  'player.movie.audio.bass' Bass                string
-  'player.movie.audio.gain' AudioGain           string
+                DetectedFaceYawAngle            no
+  'direction.facing' CameraDirection            yes
+  'direction.motion' CameraMotion               yes
+  'director'    Director                        yes
+  'displayname' DisplayName                     yes
+  'genre'       Genre                           yes
+  'information' Information                     yes
+  'keywords'    Keywords                        yes
+  'live-photo-info' LivePhotoInfo               no
+  'live-photo.auto' LivePhotoAuto               int8u
+  'live-photo.vitality-score'
+                LivePhotoVitalityScore          float
+  'live-photo.vitality-scoring-version'
+                LivePhotoVitalityScoringVersion int64s
+  'location.ISO6709' GPSCoordinates             yes
+  'location.accuracy.horizontal'
+                LocationAccuracyHorizontal      yes
+  'location.body' LocationBody                  yes
+  'location.date' LocationDate                  yes
+  'location.name' LocationName                  yes
+  'location.note' LocationNote                  yes
+  'location.role' LocationRole                  yes
+  'make'        Make                            yes
+  'model'       Model                           yes
+  'player.movie.audio.balance' Balance          yes
+  'player.movie.audio.bass' Bass                yes
+  'player.movie.audio.gain' AudioGain           yes
   'player.movie.audio.mute' Mute                int8u
-  'player.movie.audio.pitchshift' PitchShift    string
-  'player.movie.audio.treble' Trebel            string
-  'player.movie.visual.brightness' Brightness   string
-  'player.movie.visual.color' Color             string
-  'player.movie.visual.contrast' Contrast       string
-  'player.movie.visual.tint' Tint               string
-  'player.version'        PlayerVersion         string
-  'producer'              Producer              string
-  'publisher'             Publisher             string
-  'rating.user'           UserRating            string
-  'software'              Software              string
-  'still-image-time'      StillImageTime        no
-  'title'                 Title                 string
-  'version'               Version               string
-  'video-orientation'     VideoOrientation      no
-  'year'                  Year                  string
+  'player.movie.audio.pitchshift' PitchShift    yes
+  'player.movie.audio.treble' Trebel            yes
+  'player.movie.visual.brightness' Brightness   yes
+  'player.movie.visual.color' Color             yes
+  'player.movie.visual.contrast' Contrast       yes
+  'player.movie.visual.tint' Tint               yes
+  'player.version' PlayerVersion                yes
+  'producer'    Producer                        yes
+  'publisher'   Publisher                       yes
+  'rating.user' UserRating                      yes
+  'software'    Software                        yes
+  'still-image-time' StillImageTime             no
+  'title'       Title                           yes
+  'version'     Version                         yes
+  'video-orientation' VideoOrientation          no
+  'year'        Year                            yes
 
 =head3 QuickTime FaceInfo Tags
 
@@ -26167,9 +26192,9 @@ this table support alternate languages which are accessed by adding a
 3-character ISO 639-2 language code and an optional ISO 3166-1 alpha 2
 country code to the tag name (eg. "ItemList:Title-fra" or
 "ItemList::Title-fra-FR").  When creating a new Meta box to contain the
-ItemList directory, by default ExifTool does not specify a
-L<Handler|Image::ExifTool::TagNames/QuickTime Handler Tags>, but the
-API QuickTimeHandler option may be used to include an 'mdir' Handler box.
+ItemList directory, by default ExifTool adds an 'mdir' (Metadata) Handler
+box because Apple software may ignore ItemList tags otherwise, but the API
+QuickTimeHandler option may be set to 0 to avoid this.
 
   Tag ID       Tag Name                         Writable
   ------       --------                         --------
@@ -33740,9 +33765,11 @@ L<https://fits.gsfc.nasa.gov/fits_standard.html> for the specification.
   ------       --------                         --------
   'AUTHOR'     Author                           no
   'BACKGRND'   Background                       no
+  'COMMENT'    Comment                          no
   'DATE'       CreateDate                       no
   'DATE-END'   ObservationDateEnd               no
   'DATE-OBS'   ObservationDate                  no
+  'HISTORY'    History                          no
   'INSTRUME'   Instrument                       no
   'OBJECT'     Object                           no
   'OBSERVER'   Observer                         no
@@ -35024,6 +35051,7 @@ FileName.
   Tag Name                   Group              Writable
   --------                   -----              --------
   Adobe                      Adobe              yes!
+  BaseName                   System             no
   CanonDR4                   CanonVRD           yes!^
   CanonVRD                   CanonVRD           yes!^
   Comment                    File               yes
@@ -35656,6 +35684,13 @@ for more details.
                        InteropIFD:InteropVersion
                        InteropIFD:RelatedImageWidth
                        InteropIFD:RelatedImageHeight
+  ls-l                 FilePermissions          yes
+                       FileHardLinks
+                       FileUserID
+                       FileGroupID
+                       FileSize#
+                       FileModifyDate
+                       FileName
 
 =head2 MWG Tags
 
