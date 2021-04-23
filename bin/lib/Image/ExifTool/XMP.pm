@@ -50,7 +50,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 require Exporter;
 
-$VERSION = '3.39';
+$VERSION = '3.41';
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(EscapeXML UnescapeXML);
 
@@ -70,6 +70,13 @@ sub FormatXMPDate($);
 sub ConvertRational($);
 sub ConvertRationalList($);
 sub WriteGSpherical($$$);
+
+# standard path locations for XMP in major file types
+my %stdPath = (
+    JPEG => 'JPEG-APP1-XMP',
+    TIFF => 'TIFF-IFD0-XMP',
+    PSD => 'PSD-XMP',
+);
 
 # lookup for translating to ExifTool namespaces (and family 1 group names)
 %stdXlatNS = (
@@ -3844,6 +3851,7 @@ sub ProcessXMP($$;$)
     my ($buff, $fmt, $hasXMP, $isXML, $isRDF, $isSVG);
     my $rtnVal = 0;
     my $bom = 0;
+    my $path = $et->MetadataPath();
 
     # namespaces and prefixes currently in effect while parsing the file,
     # and lookup to translate brain-dead-Microsoft-Photo-software prefixes
@@ -3861,11 +3869,7 @@ sub ProcessXMP($$;$)
         (($$dirInfo{DirName} || '') eq 'XMP' or $$et{FILE_TYPE} eq 'XMP'))
     {
         $$et{XmpValidate} = { } if $$et{OPTIONS}{Validate};
-        my $path = $et->MetadataPath();
-        my $nonStd;
-        if ($$et{FILE_TYPE} =~ /^(JPEG|TIFF|PSD)$/ and $path !~ /^(JPEG-APP1-XMP|TIFF-IFD0-XMP|PSD-XMP)$/) {
-            $nonStd = 1;
-        }
+        my $nonStd = ($stdPath{$$et{FILE_TYPE}} and $path ne $stdPath{$$et{FILE_TYPE}});
         if ($nonStd and $Image::ExifTool::MWG::strict) {
             $et->Warn("Ignored non-standard XMP at $path");
             return 1;
@@ -4063,12 +4067,14 @@ sub ProcessXMP($$;$)
 
     # extract XMP/XML as a block if specified
     my $blockName = $$dirInfo{BlockInfo} ? $$dirInfo{BlockInfo}{Name} : 'XMP';
+    my $blockExtract = $et->Options('BlockExtract');
     if (($$et{REQ_TAG_LOOKUP}{lc $blockName} or ($$et{TAGS_FROM_FILE} and
-        not $$et{EXCL_TAG_LOOKUP}{lc $blockName})) and
+        not $$et{EXCL_TAG_LOOKUP}{lc $blockName}) or $blockExtract) and
         (($$et{FileType} eq 'XMP' and $blockName eq 'XMP') or
         ($$dirInfo{DirName} and $$dirInfo{DirName} eq $blockName)))
     {
         $et->FoundTag($$dirInfo{BlockInfo} || 'XMP', substr($$dataPt, $dirStart, $dirLen));
+        return 1 if $blockExtract and $blockExtract > 1;
     }
 
     $tagTablePtr or $tagTablePtr = GetTagTable('Image::ExifTool::XMP::Main');
@@ -4122,6 +4128,13 @@ sub ProcessXMP($$;$)
             }
         }
         defined $fmt or $et->Warn('XMP character encoding error');
+    }
+    # warn if standard XMP is missing xpacket wrapper
+    if ($$et{XMP_NO_XPACKET} and $$et{OPTIONS}{Validate} and
+        $stdPath{$$et{FILE_TYPE}} and $path eq $stdPath{$$et{FILE_TYPE}} and
+        not $$dirInfo{IsExtended} and not $$et{DOC_NUM})
+    {
+        $et->Warn('XMP is missing xpacket wrapper', 1);
     }
     if ($fmt) {
         # trim if necessary to avoid converting non-UTF data

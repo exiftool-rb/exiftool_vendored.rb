@@ -34,7 +34,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::Minolta;
 
-$VERSION = '3.38';
+$VERSION = '3.41';
 
 sub ProcessSRF($$$);
 sub ProcessSR2($$$);
@@ -148,8 +148,12 @@ sub PrintInvLensSpec($;$$);
     32859 => 'Sony FE 20mm F1.8 G', #IB/JR
     32860 => 'Sony FE 12-24mm F2.8 GM', #JR/IB
     32862 => 'Sony FE 50mm F1.2 GM', #IB/JR
+    32863 => 'Sony FE 14mm F1.8 GM', #IB
     32864 => 'Sony FE 28-60mm F4-5.6', #JR
     32865 => 'Sony FE 35mm F1.4 GM', #IB/JR
+    32866 => 'Sony FE 24mm F2.8 G', #IB
+    32867 => 'Sony FE 40mm F2.5 G', #IB
+    32868 => 'Sony FE 50mm F2.5 G', #IB
 
   # (comment this out so LensID will report the LensModel, which is more useful)
   # 32952 => 'Metabones Canon EF Speed Booster Ultra', #JR (corresponds to 184, but 'Advanced' mode, LensMount reported as E-mount)
@@ -190,7 +194,9 @@ sub PrintInvLensSpec($;$$);
     49463 => 'Tamron 28-200mm F2.8-5.6 Di III RXD', #JR (Model A071)
     49464 => 'Tamron 70-300mm F4.5-6.3 Di III RXD', #JR (Model A047)
     49465 => 'Tamron 17-70mm F2.8 Di III-A VC RXD', #JR (Model B070)
-    49473 => 'Tokina atx-m 85mm F1.8 FE', #JR
+    49473 => 'Tokina atx-m 85mm F1.8 FE or Viltrox lens', #JR
+    49473.1 => 'Viltrox 23mm F1.4 E', #JR
+    49473.2 => 'Viltrox 56mm F1.4 E', #JR
     49712 => 'Tokina FiRIN 20mm F2 FE AF',       # (firmware Ver.01)
     49713 => 'Tokina FiRIN 100mm F2.8 FE MACRO', # (firmware Ver.01)
 
@@ -628,9 +634,10 @@ my %hidUnk = ( Hidden => 1, Unknown => 1 );
             3 => 'Standard',
             4 => 'Economy',
             5 => 'Extra Fine',
-            6 => 'RAW + JPEG',
+            6 => 'RAW + JPEG/HEIF',
             7 => 'Compressed RAW',
             8 => 'Compressed RAW + JPEG',
+            9 => 'Light', #JR
             0xffffffff => 'n/a', #PH (SLT-A57 panorama)
         },
     },
@@ -1174,7 +1181,7 @@ my %hidUnk = ( Hidden => 1, Unknown => 1 );
         # doesn't seem to apply to DSC models (always 0)
         Name => 'AFPointSelected',
         Condition => q{
-            ($$self{Model} =~ /^(SLT-|HV)/) or ($$self{Model} =~ /^ILCE-/ and
+            ($$self{Model} =~ /^(SLT-|HV)/) or ($$self{Model} =~ /^(ILCE-|ILME-)/ and
             defined $$self{AFAreaILCE} and  $$self{AFAreaILCE} == 4)
         },
         Notes => 'SLT models or ILCE with LA-EA2/EA4',
@@ -1457,13 +1464,15 @@ my %hidUnk = ( Hidden => 1, Unknown => 1 );
         Count => 2,
         PrintConv => {
             '0 0' => 'n/a',
-            '0 1' => 'Standard JPEG',
-            '0 2' => 'Fine JPEG',
-            '0 3' => 'Extra Fine JPEG',
+            '0 1' => 'Standard',
+            '0 2' => 'Fine',
+            '0 3' => 'Extra Fine',
+            '0 4' => 'Light', #JR
             '1 0' => 'RAW',
-            '1 1' => 'RAW + Standard JPEG',
-            '1 2' => 'RAW + Fine JPEG',
-            '1 3' => 'RAW + Extra Fine JPEG',
+            '1 1' => 'RAW + Standard',
+            '1 2' => 'RAW + Fine',
+            '1 3' => 'RAW + Extra Fine',
+            '1 4' => 'RAW + Light', #JR
         },
     },
     0x202f => { #JR (ILCE-7RM3)
@@ -1509,13 +1518,57 @@ my %hidUnk = ( Hidden => 1, Unknown => 1 );
         PrintConv => 'sprintf("%.8d",$val)',
         PrintConvInv => '$val',
     },
-# 0x2032 - first seen for ILCE-7SM3, July 2020
-# 0x2033 - first seen for ILCE-7SM3, July 2020
-# 0x2034 - first seen for ILCE-7SM3, July 2020
-# 0x2035 - first seen for ILCE-7SM3, July 2020
-# 0x2036 - first seen for ILCE-7SM3, July 2020
-# 0x2037 - first seen for ILCE-7SM3, July 2020
-# 0x2039 - first seen for ILCE-7SM3, July 2020
+# 0x2032 - 0x2039: from July 2020 for ILCE-7SM3, ILCE-1, ILME-FX3 and newer
+    0x2032 => {
+        Name => 'Shadows',
+        Writable => 'int32s',
+        PrintConv => '$val > 0 ? "+$val" : $val',
+        PrintConvInv => '$val',
+    },
+    0x2033 => {
+        Name => 'Highlights',
+        Writable => 'int32s',
+        PrintConv => '$val > 0 ? "+$val" : $val',
+        PrintConvInv => '$val',
+    },
+    0x2034 => {
+        Name => 'Fade',
+        Writable => 'int32s',
+        PrintConv => '$val > 0 ? "+$val" : $val',
+        PrintConvInv => '$val',
+    },
+    0x2035 => {
+        Name => 'SharpnessRange',
+        Writable => 'int32s',
+        PrintConv => '$val > 0 ? "+$val" : $val',
+        PrintConvInv => '$val',
+    },
+    0x2036 => {
+        Name => 'Clarity',
+        Writable => 'int32s',
+        PrintConv => '$val > 0 ? "+$val" : $val',
+        PrintConvInv => '$val',
+    },
+    0x2037 => {
+        Name => 'FocusFrameSize',
+        Format => 'int16u',
+        Count => '3',
+        Notes => 'width and height of FocusFrame, centered on FocusLocation',
+        PrintConv => q{
+            my @a = split ' ', $val;
+            return $a[2] ? sprintf('%3dx%3d', $a[0], $a[1]) : 'n/a';
+        },
+        PrintConvInv => '$val =~ /(\d+)x(\d+)/ ? "$1 $2 257" : "0 0 0"',
+    },
+    0x2039 => { #JR
+        Name => 'JPEG-HEIFSwitch', # (name used in camera menus)
+        Writable => 'int16u',
+        PrintConv => {
+            0 => 'JPEG',
+            1 => 'HEIF',
+            65535 => 'n/a',
+        },
+    },
     0x3000 => {
         Name => 'ShotInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::Sony::ShotInfo' },
@@ -1578,7 +1631,7 @@ my %hidUnk = ( Hidden => 1, Unknown => 1 );
     # 0x24 (e) for ILCA-99M2,ILCE-5100/6300/6500/7M2/7RM2/7S/7SM2/QX1, DSC-HX80/HX90V/QX30/RX0/RX100M3/RX100M4/RX100M5/RX10M2/RX10M3/RX1RM2/WX500
     # 0x26 (e) for ILCE-6100/6400/6600/7M3/7RM3/9, DSC-RX0M2/RX10M4/RX100M5A/RX100M6/HX99
     # 0x28 (e) for ILCE-7RM4/9M2, DSC-RX100M7, ZV-1
-    # 0x31 (e) for ILCE-1, 7SM3
+    # 0x31 (e) for ILCE-1/7SM3, ILME-FX3
     # first byte decoded: 40, 204, 202, 27, 58, 62, 48, 215, 28, 106 respectively
     {
         Name => 'Tag9400a',
@@ -1806,7 +1859,7 @@ my %hidUnk = ( Hidden => 1, Unknown => 1 );
     },
     0x940c => [{
         Name => 'Tag940c',
-        Condition => '$$self{Model} =~ /^(NEX-|ILCE-|Lunar)\b/',
+        Condition => '$$self{Model} =~ /^(NEX-|ILCE-|ILME-|Lunar)\b/',
         SubDirectory => { TagTable => 'Image::ExifTool::Sony::Tag940c' },
     },{
         Name => 'Sony_0x940c',
@@ -6075,6 +6128,10 @@ my %pictureProfile2010 = (
         31 => 'Gamma S-Log3 (PP8 or PP9)', #14
         33 => 'Gamma HLG2 (PP10)', #14
         34 => 'Gamma HLG3', #IB
+        37 => 'FL',
+        38 => 'VV2',
+        39 => 'IN',
+        40 => 'SH',
     },
 );
 my %isoSetting2010 = (
@@ -7796,7 +7853,7 @@ my %isoSetting2010 = (
     CHECK_PROC => \&Image::ExifTool::CheckBinaryData,
     FORMAT => 'int8u',
     NOTES => q{
-        Valid from July 2020 for ILCE-1/7SM3.
+        Valid from July 2020 for ILCE-1/7SM3, ILME-FX3.
     },
     WRITABLE => 1,
     FIRST_ENTRY => 0,
@@ -7883,6 +7940,13 @@ my %isoSetting2010 = (
     },
     0x0088 => {
         Name => 'InternalSerialNumber', #(NC)
+        Condition => '$$self{Model} =~ /^(ILCE-7SM3|ILME-FX3)/',
+        Format => 'int8u[6]',
+        PrintConv => 'unpack "H*", pack "C*", split " ", $val',
+    },
+    0x008a => {
+        Name => 'InternalSerialNumber', #(NC)
+        Condition => '$$self{Model} =~ /^(ILCE-1)/',
         Format => 'int8u[6]',
         PrintConv => 'unpack "H*", pack "C*", split " ", $val',
     },
@@ -8112,7 +8176,7 @@ my %isoSetting2010 = (
             8 => 'Rotate 270 CW',
         },
     },
-    0x002a => {
+    0x002a => [{
         Name => 'Quality2',
         Condition => '$$self{Model} !~ /^(ILCE-(1|7SM3)|ILME-FX3)\b/',
         PrintConv => {
@@ -8121,7 +8185,17 @@ my %isoSetting2010 = (
             2 => 'RAW + JPEG',
             3 => 'JPEG + MPO', # 3D images
         },
-    },
+    },{
+        Name => 'Quality2',
+        Condition => '$$self{Model} =~ /^(ILCE-(1|7SM3)|ILME-FX3)\b/',
+        PrintConv => {
+            1 => 'JPEG',
+            2 => 'RAW',
+            3 => 'RAW + JPEG',
+            4 => 'HEIF',
+            6 => 'RAW + HEIF',
+        },
+    }],
     0x0047 => {
         Name => 'SonyImageHeight',
         Condition => '$$self{Model} !~ /^(ILCE-(1|7SM3)|ILME-FX3)\b/',
@@ -8790,7 +8864,7 @@ my %isoSetting2010 = (
     FIRST_ENTRY => 0,
     GROUPS => { 0 => 'MakerNotes', 2 => 'Image' },
     DATAMEMBER => [ 0x0008 ],
-    NOTES => 'NEX and ILCE models only.',
+    NOTES => 'E-mount cameras only.',
 
     # 0x0001 - 0 for all NEX and ILCE-3000/3500, 20 for all other ILCE (17 for ILCE samples from Sony.net)
     # 0x0008 - LensMount, but different values from Tag9405-0x0105 and Tag9050-0x0604.
@@ -9417,7 +9491,7 @@ my %isoSetting2010 = (
     WRITE_PROC => \&WriteEnciphered,
     CHECK_PROC => \&Image::ExifTool::CheckBinaryData,
     FORMAT => 'int8u',
-    NOTES => 'Valid for the ILCE-1/7SM3.',
+    NOTES => 'Valid for the ILCE-1/7SM3, ILME-FX3.',
     FIRST_ENTRY => 0,
     GROUPS => { 0 => 'MakerNotes', 2 => 'Image' },
     0x0000 => { Name => 'Tag9416_0000', PrintConv => 'sprintf("%3d",$val)', RawConv => '$$self{TagVersion} = $val' },
