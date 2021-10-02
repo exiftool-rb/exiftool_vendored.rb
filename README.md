@@ -1,6 +1,6 @@
 # exiftool-vendored.rb
 
-[![Build Status](https://secure.travis-ci.org/exiftool-rb/exiftool_vendored.rb.svg?branch=master)](http://travis-ci.org/exiftool-rb/exiftool_vendored.rb)
+[![Build Status](https://app.travis-ci.com/exiftool-rb/exiftool_vendored.rb.svg?branch=master)](https://app.travis-ci.com/github/exiftool-rb/exiftool_vendored.rb/builds)
 [![Gem Version](https://badge.fury.io/rb/exiftool_vendored.svg)](http://rubygems.org/gems/exiftool_vendored)
 [![Gem Downloads](https://img.shields.io/gem/dt/exiftool_vendored.svg)](http://rubygems.org/gems/exiftool_vendored)
 [![Gem Latest](https://img.shields.io/gem/dtv/exiftool_vendored.svg)](http://rubygems.org/gems/exiftool_vendored)
