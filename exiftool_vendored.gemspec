@@ -14,6 +14,8 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/exiftool-rb/exiftool_vendored.rb'
   spec.license       = 'MIT'
 
+  spec.metadata['rubygems_mfa_required'] = 'true'
+
   spec.required_ruby_version = '>= 2.7'
 
   spec.files         = `git ls-files -- lib bin`.split($/)
