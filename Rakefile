@@ -48,7 +48,7 @@ task :update_exiftool do
   end
 
   dest_dir = File.expand_path('bin', __dir__)
-  FileUtils.remove_entry_secure(dest_dir) if File.exist?(dest_dir)
+  FileUtils.remove_entry_secure(dest_dir)
   FileUtils.mkdir(dest_dir)
   `tar xzf #{tgz.realpath} -C #{dest_dir}`
   # Move contents out of the subdirectory and into bin directly:

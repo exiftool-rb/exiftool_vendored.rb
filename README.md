@@ -9,16 +9,19 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/57fa22bff558e49bf128/maintainability)](https://codeclimate.com/github/exiftool-rb/exiftool_vendored.rb/maintainability)
 
 This is
-* a vendored version of Phil Harvey's excellent [exiftool](http://www.sno.phy.queensu.ca/~phil/exiftool) library, and
-* a dependency on the [exiftool](https://github.com/exiftool-rb/exiftool.rb) rubygem, and
-* an autoload script that configures the Exiftool gem to use the vendored version of the exiftool library.
 
-##  Ruby Support Deprecation Notice
+- a vendored version of Phil Harvey's excellent [exiftool](http://www.sno.phy.queensu.ca/~phil/exiftool) library, and
+- a dependency on the [exiftool](https://github.com/exiftool-rb/exiftool.rb) rubygem, and
+- an autoload script that configures the Exiftool gem to use the vendored version of the exiftool library.
 
-Starting March 31, 2021 future releases of `exiftool_vendored` Gem will no longer support following
+## Ruby Support Deprecation Notice
+
+Future releases of `exiftool_vendored` Gem will no longer support following
 Ruby Versions due to their [End Of Life](https://www.ruby-lang.org/en/downloads/branches/) announcements:
+
 - Ruby 2.4 (EOL 2020-03-31)
 - Ruby 2.5 (EOL 2021-03-31)
+- Ruby 2.6 (EOL 2022-04-12)
 
 ## Installation
 
@@ -44,4 +47,3 @@ irb(main):003:0> Exiftool.exiftool_version
 
 The version of this rubygem will match the major and minor versions of the exiftool library that it
 vendors.
-
