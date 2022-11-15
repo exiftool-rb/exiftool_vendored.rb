@@ -23,6 +23,7 @@ config_files/cuepointlist.config
 config_files/depthmap.config
 config_files/example.config
 config_files/fotoware.config
+config_files/frameCount.config
 config_files/gps2utm.config
 config_files/nksc.config
 config_files/photoshop_paths.config
@@ -84,6 +85,7 @@ html/TagNames/H264.html
 html/TagNames/HP.html
 html/TagNames/HTML.html
 html/TagNames/ICC_Profile.html
+html/TagNames/ICO.html
 html/TagNames/ID3.html
 html/TagNames/IPTC.html
 html/TagNames/ISO.html
@@ -102,6 +104,7 @@ html/TagNames/Lytro.html
 html/TagNames/M2TS.html
 html/TagNames/MIE.html
 html/TagNames/MIFF.html
+html/TagNames/MISB.html
 html/TagNames/MNG.html
 html/TagNames/MOI.html
 html/TagNames/MPC.html
@@ -291,6 +294,7 @@ lib/Image/ExifTool/HP.pm
 lib/Image/ExifTool/HTML.pm
 lib/Image/ExifTool/HtmlDump.pm
 lib/Image/ExifTool/ICC_Profile.pm
+lib/Image/ExifTool/ICO.pm
 lib/Image/ExifTool/ID3.pm
 lib/Image/ExifTool/IPTC.pm
 lib/Image/ExifTool/ISO.pm
@@ -329,6 +333,7 @@ lib/Image/ExifTool/M2TS.pm
 lib/Image/ExifTool/MIE.pm
 lib/Image/ExifTool/MIEUnits.pod
 lib/Image/ExifTool/MIFF.pm
+lib/Image/ExifTool/MISB.pm
 lib/Image/ExifTool/MNG.pm
 lib/Image/ExifTool/MOI.pm
 lib/Image/ExifTool/MPC.pm
@@ -417,6 +422,7 @@ lib/Image/ExifTool/WritePNG.pl
 lib/Image/ExifTool/WritePhotoshop.pl
 lib/Image/ExifTool/WritePostScript.pl
 lib/Image/ExifTool/WriteQuickTime.pl
+lib/Image/ExifTool/WriteRIFF.pl
 lib/Image/ExifTool/WriteXMP.pl
 lib/Image/ExifTool/Writer.pl
 lib/Image/ExifTool/XMP.pm
@@ -592,6 +598,8 @@ t/GoPro.t
 t/GoPro_2.out
 t/HTML.t
 t/HTML_2.out
+t/ICO.t
+t/ICO_2.out
 t/IPTC.t
 t/IPTC_2.out
 t/IPTC_4.out
@@ -792,6 +800,9 @@ t/RIFF.t
 t/RIFF_2.out
 t/RIFF_3.out
 t/RIFF_4.out
+t/RIFF_5.out
+t/RIFF_6.out
+t/RIFF_7.out
 t/RTF.t
 t/RTF_2.out
 t/Radiance.t
@@ -1016,6 +1027,7 @@ t/images/Geotag_DJI_2020-12-02_[07-50-31].csv
 t/images/GoPro.jpg
 t/images/HTML.html
 t/images/ICC_Profile.icc
+t/images/ICO.ico
 t/images/IPTC.jpg
 t/images/ISO.iso
 t/images/ITC.itc
