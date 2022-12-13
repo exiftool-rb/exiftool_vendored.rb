@@ -47,7 +47,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.80';
+$VERSION = '2.81';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -1352,12 +1352,14 @@ my %eeBox2 = (
         },
         { #https://github.com/google/spatial-media/blob/master/docs/spherical-video-rfc.md
             Name => 'SphericalVideoXML',
+            # (this tag is readable/writable as a block through the Extra SphericalVideoXML tags)
             Condition => '$$valPt=~/^\xff\xcc\x82\x63\xf8\x55\x4a\x93\x88\x14\x58\x7a\x02\x52\x1f\xdd/',
             WriteGroup => 'GSpherical', # write only GSpherical XMP tags here
             HandlerType => 'vide',      # only write in video tracks
             SubDirectory => {
                 TagTable => 'Image::ExifTool::XMP::Main',
                 Start => 16,
+                ProcessProc => 'Image::ExifTool::XMP::ProcessGSpherical',
                 WriteProc => 'Image::ExifTool::XMP::WriteGSpherical',
             },
         },
@@ -6034,6 +6036,7 @@ my %eeBox2 = (
     plID => { #10 (or TV season)
         Name => 'PlayListID',
         Format => 'int8u',  # actually int64u, but split it up
+        Count => 8,
         Writable => 'int32s', #27
     },
     purd => 'PurchaseDate', #7
