@@ -34,7 +34,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::Minolta;
 
-$VERSION = '3.55';
+$VERSION = '3.56';
 
 sub ProcessSRF($$$);
 sub ProcessSR2($$$);
@@ -10364,7 +10364,7 @@ my %isoSetting2010 = (
             return 'inf' if $val >= 255;
             return (2**($val/16-5) + 1) * $val[1] / 1000;
         },
-        PrintConv => '$val eq "inf" ? $val : sprintf("%.2f m",$val)',
+        PrintConv => '$val eq "inf" ? $val : sprintf("%.4g m", $val)',
     },
     GPSDateTime => {
         Description => 'GPS Date/Time',
@@ -11317,7 +11317,7 @@ Minolta.
 
 =head1 AUTHOR
 
-Copyright 2003-2022, Phil Harvey (philharvey66 at gmail.com)
+Copyright 2003-2023, Phil Harvey (philharvey66 at gmail.com)
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
