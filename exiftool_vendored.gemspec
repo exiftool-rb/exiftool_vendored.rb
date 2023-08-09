@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'exiftool', '>= 0.7.0'
   spec.add_development_dependency 'bundler'
-  spec.add_development_dependency 'minitest'
+  spec.add_development_dependency 'minitest', '<= 5.18.1'
   spec.add_development_dependency 'minitest-great_expectations'
   spec.add_development_dependency 'minitest-reporters' unless ENV['CI']
   spec.add_development_dependency 'nokogiri'
