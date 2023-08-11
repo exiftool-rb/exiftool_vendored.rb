@@ -25,17 +25,4 @@ Gem::Specification.new do |spec|
   spec.require_paths = %w[lib]
 
   spec.add_dependency 'exiftool', '>= 0.7.0'
-  spec.add_development_dependency 'bundler'
-  spec.add_development_dependency 'minitest', '<= 5.18.1'
-  spec.add_development_dependency 'minitest-great_expectations'
-  spec.add_development_dependency 'minitest-reporters' unless ENV['CI']
-  spec.add_development_dependency 'nokogiri'
-  spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'rubocop'
-  spec.add_development_dependency 'rubocop-minitest'
-  spec.add_development_dependency 'rubocop-rake'
-  spec.add_development_dependency 'simplecov'
-  spec.add_development_dependency 'simplecov-console'
-  spec.add_development_dependency 'simplecov_json_formatter'
-  spec.add_development_dependency 'yard'
 end
