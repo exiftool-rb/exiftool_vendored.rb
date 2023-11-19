@@ -65,7 +65,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 use Image::ExifTool::XMP;
 
-$VERSION = '4.26';
+$VERSION = '4.27';
 
 sub LensIDConv($$$);
 sub ProcessNikonAVI($$$);
@@ -962,8 +962,8 @@ my %imageAreaZ9b = (
 );
 
 my %infoZSeries = (
-    Condition => '$$self{Model} =~ /^NIKON Z (30|5|50|6|6_2|7|7_2|8|fc|9)\b/i',
-    Notes => 'Z Series cameras thru July 2023',
+    Condition => '$$self{Model} =~ /^NIKON Z (30|5|50|6|6_2|7|7_2|8|f|fc|9)\b/i',
+    Notes => 'Z Series cameras thru October 2023',
 );
 
 my %iSOAutoHiLimitZ7 = (
@@ -2582,9 +2582,21 @@ my %base64coord = (
                 DirOffset => 4,
             },
         },
-        {   # (D5200/D7100=0218, D5300=0219, D610/Df=0220, D3300=0221, CoolpixA=0601)
-            Name => 'ColorBalanceUnknown02',
-            Condition => '$$valPt =~ /^0[26]/',
+        {   #PH (NC)
+            # (D5300=0219, D3300=0221, D4S=0222, D750/D810=0223, D3400/D3500/D5500/D5600/D7200=0224)
+            Condition => '$$valPt =~ /^02(19|2[1234])/',
+            Name => 'ColorBalance0219',
+            SubDirectory => {
+                TagTable => 'Image::ExifTool::Nikon::ColorBalance2',
+                ProcessProc => \&ProcessNikonEncrypted,
+                WriteProc => \&ProcessNikonEncrypted,
+                DecryptStart => 4,
+                DirOffset => 0x7c,
+            },
+        },
+        {   # (D610/Df=0220, CoolpixA=0601)
+            Name => 'ColorBalanceUnknown1',
+            Condition => '$$valPt =~ /^0(220|6)/',
             SubDirectory => {
                 TagTable => 'Image::ExifTool::Nikon::ColorBalanceUnknown',
                 ProcessProc => \&ProcessNikonEncrypted,
@@ -2592,11 +2604,12 @@ my %base64coord = (
                 DecryptStart => 284,
             },
         },
-        {   # (1J1/1J2/1V1=0400, 1V2=0401, 1J3/1S1=0402, 1AW1=0403, Z6/Z7=0800)
-            Name => 'ColorBalanceUnknown04',
-            Condition => '$$valPt =~ /^0[48]/',
+        {   # (D5200/D7200=0218, D5/D500=0225, D7500=0226, D850=0227, D6/D780=0228,
+            #  1J1/1J2/1V1=0400, 1V2=0401, 1J3/1S1=0402, 1AW1=0403, Z6/Z7=0800)
+            Name => 'ColorBalanceUnknown2',
+            Condition => '$$valPt =~ /^0(18|[248])/',
             SubDirectory => {
-                TagTable => 'Image::ExifTool::Nikon::ColorBalanceUnknown',
+                TagTable => 'Image::ExifTool::Nikon::ColorBalanceUnknown2',
                 ProcessProc => \&ProcessNikonEncrypted,
                 WriteProc => \&ProcessNikonEncrypted, # (necessary to recrypt this if serial number changed)
                 DecryptStart => 4,
@@ -4588,7 +4601,7 @@ my %base64coord = (
         RawConv => '$$self{AFInfo2Version} = $val',
     },
     5 => { #28
-        Name => 'AFAreaMode',     #reflects the mode active when the shutter is tripped, not the position of the Focus Mode button (which is recorded in MenuSettingsZ9 tag also named AfAreaMode)
+        Name => 'AFAreaMode', #reflects the mode active when the shutter is tripped, not the position of the Focus Mode button (which is recorded in MenuSettingsZ9 tag also named AfAreaMode)
         PrintConv => {
             192 => 'Pinpoint',
             193 => 'Single',
@@ -4604,7 +4617,7 @@ my %base64coord = (
     },
     10 => {
             Name => 'AFPointsUsed',
-            Condition => '$$self{AFAreaMode} == 6',    #only valid for Auto AF Area mode.  Other modes handled via AFAreaXPosition/AFAreaYPosition
+            Condition => 'defined $$self{AFAreaMode} and $$self{AFAreaMode} == 6', #only valid for Auto AF Area mode.  Other modes handled via AFAreaXPosition/AFAreaYPosition
             Format => 'undef[51]',
             ValueConv => 'join(" ", unpack("H2"x51, $val))',
             ValueConvInv => '$val=~tr/ //d; pack("H*",$val)',
@@ -4950,6 +4963,16 @@ my %nrwLevels = (
 %Image::ExifTool::Nikon::ColorBalanceUnknown = (
     %binaryDataAttrs,
     GROUPS => { 0 => 'MakerNotes', 2 => 'Camera' },
+    0 => {
+        Name => 'ColorBalanceVersion',
+        Format => 'undef[4]',
+    },
+);
+
+%Image::ExifTool::Nikon::ColorBalanceUnknown2 = (
+    %binaryDataAttrs,
+    GROUPS => { 0 => 'MakerNotes', 2 => 'Camera' },
+    FORMAT => 'int16u',
     0 => {
         Name => 'ColorBalanceVersion',
         Format => 'undef[4]',
@@ -5442,6 +5465,13 @@ my %nikonFocalConversions = (
             37 => 'Nikkor Z 600mm f/4 TC VR S', #28
             38 => 'Nikkor Z 85mm f/1.2 S', #28
             39 => 'Nikkor Z 17-28mm f/2.8', #IB
+            40 => 'NIKKOR Z 26mm f/2.8', #28
+            41 => 'NIKKOR Z DX 12-28mm f/3.5-5.6 PZ VR', #28
+            42 => 'Nikkor Z 180-600mm f/5.6-6.3 VR', #30
+            43 => 'NIKKOR Z DX 24mm f/1.7', #28
+            44 => 'NIKKOR Z 70-180mm f/2.8', #28
+            45 => 'NIKKOR Z 600mm f/6.3 VR S', #28
+            46 => 'Nikkor Z 135mm f/1.8 S Plena', #28
             32768 => 'Nikkor Z 400mm f/2.8 TC VR S TC-1.4x', #28
             32769 => 'Nikkor Z 600mm f/4 TC VR S TC-1.4x', #28
         },
@@ -8188,7 +8218,7 @@ my %nikonFocalConversions = (
     CHECK_PROC => \&Image::ExifTool::CheckBinaryData,
     VARS => { ID_LABEL => 'Index', NIKON_OFFSETS => 0x24 },
     DATAMEMBER => [ 0x04 ],
-    IS_SUBDIR => [ 0x30, 0x38, 0x98, 0xa0 ],
+    IS_SUBDIR => [ 0x30, 0x38, 0x88, 0x98, 0xa0 ],
     WRITABLE => 1,
     GROUPS => { 0 => 'MakerNotes', 2 => 'Camera' },
     NOTES => 'These tags are extracted from encrypted data in images from the Z7II.',
@@ -8238,9 +8268,19 @@ my %nikonFocalConversions = (
             Start => '$val',
         }
     },
+    0x88 => {
+        Name => 'OrientationOffset',
+        Format => 'int32u',
+        Condition => '$$self{Model} =~ /^NIKON Z f\b/i',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::Nikon::OrientationInfo',
+            Start => '$val',
+        }
+    },
     0x98 => {
         Name => 'OrientationOffset',
         Format => 'int32u',
+        Condition => '$$self{Model} =~ /^NIKON Z (30|5|50|6|6_2|7|7_2|8|fc)\b/i',   #models other then the Z f
         SubDirectory => {
             TagTable => 'Image::ExifTool::Nikon::OrientationInfo',
             Start => '$val',
@@ -8507,7 +8547,7 @@ my %nikonFocalConversions = (
     0x002a => {
         Name => 'IntervalFrame',
         RawConv => '$$self{IntervalFrame} = $val',
-        Condition => '$$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{FocusShiftShooting} > 0',     #not valid for C30/C60/C120
+        Condition => '$$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0',     #not valid for C30/C60/C120
         Format => 'int16u',
         Hidden => 1,
     },
@@ -8520,7 +8560,7 @@ my %nikonFocalConversions = (
     DATAMEMBER => [ 0x0bea, 0x0beb ],
     0x0be8 => {
         Name => 'AFAreaInitialXPosition',        #stored as a representation of the horizontal position of the center of the portion of the focus box positioned top left when in Wide Area (L/S/C1/C2) focus modes (before subject detection potentially refines focus)
-        Condition => '$$self{ShutterMode} ne 96 and $$self{AFAreaMode} < 2 ',    #not valid for C30/C60/C120 or for Area Modes 1:1 and 16:19
+        Condition => '$$self{ShutterMode} and $$self{ShutterMode} ne 96 and defined $$self{AFAreaMode} and $$self{AFAreaMode} < 2 ',    #not valid for C30/C60/C120 or for Area Modes 1:1 and 16:19
         Format => 'int8s',
         PrintConv => q{
             #in FX mode and Single-point, the 29 horizontal focus points are spaced 259 pixels apart starting at pixel 502 and ending at 7754.  Spacing is the same for Wide(L/C1/C2) with different start points.
@@ -8582,7 +8622,7 @@ my %nikonFocalConversions = (
     },
     0x0be9 => {
         Name =>'AFAreaInitialYPosition',    #stored as a representation of the vertical position of the center of the portion of the focus box positioned top left when in Wide Area (L/S/C1/C2) focus modes (before subject detection potentially refines focus)
-        Condition => '$$self{ShutterMode} ne 96 and $$self{AFAreaMode} < 2',    #not valid for C30/C60/C120 or for Area Modes 1:1 and 16:19
+        Condition => '$$self{ShutterMode} and $$self{ShutterMode} ne 96 and defined $$self{AFAreaMode} and $$self{AFAreaMode} < 2',    #not valid for C30/C60/C120 or for Area Modes 1:1 and 16:19
         Format => 'int8s',
         PrintConv => q{
             #in FX mode and Single-point, the 17 vertical focus points are spaced 291 pixels apart starting at pixel 424 and ending at 5080.  Spacing is the same for Wide(L/C1/C2)
@@ -8646,13 +8686,13 @@ my %nikonFocalConversions = (
     },
     0x0bea => {
         Name => 'AFAreaInitialWidth',
-        Condition => '$$self{ShutterMode} ne 96',    #not valid for C30/C60/C120
+        Condition => '$$self{ShutterMode} and $$self{ShutterMode} ne 96',    #not valid for C30/C60/C120
         ValueConv => '$$self{VALUE}{PhotoShootingMenuBankImageArea} eq 0 ? $val : int($val * 2 / 3)',   #DX mode requires scaling down  TODO: add support ImageAreas 1:1 and 16:9
         RawConv => '$$self{AFAreaInitialWidth} = 1 + int ($val / 4)',    #convert from [3, 11, 19, 35, 51, 75] to [1, 3, 5, 9 13, 19] to match camera options for C1/C2 focus modes .. input/output of 11/3 is for Wide(S)
     },
     0x0beb => {
         Name => 'AFAreaInitialHeight',
-        Condition => '$$self{ShutterMode} ne 96',    #not valid for C30/C60/C120
+        Condition => '$$self{ShutterMode} and $$self{ShutterMode} ne 96',    #not valid for C30/C60/C120
         ValueConv => '$$self{VALUE}{PhotoShootingMenuBankImageArea} eq 0 ? $val : int($val * 2 / 3)',   #DX mode requires scaling down  TODO: add support ImageAreas 1:1 and 16:9
         RawConv => '$$self{AFAreaInitialHeight} = 1 + int ($val / 7) ',    #convert from [6, 20, 33, 46, 73] to [1, 3, 5, 7, 11] to match camera options for C1/C2 focus modes  .. input/output of 33/5 is for Wide(L)
     },

@@ -29,7 +29,7 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %jpegMarker %specialTags %fileTypeLookup $testLen $exeDir
             %static_vars);
 
-$VERSION = '12.68';
+$VERSION = '12.70';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -132,7 +132,7 @@ sub Rename($$$);
 sub Unlink($@);
 sub SetFileTime($$;$$$$);
 sub DoEscape($$);
-sub ConvertFileSize($);
+sub ConvertFileSize($;$);
 sub ParseArguments($;@); #(defined in attempt to avoid mod_perl problem)
 sub ReadValue($$$;$$$);
 
@@ -145,16 +145,16 @@ sub ReadValue($$$;$$$);
     WPG ICO PICT PNG MNG FLIF DjVu DPX OpenEXR ZISRAW MRC LIF MRC::FEI12 MIFF
     PCX PGF PSP PhotoCD Radiance Other::PFM PDF PostScript Photoshop::Header
     Photoshop::Layers Photoshop::ImageData FujiFilm::RAF FujiFilm::IFD
-    Samsung::Trailer Sony::SRF2 Sony::SR2SubIFD Sony::PMP ITC ID3 ID3::Lyrics3
-    FLAC Ogg Vorbis APE APE::NewHeader APE::OldHeader Audible MPC MPEG::Audio
-    MPEG::Video MPEG::Xing M2TS QuickTime QuickTime::ImageFile QuickTime::Stream
-    QuickTime::Tags360Fly Matroska Matroska::StdTag MOI MXF DV Flash Flash::FLV
-    Real::Media Real::Audio Real::Metafile Red RIFF AIFF ASF WTV DICOM FITS XISF
-    MIE JSON HTML XMP::SVG Palm Palm::MOBI Palm::EXTH Torrent EXE EXE::PEVersion
-    EXE::PEString EXE::MachO EXE::PEF EXE::ELF EXE::AR EXE::CHM LNK Font VCard
-    Text VCard::VCalendar VCard::VNote RSRC Rawzor ZIP ZIP::GZIP ZIP::RAR
-    ZIP::RAR5 RTF OOXML iWork ISO FLIR::AFF FLIR::FPF MacOS MacOS::MDItem
-    FlashPix::DocTable
+    FujiFilm::MRAW Samsung::Trailer Sony::SRF2 Sony::SR2SubIFD Sony::PMP ITC ID3
+    ID3::Lyrics3 FLAC Ogg Vorbis APE APE::NewHeader APE::OldHeader Audible MPC
+    MPEG::Audio MPEG::Video MPEG::Xing M2TS QuickTime QuickTime::ImageFile
+    QuickTime::Stream QuickTime::Tags360Fly Matroska Matroska::StdTag MOI MXF DV
+    Flash Flash::FLV Real::Media Real::Audio Real::Metafile Red RIFF AIFF ASF
+    WTV DICOM FITS XISF MIE JSON HTML XMP::SVG Palm Palm::MOBI Palm::EXTH
+    Torrent EXE EXE::PEVersion EXE::PEString EXE::MachO EXE::PEF EXE::ELF
+    EXE::AR EXE::CHM LNK Font VCard Text VCard::VCalendar VCard::VNote RSRC
+    Rawzor ZIP ZIP::GZIP ZIP::RAR ZIP::RAR5 RTF OOXML iWork ISO FLIR::AFF
+    FLIR::FPF MacOS MacOS::MDItem FlashPix::DocTable
 );
 
 # alphabetical list of current Lang modules
@@ -365,6 +365,7 @@ my %createTypes = map { $_ => 1 } qw(XMP ICC MIE VRD DR4 EXIF EXV);
     JPC  =>  'J2C',
     JPE  =>  'JPEG',
     JPEG => ['JPEG', 'Joint Photographic Experts Group'],
+    JPH  => ['JP2',  'High-throughput JPEG 2000'],
     JPF  =>  'JP2',
     JPG =>   'JPEG',
     JPM  => ['JP2',  'JPEG 2000 compound image'],
@@ -677,6 +678,7 @@ my %fileDescription = (
     JNG  => 'image/jng',
     JP2  => 'image/jp2',
     JPEG => 'image/jpeg',
+    JPH  => 'image/jph',
     JPM  => 'image/jpm',
     JPS  => 'image/x-jps',
     JPX  => 'image/jpx',
@@ -1066,6 +1068,7 @@ my %xmpShorthandOpt = ( 0 => 'None', 1 => 'Shorthand', 2 => ['Shorthand','OneDes
 my @availableOptions = (
     [ 'Binary',           undef,  'flag to extract binary values even if tag not specified' ],
     [ 'ByteOrder',        undef,  'default byte order when creating EXIF information' ],
+    [ 'ByteUnit',         'SI',   'units for byte conversions (SI or Binary)'],
     [ 'Charset',          'UTF8', 'character set for converting Unicode characters' ],
     [ 'CharsetEXIF',      undef,  'internal EXIF "ASCII" string encoding' ],
     [ 'CharsetFileName',  undef,  'external encoding for file names' ],
@@ -1307,8 +1310,9 @@ my %systemTagsNotes = (
     FileSize => {
         Groups => { 1 => 'System', 2 => 'Other' },
         Notes => q{
-            note that the print conversion for this tag uses historic prefixes: 1 kB =
-            1024 bytes, etc.
+            note that the print conversion for this tag uses SI prefixes by default:  1
+            kB = 1000 bytes, etc.  Set the API ByteUnit option to "Binary" to use binary
+            prefixes instead:  1 KiB = 1024 bytes, etc.
         },
         PrintConv => \&ConvertFileSize,
     },
@@ -2413,17 +2417,28 @@ sub Options($$;@)
             }
             $$options{$param} = $newVal;
         } elsif ($param eq 'ImageHashType') {
-            if (defined $newVal and $newVal =~ /^(MD5|SHA256|SHA512)$/i) {
+            if (not defined $newVal) {
+                warn("Can't set $param to undef\n");
+            } elsif ($newVal =~ /^(MD5|SHA256|SHA512)$/i) {
                 $$options{$param} = uc($newVal);
             } else {
-                warn("Invalid $param setting '${newVal}'\n"), return $oldVal;
+                warn("Invalid $param setting '${newVal}'\n");
             }
         } elsif ($param eq 'StructFormat') {
             if (defined $newVal) {
-                $newVal =~ /^(JSON|JSONQ)$/i or warn("Invalid $param setting '${newVal}'\n"), return $oldVal;
+                $newVal =~ /^(JSON|JSONQ)$/i or warn("Invalid $param setting '${newVal}'\n"), next;
                 $newVal = uc($newVal);
             }
             $$options{$param} = $newVal;
+        } elsif ($param eq 'ByteUnit') {
+            if (defined $newVal) {
+                # (allow "Metric" or "SI" for SI, and "IT" or "Binary" for Binary)
+                my $goodVal = ($newVal =~ /^S|M/i ? 'SI' : ($newVal =~ /^I|B/i ? 'Binary' : undef));
+                $goodVal or warn("Invalid $param setting '${newVal}'\n"), next;
+                $$options{$param} = $goodVal;
+            } else {
+                warn("Can't set $param to undef\n");
+            }
         } else {
             if ($param eq 'Escape') {
                 # set ESCAPE_PROC
@@ -2548,7 +2563,7 @@ sub ExtractInfo($;@)
                 $self->WarnOnce('Install Time::HiRes to generate ProcessingTime');
             }
         }
-        
+
         # create Hash object if ImageDataHash is requested
         if ($$req{imagedatahash} and not $$self{ImageDataHash}) {
             my $imageHashType = $self->Options('ImageHashType');
@@ -3456,9 +3471,10 @@ sub GetValue($$;$)
         } elsif (wantarray) {
             # return array if requested
             return @$value;
-        } elsif ($type eq 'PrintConv' and not $$self{OPTIONS}{List} and not ref $$value[0]) {
-            # join PrintConv values in comma-separated string if List option not used
+        } elsif ($type eq 'PrintConv' and not $$self{OPTIONS}{List}) {
+            # join PrintConv values in delimited string if List option not used
             # and list contains simple scalars (otherwise return ARRAY ref)
+            ref and return $value foreach @$value;
             $value = join $$self{OPTIONS}{ListSep}, @$value;
         }
     }
@@ -6023,7 +6039,7 @@ sub ConvertDateTime($$)
                             ++$a[5];
                             last; # (this was a goto)
                         }
-                    } 
+                    }
                 }
                 $neg and $frac =~ s/^\.//;
                 $fmt =~ s/(^|[^%])((%%)*)%-?\.?\d*f/$1$2$frac/g;
@@ -6203,16 +6219,26 @@ sub GetUnixTime($;$)
 # Print conversion for file size
 # Inputs: 0) file size in bytes
 # Returns: converted file size
-sub ConvertFileSize($)
+sub ConvertFileSize($;$)
 {
-    my $val = shift;
-    $val < 2000 and return "$val bytes";
-    $val < 10000 and return sprintf('%.1f kB', $val / 1000);
-    $val < 2000000 and return sprintf('%.0f kB', $val / 1000);
-    $val < 10000000 and return sprintf('%.1f MB', $val / 1000000);
-    $val < 2000000000 and return sprintf('%.0f MB', $val / 1000000);
-    $val < 10000000000 and return sprintf('%.1f GB', $val / 1000000000);
-    return sprintf('%.0f GB', $val / 1000000000);
+    my ($val, $et) = @_;
+    if ($et and $$et{OPTIONS}{ByteUnit} eq 'Binary') {
+        $val < 2048 and return "$val bytes";
+        $val < 10240 and return sprintf('%.1f KiB', $val / 1024);
+        $val < 2097152 and return sprintf('%.0f KiB', $val / 1024);
+        $val < 10485760 and return sprintf('%.1f MiB', $val / 1048576);
+        $val < 2147483648 and return sprintf('%.0f MiB', $val / 1048576);
+        $val < 10737418240 and return sprintf('%.1f GiB', $val / 1073741824);
+        return sprintf('%.0f GiB', $val / 1073741824);
+    } else {
+        $val < 2000 and return "$val bytes";
+        $val < 10000 and return sprintf('%.1f kB', $val / 1000);
+        $val < 2000000 and return sprintf('%.0f kB', $val / 1000);
+        $val < 10000000 and return sprintf('%.1f MB', $val / 1000000);
+        $val < 2000000000 and return sprintf('%.0f MB', $val / 1000000);
+        $val < 10000000000 and return sprintf('%.1f GB', $val / 1000000000);
+        return sprintf('%.0f GB', $val / 1000000000);
+    }
 }
 
 #------------------------------------------------------------------------------
@@ -7480,7 +7506,8 @@ sub ProcessJPEG($$)
                 my $hdr = $1;
                 $dumpType = 'JUMBF';
                 SetByteOrder('MM');
-                my $seq = Get32u($segDataPt, 4) - 1; # (start from 0)
+                # (sequence should start from 1, but some software incorrectly writes 0)
+                my $seq = Get32u($segDataPt, 4);
                 my $len = Get32u($segDataPt, 8);
                 my $type = substr($$segDataPt, 12, 4);
                 my $hdrLen;
@@ -7490,14 +7517,13 @@ sub ProcessJPEG($$)
                 } else {
                     $hdrLen = 8;
                 }
-                $jumbfChunk{$type} or $jumbfChunk{$type} = [ ];
+                $jumbfChunk{$type} or $jumbfChunk{$type} = [ '' ];
                 if ($len < $hdrLen) {
                     $self->Warn('Invalid JUMBF segment');
-                } elsif ($seq < 0) {
-                    $self->Warn('Invalid JUMBF sequence number');
-                } elsif (defined $jumbfChunk{$type}[$seq]) {
+                } elsif (defined $jumbfChunk{$type}[$seq] and length $jumbfChunk{$type}[$seq]) {
                     $self->Warn('Duplicate JUMBF sequence number');
                 } else {
+                    $seq or $self->Warn('Incorrect JUMBF sequence numbering (should start from 0, not 1)');
                     # add to list of JUMBF chunks
                     $jumbfChunk{$type}[$seq] = substr($$segDataPt, 8 + $hdrLen);
                     # check to see if we have a complete JUMBF box
@@ -7722,6 +7748,19 @@ sub ProcessTIFF($$;$)
 }
 
 #------------------------------------------------------------------------------
+# Process TIFF as a sub-document
+# Inputs: 0) ExifTool object ref, 1) dirInfo ref, 2) optional tag table ref
+# Returns: 1 if this looked like a valid EXIF block, 0 otherwise, or -1 on write error
+sub ProcessSubTIFF($$;$)
+{
+    my ($self, $dirInfo, $tagTablePtr) = @_;
+    $$self{DOC_NUM} = ++$$self{DOC_COUNT};
+    my $rtnVal = $self->ProcessTIFF($dirInfo, $tagTablePtr);
+    delete $$self{DOC_NUM};
+    return $rtnVal;
+}
+
+#------------------------------------------------------------------------------
 # Process TIFF data
 # Inputs: 0) ExifTool object ref, 1) dirInfo ref, 2) optional tag table ref
 # Returns: 1 if this looked like a valid EXIF block, 0 otherwise, or -1 on write error
@@ -7736,8 +7775,8 @@ sub DoProcessTIFF($$;$)
     my ($err, $sig, $canonSig, $otherSig);
 
     # attempt to read TIFF header
-    $$self{EXIF_DATA} = '';
     if ($raf) {
+        $$self{EXIF_DATA} = '';
         if ($outfile) {
             $raf->Seek(0, 0) or return 0;
             if ($base) {
@@ -8089,8 +8128,8 @@ sub DoProcessTIFF($$;$)
     # check DNG version
     if ($$self{DNGVersion}) {
         my $ver = $$self{DNGVersion};
-        # currently support up to DNG version 1.6
-        unless ($ver =~ /^(\d+) (\d+)/ and "$1.$2" <= 1.6) {
+        # currently support up to DNG version 1.7
+        unless ($ver =~ /^(\d+) (\d+)/ and "$1.$2" <= 1.7) {
             $ver =~ tr/ /./;
             $self->Error("DNG Version $ver not yet tested", 1);
         }
@@ -8359,7 +8398,7 @@ sub GetTagInfo($$$;$$$)
             }
         }
         # don't return Unknown tags unless that option is set (also see forum13716)
-        if ($$tagInfo{Unknown} and not $$self{OPTIONS}{Unknown} and not 
+        if ($$tagInfo{Unknown} and not $$self{OPTIONS}{Unknown} and not
             ($$self{OPTIONS}{Verbose} or $$self{HTML_DUMP} or
             ($$self{OPTIONS}{Validate} and not $$tagInfo{AddedUnknown})))
         {

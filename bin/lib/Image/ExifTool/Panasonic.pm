@@ -37,7 +37,7 @@ use vars qw($VERSION %leicaLensTypes);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 
-$VERSION = '2.19';
+$VERSION = '2.21';
 
 sub ProcessLeicaLEIC($$$);
 sub WhiteBalanceConv($;$$);
@@ -1991,6 +1991,15 @@ my %shootingMode = (
         },
         PrintConvInv => '$_=$val; tr/A-Z0-9//dc; s/(.{3})(19|20)/$1/; $_',
     },
+    0x05ff => {
+        Name => 'CameraIFD', # (Leica Q3)
+        Condition => '$$valPt =~ /^(II\x2a\0\x08\0\0\0|MM\0\x2a\0\0\0\x08)/',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::PanasonicRaw::CameraIFD',
+            Base => '$start',
+            ProcessProc => \&Image::ExifTool::ProcessTIFF,
+        },
+    },
 );
 
 # Leica type5 ShotInfo (ref PH) (X2)
@@ -2834,10 +2843,14 @@ sub ProcessLeicaTrailer($;$)
             my $val = Image::ExifTool::Exif::RebuildMakerNotes($et, \%dirInfo, $tagTablePtr);
             unless (defined $val) {
                 $et->Warn('Error rebuilding maker notes (may be corrupt)') if $len > 4;
-                $val = $buff,
+                $val = $buff;
             }
             my $key = $et->FoundTag($tagInfo, $val);
             $et->SetGroup($key, 'ExifIFD');
+            if ($$et{MAKER_NOTE_FIXUP}) {
+                $$et{TAG_EXTRA}{$key}{Fixup} = $$et{MAKER_NOTE_FIXUP};
+                delete $$et{MAKER_NOTE_FIXUP};
+            }
         }
     }
     SetByteOrder($oldOrder);
