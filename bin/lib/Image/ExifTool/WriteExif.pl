@@ -569,6 +569,7 @@ sub WriteExif($$$)
     my $imageDataFlag = $$dirInfo{ImageData} || '';
     my $verbose = $et->Options('Verbose');
     my $out = $et->Options('TextOut');
+    my $noMandatory = $et->Options('NoMandatory');
     my ($nextIfdPos, %offsetData, $inMakerNotes);
     my (@offsetInfo, %validateInfo, %xDelete, $strEnc);
     my $deleteAll = 0;
@@ -698,8 +699,8 @@ sub WriteExif($$$)
         }
 
         # initialize variables to handle mandatory tags
-        my $mandatory = $mandatory{$dirName};
-        my ($allMandatory, $addMandatory);
+        my ($mandatory, $allMandatory, $addMandatory);
+        $mandatory = $mandatory{$dirName} unless $noMandatory;
         if ($mandatory) {
             # use X/Y resolution values from JFIF if available
             if ($dirName eq 'IFD0' and defined $$et{JFIFYResolution}) {
@@ -1152,7 +1153,7 @@ Entry:  for (;;) {
                     }
                     my $nvHash;
                     $nvHash = $et->GetNewValueHash($curInfo, $dirName) if $isNew >= 0;
-                    unless ($nvHash or defined $$mandatory{$newID}) {
+                    unless ($nvHash or (defined $$mandatory{$newID} and not $noMandatory)) {
                         goto NoWrite unless $wrongDir;  # GOTO !
                         # delete stuff from the wrong directory if setting somewhere else
                         $nvHash = $et->GetNewValueHash($curInfo, $wrongDir);
@@ -2235,6 +2236,19 @@ NoOverwrite:            next if $isNew > 0;
 
     # do our fixups now so we can more easily calculate offsets below
     $fixup->ApplyFixup(\$newData);
+    # write Sony HiddenData now if this is an ARW file
+    if ($$et{HiddenData} and not $$dirInfo{Fixup} and $$et{FILE_TYPE} eq 'TIFF') {
+        $fixup->SetMarkerPointers(\$newData, 'HiddenData', length($newData));
+        my $hbuf;
+        my $hd = $$et{HiddenData};
+        if ($raf->Seek($$hd{Offset}, 0) and $raf->Read($hbuf, $$hd{Size}) == $$hd{Size} and
+            $hbuf =~ /^\x55\x26\x11\x05\0/)
+        {
+            $newData .= $hbuf;
+        } else {
+            $et->Error('Error copying hidden data', 1);
+        }
+    }
 #
 # determine total block size for deferred data
 #
@@ -2625,8 +2639,9 @@ NoOverwrite:            next if $isNew > 0;
             $$fixup{Shift} += $newDataPos;
             $fixup->ApplyFixup(\$newData);
         }
-        # save fixup for adjusting Leica trailer offset if necessary
+        # save fixup for adjusting Leica trailer and Sony HiddenData offsets if necessary
         $$et{LeicaTrailer}{Fixup}->AddFixup($fixup) if $$et{LeicaTrailer};
+        $$et{HiddenData}{Fixup}->AddFixup($fixup) if $$et{HiddenData};
         # save fixup for PreviewImage in JPEG file if necessary
         my $previewInfo = $$et{PREVIEW_INFO};
         if ($previewInfo) {
