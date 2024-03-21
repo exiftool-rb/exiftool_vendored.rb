@@ -148,6 +148,7 @@ sub PrintInvGPSCoordinates($)
         $v[2] = Image::ExifTool::ToFloat($v[2]) * ($below ? -1 : 1) if @v == 3;
         return "@v";
     }
+    return $val if $val =~ /^([-+]?\d+(\.\d*)?)\s+([-+]?\d+(\.\d*)?)$/; # already 2 floats?
     return $val if $val =~ /^([-+]\d+(\.\d*)?){2,3}(CRS.*)?\/?$/; # already in ISO6709 format?
     return undef;
 }
@@ -354,6 +355,18 @@ sub SetVarInt($$)
         return Set64u($val);
     }
     return '';
+}
+
+#------------------------------------------------------------------------------
+# Write Nextbase infi atom (ref PH)
+# Inputs: 0) ExifTool object ref, 1) dirInfo ref, 2) tag table ref
+# Returns: updated infi data
+sub WriteNextbase($$$)
+{
+    my ($et, $dirInfo, $tagTablePtr) = @_;
+    $et or return 1;
+    $$et{DEL_GROUP}{Nextbase} and ++$$et{CHANGED}, return '';
+    return ${$$dirInfo{DataPt}};
 }
 
 #------------------------------------------------------------------------------
@@ -1619,7 +1632,8 @@ sub WriteQuickTime($$$)
         if ($isEmpty) {
             $et->VPrint(0,'  Deleting ' . join('+', sort map { $emptyMeta{$_} } keys %boxPos)) if %boxPos;
             $$outfile = '';
-            ++$$et{CHANGED};
+            # (could report a file if editing nothing when it contained an empty Meta atom)
+            # ++$$et{CHANGED};
         }
         if ($curPath eq 'MOV-Movie-Meta') {
             delete $$addDirs{Keys}; # prevent creation of another Meta for Keys tags

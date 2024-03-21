@@ -14,7 +14,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Import;
 
-$VERSION = '1.07';
+$VERSION = '1.08';
 
 sub ProcessJSON($$);
 sub ProcessTag($$$$%);
@@ -60,15 +60,20 @@ sub FoundTag($$$$%)
     # avoid conflict with special table entries
     $tag .= '!' if $Image::ExifTool::specialTags{$tag};
 
-    # use underline instead of colon if necessary in tag name
-    $tag =~ s/([A-Z]):([A-Z]{2})/${1}_$2/g;
-
-    AddTagToTable($tagTablePtr, $tag, {
-        Name => Image::ExifTool::MakeTagName($tag),
-        %flags,
-        Temporary => 1,
-    }) unless $$tagTablePtr{$tag};
-
+    unless ($$tagTablePtr{$tag}) {
+        my $name = $tag;
+        $name =~ tr/:/_/; # use underlines in place of colons in tag name
+        $name =~ s/^c2pa/C2PA/i;   # hack to fix "C2PA" case
+        $name = Image::ExifTool::MakeTagName($name);
+        my $desc = Image::ExifTool::MakeDescription($name);
+        $desc =~ s/^C2 PA/C2PA/;    # hack to get "C2PA" correct
+        AddTagToTable($tagTablePtr, $tag, {
+            Name => $name,
+            Description => $desc,
+            %flags,
+            Temporary => 1,
+        });
+    }
     $et->HandleTag($tagTablePtr, $tag, $val);
 }
 

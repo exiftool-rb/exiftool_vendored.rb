@@ -137,12 +137,12 @@ my %rawType = (
 # 1) these names must either exist in %dirMap, or be translated in InitWriteDirs())
 # 2) any dependencies must be added to %excludeGroups
 my @delGroups = qw(
-    Adobe AFCP APP0 APP1 APP2 APP3 APP4 APP5 APP6 APP7 APP8 APP9 APP10 APP11
-    APP12 APP13 APP14 APP15 CanonVRD CIFF Ducky EXIF ExifIFD File FlashPix
-    FotoStation GlobParamIFD GPS ICC_Profile IFD0 IFD1 Insta360 InteropIFD IPTC
-    ItemList JFIF Jpeg2000 JUMBF Keys MakerNotes Meta MetaIFD Microsoft MIE MPF
-    NikonApp NikonCapture PDF PDF-update PhotoMechanic Photoshop PNG PNG-pHYs
-    PrintIM QuickTime RMETA RSRC SubIFD Trailer UserData XML XML-* XMP XMP-*
+    Adobe AFCP APP0 APP1 APP2 APP3 APP4 APP5 APP6 APP7 APP8 APP9 APP10 APP11 APP12
+    APP13 APP14 APP15 CanonVRD CIFF Ducky EXIF ExifIFD File FlashPix FotoStation
+    GlobParamIFD GPS ICC_Profile IFD0 IFD1 Insta360 InteropIFD IPTC ItemList JFIF
+    Jpeg2000 JUMBF Keys MakerNotes Meta MetaIFD Microsoft MIE MPF Nextbase NikonApp
+    NikonCapture PDF PDF-update PhotoMechanic Photoshop PNG PNG-pHYs PrintIM
+    QuickTime RMETA RSRC SubIFD Trailer UserData XML XML-* XMP XMP-*
 );
 # family 2 group names that we can delete
 my @delGroup2 = qw(
@@ -227,7 +227,7 @@ my %allFam0 = (
 
 my @writableMacOSTags = qw(
     FileCreateDate MDItemFinderComment MDItemFSCreationDate MDItemFSLabel MDItemUserTags
-    XAttrQuarantine
+    XAttrQuarantine XAttrMDItemWhereFroms
 );
 
 # min/max values for integer formats
@@ -1296,6 +1296,10 @@ sub SetNewValuesFromFile($$;@)
         FastScan        => $$options{FastScan},
         Filter          => $$options{Filter},
         FixBase         => $$options{FixBase},
+        Geolocation     => $$options{Geolocation},
+        GeolocFeature   => $$options{GeolocFeature},
+        GeolocMinPop    => $$options{GeolocMinPop},
+        GeolocMaxDist   => $$options{GeolocMaxDist},
         GlobalTimeShift => $$options{GlobalTimeShift},
         HexTagIDs       => $$options{HexTagIDs},
         IgnoreMinorErrors=>$$options{IgnoreMinorErrors},
@@ -2181,7 +2185,7 @@ sub SetSystemTags($$)
             $result = $res if $res == 1 or not $result;
             last;
         } elsif ($tag ne 'FileCreateDate') {
-            $self->WarnOnce('Can only set MDItem tags on OS X');
+            $self->WarnOnce('Can only set MDItem tags on MacOS');
             last;
         }
     }
@@ -3781,6 +3785,53 @@ sub GetWriteGroup1($$)
     my ($self, $tagInfo, $writeGroup) = @_;
     return $writeGroup unless $writeGroup =~ /^(MakerNotes|XMP|Composite|QuickTime)$/;
     return $self->GetGroup($tagInfo, 1);
+}
+
+#------------------------------------------------------------------------------
+# Get list of tags to write for Geolocate feature
+# Inputs: 0) ExifTool ref, 1) group name(s),
+#         2) 0=prefer writing City, 1=prefer writing GPS, undef=deleting tags
+# Returns: list of tags to write/delete
+sub GetGeolocateTags($$;$)
+{
+    my ($self, $wantGroup, $writeGPS) = @_;
+    my @grps = $wantGroup ? map lc, split(/:/, $wantGroup) : ();
+    my %grps = map { $_ => $_ } @grps;   # lookup for specified groups
+    $grps{exif} and not $grps{gps} and $grps{gps} = 'gps', push(@grps, 'gps');
+    my %tagGroups = (
+        'xmp-iptcext'   => [ qw(LocationShownCity LocationShownProvinceState LocationShownCountryCode
+                                LocationShownCountryName LocationShownGPSLatitude LocationShownGPSLongitude) ],
+        'xmp-photoshop' => [ qw(City State Country) ],
+        'xmp-iptccore'  => [ 'CountryCode' ],
+        'iptc'          => [ qw(City Province-State Country-PrimaryLocationCode Country-PrimaryLocationName) ],
+        'gps'           => [ qw(GPSLatitude GPSLongitude GPSLatitudeRef GPSLongitudeRef) ],
+        'xmp-exif'      => [ qw(GPSLatitude GPSLongitude) ],
+        'keys'          => [ 'GPSCoordinates' ],
+        'itemlist'      => [ 'GPSCoordinates' ],
+        'userdata'      => [ 'GPSCoordinates' ],
+        # more general groups not in this lookup: XMP and QuickTime 
+    );
+    my (@tags, $grp);
+    # set specific City and GPS tags
+    foreach $grp (@grps) {
+        $tagGroups{$grp} and push @tags, map("$grp:$_", @{$tagGroups{$grp}});
+    }
+    # set default XMP City tags if necessary
+    if (not $writeGPS and ($grps{xmp} or (not @tags and not $grps{quicktime}))) {
+        push @tags, qw(XMP:City XMP:State XMP:CountryCode XMP:Country);
+    }
+    $writeGPS = 1 unless defined $writeGPS; # (delete both City and GPS)
+    # set default QuickTime tag if necessary
+    my $didQT = grep /Coordinates$/, @tags;
+    if (($grps{quicktime} and not $didQT) or ($writeGPS and not @tags and not $grps{xmp})) {
+        push @tags, 'QuickTime:GPSCoordinates';
+    }
+    # set default GPS tags if necessary
+    if ($writeGPS) {
+        push @tags, qw(XMP:GPSLatitude XMP:GPSLongitude) if $grps{xmp} and not $grps{'xmp-exif'};
+        push @tags, qw(GPSLatitude GPSLongitude GPSLatitudeRef GPSLongitudeRef) if not $wantGroup;
+    }
+    return @tags;
 }
 
 #------------------------------------------------------------------------------

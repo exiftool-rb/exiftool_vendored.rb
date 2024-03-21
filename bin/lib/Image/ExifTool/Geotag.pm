@@ -1109,7 +1109,7 @@ sub SetGeoValues($$;$)
                     $iExt = $i1;
                 }
                 if (abs($time - $tn) > $geoMaxExtSecs) {
-                    $err or $err = 'Time is too far from nearest GPS fix'.' '.abs($time-$tn).' '.$geoMaxExtSecs;
+                    $err or $err = 'Time is too far from nearest GPS fix'.' '.abs($time-$tn).' > '.$geoMaxExtSecs;
                     $et->VPrint(2, '  Nearest fix:     ', PrintFixTime($tn), "\n") if $verbose > 2;
                     $fix = { } if $$geotag{DateTimeOnly};
                 } else {
@@ -1218,6 +1218,13 @@ Category:       foreach $category (qw{pos track alt orient atemp}) {
             $coords .= " $alt";
         }
         @r = $et->SetNewValue(GPSCoordinates => $coords, %opts);
+        # also Geolocate if specified
+        my $nvHash;
+        my $geoloc = $et->GetNewValue('Geolocate', \$nvHash);
+        if ($geoloc and lc($geoloc) eq 'geotag') {
+            $geoloc = ($$nvHash{WantGroup} ? "$$nvHash{WantGroup}:" : '') . 'Geolocate';
+            $et->SetNewValue($geoloc => "$$fix{lat},$$fix{lon}");
+        }
         return $err if $qt; # all done if writing to QuickTime only
         # (capture error messages by calling SetNewValue in list context)
         @r = $et->SetNewValue(GPSLatitude => $$fix{lat}, %opts);

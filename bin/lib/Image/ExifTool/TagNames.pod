@@ -12,7 +12,7 @@ meta information extracted from or written to a file.
 =head1 TAG TABLES
 
 The tables listed below give the names of all tags recognized by ExifTool.
-They contain a total of 27474 tags, with 17233 unique tag names.
+They contain a total of 27593 tags, with 17336 unique tag names.
 
 B<Tag ID>, B<Index#> or B<Sequence> is given in the first column of each
 table.  A B<Tag ID> is the computer-readable equivalent of a tag name, and
@@ -376,6 +376,7 @@ for the official EXIF 2.32 specification.
   0x0110   Model                     IFD0       string
   0x0111   StripOffsets              -          no
            OtherImageStart           -          no
+           PreviewJXLStart           -          no
            StripOffsets              -          no
            PreviewImageStart         IFD0       int32u*
            PreviewImageStart         All        int32u*
@@ -385,6 +386,7 @@ for the official EXIF 2.32 specification.
   0x0116   RowsPerStrip              IFD0       int32u!
   0x0117   StripByteCounts           -          no
            OtherImageLength          -          no
+           PreviewJXLLength          -          no
            StripByteCounts           -          no
            PreviewImageLength        IFD0       int32u*
            PreviewImageLength        All        int32u*
@@ -1360,6 +1362,7 @@ L<http://www.adobe.com/devnet/xmp/> for the official XMP specification.
   ---------                                     --------
   aas                                           XMP aas
   acdsee                                        XMP acdsee
+  acdsee-rs                                     XMP ACDSeeRegions
   album                                         XMP Album
   apple-fi                                      XMP apple_fi
   ast                                           Nikon ast
@@ -1502,6 +1505,66 @@ These tags belong to the ExifTool XMP-acdsee family 1 group.
   RPP                                           lang-alt/
   Snapshots                                     string/+
   Tagged                                        boolean/
+
+=head3 XMP ACDSeeRegions Tags
+
+These tags belong to the ExifTool XMP-acdsee-rs family 1 group.
+
+  Tag Name                                      Writable
+  --------                                      --------
+  RegionInfoACDSee                              ACDSeeRegionInfo Struct
+  ACDSeeRegionAppliedToDimensions               ACDSeeDimensions Struct_
+  ACDSeeRegionAppliedToDimensionsH              real/_
+  ACDSeeRegionAppliedToDimensionsUnit           string/_
+  ACDSeeRegionAppliedToDimensionsW              real/_
+  ACDSeeRegion                                  ACDSeeRegion Struct_+
+  ACDSeeRegionALGArea                           ACDSeeArea Struct_+
+  ACDSeeRegionALGAreaH                          real/_+
+  ACDSeeRegionALGAreaW                          real/_+
+  ACDSeeRegionALGAreaX                          real/_+
+  ACDSeeRegionALGAreaY                          real/_+
+  ACDSeeRegionDLYArea                           ACDSeeArea Struct_+
+  ACDSeeRegionDLYAreaH                          real/_+
+  ACDSeeRegionDLYAreaW                          real/_+
+  ACDSeeRegionDLYAreaX                          real/_+
+  ACDSeeRegionDLYAreaY                          real/_+
+  ACDSeeRegionName                              string/_+
+  ACDSeeRegionNameAssignType                    string/_+
+  ACDSeeRegionType                              string/_+
+
+=head3 XMP ACDSeeRegionInfo Struct
+
+  Field Name                                    Writable
+  ----------                                    --------
+  AppliedToDimensions                           ACDSeeDimensions Struct
+  RegionList                                    ACDSeeRegion Struct+
+
+=head3 XMP ACDSeeDimensions Struct
+
+  Field Name                                    Writable
+  ----------                                    --------
+  H                                             real
+  Unit                                          string
+  W                                             real
+
+=head3 XMP ACDSeeRegion Struct
+
+  Field Name                                    Writable
+  ----------                                    --------
+  ALGArea                                       ACDSeeArea Struct
+  DLYArea                                       ACDSeeArea Struct
+  Name                                          string
+  NameAssignType                                string
+  Type                                          string
+
+=head3 XMP ACDSeeArea Struct
+
+  Field Name                                    Writable
+  ----------                                    --------
+  H                                             real
+  W                                             real
+  X                                             real
+  Y                                             real
 
 =head3 XMP Album Tags
 
@@ -5147,6 +5210,7 @@ These tags belong to the ExifTool XMP-iptcExt family 1 group.
   LocationCreatedCountryCode                    string_+
   LocationCreatedCountryName                    string_+
   LocationCreatedGPSAltitude                    rational_+
+  LocationCreatedGPSAltitudeRef                 integer_+
   LocationCreatedGPSLatitude                    string_+
   LocationCreatedGPSLongitude                   string_+
   LocationCreatedIdentifier                     string_+
@@ -5160,6 +5224,7 @@ These tags belong to the ExifTool XMP-iptcExt family 1 group.
   LocationShownCountryCode                      string_+
   LocationShownCountryName                      string_+
   LocationShownGPSAltitude                      rational_+
+  LocationShownGPSAltitudeRef                   integer_+
   LocationShownGPSLatitude                      string_+
   LocationShownGPSLongitude                     string_+
   LocationShownIdentifier                       string_+
@@ -5213,6 +5278,7 @@ These tags belong to the ExifTool XMP-iptcExt family 1 group.
   RatingRegionCountryCode                       string_+
   RatingRegionCountryName                       string_+
   RatingRegionGPSAltitude                       rational_+
+  RatingRegionGPSAltitudeRef                    integer_+
   RatingRegionGPSLatitude                       string_+
   RatingRegionGPSLongitude                      string_+
   RatingRegionIdentifier                        string_+
@@ -5421,6 +5487,7 @@ is to write ImageRegion as a structure with these tags as new fields.
   CountryCode                                   string
   CountryName                                   string
   GPSAltitude                                   rational
+  GPSAltitudeRef                                integer
   GPSLatitude                                   string
   GPSLongitude                                  string
   Identifier                                    string+
@@ -6258,6 +6325,7 @@ These tags belong to the ExifTool XMP-xmpDM family 1 group.
   OutCueScale                                   rational_
   OutCueValue                                   integer_
   PartOfCompilation                             boolean
+  Pick                                          integer
   ProjectName                                   string
   ProjectRef                                    ProjectLink Struct
   ProjectRefPath                                string_
@@ -10115,6 +10183,7 @@ CameraInfo tags for the PowerShot G5 X Mark II.
   Index1   Tag Name                             Writable
   ------   --------                             --------
     659    ShutterCount                         int32u
+   2709    ShutterCount                         int32u
    2849    DirectoryIndex                       int32u
    2861    FileIndex                            int32u
 
@@ -12270,6 +12339,11 @@ below by a decimal appended to the tag ID (.0, .1 or .2).
   0x20916      PurpleHSL                        yes
   0x20917      MagentaHSL                       yes
   0x20a00      GammaInfo                        CanonVRD GammaInfo
+  0x20b10      DPRAWMicroadjustBackFront        yes
+  0x20b12      DPRAWMicroadjustStrength         yes
+  0x20b20      DPRAWBokehShift                  yes
+  0x20b21      DPRAWBokehShiftArea              yes
+  0x20b30      DPRAWGhostingReductionArea       yes
   0x30101      CropAspectRatio                  yes
   0x30102      CropAspectRatioCustom            yes
   0xf0100      CropInfo                         CanonVRD CropInfo
@@ -13091,6 +13165,8 @@ Tags extracted from FLIR Public image Format (FPF) files.
   0x104d   CropMode                             int16u
   0x104e   ColorChromeFXBlue                    int32s
   0x1050   ShutterType                          int16u
+  0x1051   CropTopLeft                          int32u
+  0x1052   CropCenter                           int32u
   0x1100   AutoBracketing                       int16u
   0x1101   SequenceNumber                       int16u
   0x1103   DriveSettings                        FujiFilm DriveSettings
@@ -29253,6 +29329,7 @@ for the official specification.
                        ThumbnailImage           no
                        Free?                    no
   'ftyp'               FileType                 QuickTime FileType
+  'gdat'               GPSData                  QuickTime Stream
   'gps0'               GPSTrack                 QuickTime Stream
   'gsen'               GSensor                  QuickTime Stream
   'junk'               Junk?                    no
@@ -29264,6 +29341,7 @@ for the official specification.
   'moof'               MovieFragment            QuickTime MovieFragment
   'moov'               Movie                    QuickTime Movie
   'mpvd'               MotionPhotoVideo         yes
+  'nbmt'               NextbaseMeta             QuickTime Stream
   'pict'               PreviewPICT              no
   'pnot'               Preview                  QuickTime Preview
   'prrt'               ARDroneTelemetry         no
@@ -29283,10 +29361,11 @@ for the official specification.
                        UUID-Flip                QuickTime Flip
                        UUID-Canon2              Canon uuid2
                        SensorData               QuickTime Tags360Fly
+                       SensorData               no
                        JUMBF                    Jpeg2000
                        CBOR                     CBOR
-                       SensorData               no
                        PreviewImage             no
+                       ThumbnailImage           no
                        UUID-Unknown?            no
   'wide'               Wide?                    no
 
@@ -29295,7 +29374,7 @@ for the official specification.
 The tags below are extracted from timed metadata in QuickTime and other
 formats of video files when the ExtractEmbedded option is used.  Although
 most of these tags are combined into the single table below, ExifTool
-currently reads 68 different formats of timed GPS metadata from video files.
+currently reads 71 different formats of timed GPS metadata from video files.
 
   Tag Name                                      Writable
   --------                                      --------
@@ -29304,6 +29383,7 @@ currently reads 68 different formats of timed GPS metadata from video files.
   AngularVelocity                               no
   CTMD                                          Canon CTMD
   CameraDateTime                                no
+  CameraModel                                   no
   Car                                           no
   DateTimeOriginal                              no
   Distance                                      no
@@ -30537,12 +30617,15 @@ the config file.
   'cvru'       CoverURI                         string
   'date'       DateTimeOriginal                 string
   'dscp'       Description                      string/
+  'finm'       OriginalFileName                 no
   'gnre'       Genre                            string/
   'hinf'       HintTrackInfo                    QuickTime HintTrackInfo
   'hinv'       HintVersion                      string
   'hnti'       HintInfo                         QuickTime HintInfo
   'htcb'       HTCBinary                        QuickTime HTCBinary
   'icnu'       IconURI                          string
+  'infi'       CameraInfo                       QuickTime Nextbase
+  'info'       FirmwareVersion                  string
   'infu'       InfoURL                          string
   'kgtt'       TrackType                        string
   'kywd'       Keywords                         no
@@ -30574,9 +30657,11 @@ the config file.
                ThumbnailImage                   string
                ThumbnailPNG                     string
                UnknownThumbnail                 string
+  'time'       TimeStamp                        no
   'titl'       Title                            string/
   'urat'       UserRating                       undef/
   'uuid'       GarminSoftware                   string
+               GarminModel                      no
                UUID-Unknown?                    no
   'vndr'       Vendor                           string
   'vrot'       AccelerometerData                no
@@ -30690,6 +30775,83 @@ Tags found in TomTom Bandit Action Cam MP4 videos.
   Index4   Tag Name                             Writable
   ------   --------                             --------
   [no tags known]
+
+=head3 QuickTime Nextbase Tags
+
+Tags found in 'infi' atom from some Nextbase videos.  As well as these tags,
+other existing tags are also extracted.  These tags are not currently
+writable but they may all be removed by deleting the Nextbase group.
+
+  Tag ID            Tag Name                    Writable
+  ------            --------                    --------
+  '2nd Cam'         SecondCam                   no
+  'Alerts'          Alerts                      no
+  'Alexa'           Alexa                       no
+  'Alexa - Paired Device Name'
+                    Alexa-PairedDeviceName      no
+  'Alexa - Pairing' Alexa-Pairing               no
+  'Alexa - Privacy Mode' Alexa-PrivacyMode      no
+  'Alexa - Wake Word Language'
+                    Alexa-WakeWordLanguage      no
+  'Audio'           Audio                       no
+  'Auto Power Off'  AutoPowerOff                no
+  'Battery Status'  BatteryStatus               no
+  'Bluetooth MAC Address' BluetoothMACAddress   no
+  'Bluetooth Name'  BluetoothName               no
+  'Country'         Country                     no
+  'Default Settings' DefaultSettings            no
+  'Device Sounds'   DeviceSounds                no
+  'Dual Files'      DualFiles                   no
+  'Emergency SOS'   EmergencySOS                no
+  'Exposure'        Exposure                    no
+  'Extreme Weather Mode' ExtremeWeatherMode     no
+  'FCC-ID'          FCC-ID                      no
+  'Firmware'        Firmware                    no
+  'Firmware Version' FirmwareVersion            no
+  'Format SD Card'  FormatSDCard                no
+  'G Sensor'        GSensor                     no
+  'GPS Stamp'       GPSStamp                    no
+  'Image Stabilisation' ImageStabilisation      no
+  'Keep User Settings' KeepUserSettings         no
+  'Language'        Language                    no
+  'Linux'           Linux                       no
+  'Model'           Model                       no
+  'Model Stamp'     ModelStamp                  no
+  'MyNextbase - Paired Device Name'
+                    MyNextbase-PairedDeviceName no
+  'MyNextbase - Pairing' MyNextbase-Pairing     no
+  'NBCD'            NBCD                        no
+  'Number / License Plate' NumberLicensePlate   no
+  'Parking Mode'    ParkingMode                 no
+  'RTOS'            RTOS                        no
+  'Recording History' RecordingHistory          no
+  'Resolution'      Resolution                  no
+  'Reversing Camera' ReversingCamera            no
+  'SD Card Class'   SDCardClass                 no
+  'SD Card Format'  SDCardFormat                no
+  'SD Card Manf Date' SDCardManfDate            no
+  'SD Card Manf ID' SDCardManfID                no
+  'SD Card Model No' SDCardModelNo              no
+  'SD Card OEM ID'  SDCardOEMID                 no
+  'SD Card Serial No' SDCardSerialNo            no
+  'SD Card Size'    SDCardSize                  no
+  'SD Card Type'    SDCardType                  no
+  'SD Card Used Space' SDCardUsedSpace          no
+  'Screen Dimming'  ScreenDimming               no
+  'Screen Saver'    ScreenSaver                 no
+  'Serial No'       SerialNumber                no
+  'Speed Stamp'     SpeedStamp                  no
+  'Speed Units'     SpeedUnits                  no
+  'System Info'     SystemInfo                  no
+  'Time & Date'     TimeAndDate                 no
+  'Time Lapse'      TimeLapse                   no
+  'Time Stamp'      VideoTimeStamp              no
+  'Time Zone / DST' TimeZoneDST                 no
+  'Video Length'    VideoLength                 no
+  'Wi-Fi MAC Address' Wi-FiMACAddress           no
+  'Wi-Fi Password'  Wi-FiPassword               no
+  'Wi-Fi SSID'      Wi-FiSSID                   no
+  'what3words'      What3Words                  no
 
 =head3 QuickTime Video Tags
 
@@ -39363,7 +39525,7 @@ these files directly.
   XAttrLastUsedDate                             no
   XAttrMDItemDownloadedDate                     no
   XAttrMDItemFinderComment                      no
-  XAttrMDItemWhereFroms                         no
+  XAttrMDItemWhereFroms                         yes!
   XAttrMDLabel                                  no
   XAttrQuarantine                               yes!
   XAttrResourceFork                             no
@@ -39561,6 +39723,19 @@ FileName.
   FileTypeExtension          File               no
   FileUserID                 System             yes!
   ForceWrite                 -                  yes
+  Geolocate                  -                  yes
+  GeolocationBearing         ExifTool           no
+  GeolocationCity            ExifTool           no
+  GeolocationCountry         ExifTool           no
+  GeolocationCountryCode     ExifTool           no
+  GeolocationDistance        ExifTool           no
+  GeolocationFeatureCode     ExifTool           no
+  GeolocationPopulation      ExifTool           no
+  GeolocationPosition        ExifTool           no
+  GeolocationRegion          ExifTool           no
+  GeolocationSubregion       ExifTool           no
+  GeolocationTimeZone        ExifTool           no
+  GeolocationWarning         ExifTool           no
   Geosync                    -                  yes
   Geotag                     -                  yes
   Geotime                    -                  yes
@@ -39583,6 +39758,7 @@ FileName.
   OtherImage                 File               no
   PageCount                  File               no
   PreviewImage               File               yes
+  PreviewJXL                 File               no
   PreviewPDF                 File               no
   PreviewPNG                 File               no
   PreviewTIFF                File               no
@@ -39846,6 +40022,10 @@ values, may created via the ExifTool configuration file.
   PreviewImage         ScreenNail               no
   PreviewImageSize     PreviewImageWidth        no
                        PreviewImageHeight
+  PreviewJXL           PreviewJXLStart          no
+                       PreviewJXLLength
+                       PreviewJXLStart (1)
+                       PreviewJXLLength (1)
   RedBalance           WB_RGGBLevels            no
                        WB_RGBGLevels
                        WB_RBGGLevels
