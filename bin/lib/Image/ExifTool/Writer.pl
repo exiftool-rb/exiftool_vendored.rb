@@ -29,7 +29,6 @@ sub ConvInv($$$$$;$$);
 sub PushValue($$$;$);
 
 my $loadedAllTables;    # flag indicating we loaded all tables
-my $advFmtSelf;         # ExifTool object during evaluation of advanced formatting expr
 
 # the following is a road map of where we write each directory
 # in the different types of files.
@@ -1271,16 +1270,16 @@ sub SetNewValuesFromFile($$;@)
         $opts{SrcType} = $opts{Type};
         # override PrintConv option with initial Type if given
         $printConv = ($opts{Type} eq 'PrintConv' ? 1 : 0);
-        $srcExifTool->Options(PrintConv => $printConv);
     }
     my $srcType = $printConv ? 'PrintConv' : 'ValueConv';
     my $structOpt = defined $$options{Struct} ? $$options{Struct} : 2;
 
     if (ref $srcFile and UNIVERSAL::isa($srcFile,'Image::ExifTool')) {
         $srcExifTool = $srcFile;
-        $info = $srcExifTool->GetInfo();
+        $info = $srcExifTool->GetInfo({ PrintConv => $printConv });
     } else {
         $srcExifTool = Image::ExifTool->new;
+        $srcExifTool->Options(PrintConv => $printConv);
         # set flag to indicate we are being called from inside SetNewValuesFromFile()
         $$srcExifTool{TAGS_FROM_FILE} = 1;
         # synchronize and increment the file sequence number
@@ -3380,7 +3379,7 @@ sub InsertTagValues($$;$$$$)
         if (defined $expr and defined $val) {
             local $SIG{'__WARN__'} = \&SetWarning;
             undef $evalWarning;
-            $advFmtSelf = $self;
+            $advFmtSelf = $self;    # set variable for access to $self in helper functions
             if ($asList) {
                 foreach (@val) {
                     #### eval advanced formatting expression ($_, $self, @val, $tag, $advFmtSelf)
@@ -3477,13 +3476,14 @@ sub NoDups
 #------------------------------------------------------------------------------
 # Utility routine to set in $_ image from current object
 # Inputs: 0-N) list of tags to copy
+# Returns: Return value from WriteInfo
 # Notes: - for use only in advanced formatting expressions
 sub SetTags(@)
 {
     my $self = $advFmtSelf;
     my $et = Image::ExifTool->new;
     $et->SetNewValuesFromFile($self, @_);
-    $et->WriteInfo(\$_);
+    return $et->WriteInfo(\$_);
 }
 
 #------------------------------------------------------------------------------

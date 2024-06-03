@@ -7,6 +7,45 @@ RSS feed: https://exiftool.org/rss.xml
 Note: The most recent production release is Version 12.76. (Other versions are
 considered development releases, and are not uploaded to MetaCPAN.)
 
+May 21, 2024 - Version 12.85
+
+  - Added GeolocationFeatureType tag
+  - Added read support for Nikon NKA and NXD adjustment files
+  - Added a new Apple:ImageCaptureType value, and changed another one
+  - Decode a few new Pentax tags
+  - Decode a few new Canon tags
+  - Decode some Ricoh Exif metadata from MOV videos
+  - Extract ID3 UserDefinedText and UserDefinedURL tags by name
+  - Make $advFmtSelf available for user-defined helper functions
+  - Documented API GeoDir pseudo option feature
+  - Tolerate pad byte at end of HIF file when writing
+  - Raised priority of FileName, BaseName, Directory and FileType tags so they
+    don't get hidden by other tags in the file which may have these names
+  - Changed decoding of QuickTime Rotation (irot) to correspond with
+    EXIF:Orientation (previously this was oddly reported as degrees of
+    counterclockwise rotation)
+  - Fixed a typo in the print conversion value for a couple of DPX tags
+  - Fixed problem writing some QuickTime tags with very large (> 16 MB) values
+  - Fixed bug in build_geolocation utility that resulted in incorrect population
+    numbers when run under ActivePerl
+
+Apr. 23, 2024 - Version 12.84
+
+  - Added ability to read speed and accuracy_horizontal when geotagging from
+    OpenTracks GPX files
+  - Decode a few more Apple tags and a new CanonVRD tag
+  - Enhanced Geolocation feature with the ability to return any number of nearby
+    cities
+  - Fixed long-standing bug in Windows version that didn't properly handle dates
+    older than 50 years when writing FileModifyDate or FileCreateDate
+  - Fixed API TimeZone option to work in Windows
+  - Fixed problem where the SetTags helper function didn't properly copy tags
+    which have print conversions
+  - Fixed problem where a new subregion couldn't be added through a user-defined
+    Geolocation database entry
+  - Fixed problem where the API GeolocFeature option didn't work for some
+    features if a user-generated custom database was used
+
 Apr. 18, 2024 - Version 12.83
 
   - Added SetTags helper function for use in advanced formatting expressions
@@ -14,7 +53,7 @@ Apr. 18, 2024 - Version 12.83
   - Added a new Nikon Z lens
   - Added a couple of new QuickTime tags
   - Added a few more XMP-GCamera tags
-  - Added build_geolocation to the full distribution
+  - Added build_geolocation utility to the full distribution
   - Decode a new CanonVRD tag and rename another one
   - Updates to Sony maker note decoding for newer models (thanks Jos Roost)
   - Minor change in -p option to avoid adding the trailing newline if the -b
