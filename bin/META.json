@@ -4,7 +4,7 @@
       "Phil Harvey (philharvey66 at gmail.com)"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "ExtUtils::MakeMaker version 6.66, CPAN::Meta::Converter version 2.133380",
+   "generated_by" : "ExtUtils::MakeMaker version 7.34, CPAN::Meta::Converter version 2.143240",
    "license" : [
       "perl_5"
    ],
@@ -50,5 +50,5 @@
       }
    },
    "release_status" : "stable",
-   "version" : "12.86"
+   "version" : "12.89"
 }

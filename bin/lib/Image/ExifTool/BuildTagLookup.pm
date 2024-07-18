@@ -35,7 +35,7 @@ use Image::ExifTool::Sony;
 use Image::ExifTool::Validate;
 use Image::ExifTool::MacOS;
 
-$VERSION = '3.57';
+$VERSION = '3.58';
 @ISA = qw(Exporter);
 
 sub NumbersFirst($$);
@@ -98,6 +98,8 @@ my %tweakOrder = (
     GIMP    => 'Microsoft',
     DarwinCore => 'AFCP',
     MWG     => 'Shortcuts',
+    'FujiFilm::RAF' => 'FujiFilm::RAFHeader',
+    'FujiFilm::RAFData' => 'FujiFilm::RAF',
 );
 
 # list of all recognized Format strings
@@ -423,11 +425,11 @@ parameters, as well as proprietary information written by many camera
 models.  Tags with a question mark after their name are not extracted unless
 the L<Unknown|../ExifTool.html#Unknown> option is set.
 
-When writing, ExifTool creates both QuickTime and XMP tags by default, but
-the group may be specified to write one or the other separately.  If no
-location is specified, newly created QuickTime tags are added in the
-L<ItemList|Image::ExifTool::TagNames/QuickTime ItemList Tags> location if
-possible, otherwise in
+When writing video files, ExifTool creates both QuickTime and XMP tags by
+default, but the group may be specified to write one or the other
+separately.  If no location is specified, newly created QuickTime tags are
+added in the L<ItemList|Image::ExifTool::TagNames/QuickTime ItemList Tags>
+location if possible, otherwise in
 L<UserData|Image::ExifTool::TagNames/QuickTime UserData Tags>, and
 finally in L<Keys|Image::ExifTool::TagNames/QuickTime Keys Tags>,
 but this order may be changed by setting the PREFERRED level of the
@@ -478,7 +480,7 @@ the original size by padding with nulls if necessary.
 
 See
 L<https://developer.apple.com/library/archive/documentation/QuickTime/QTFF/>
-for the official specification.
+for the official QuickTime specification.
 },
     Photoshop => q{
 Photoshop tags are found in PSD and PSB files, as well as inside embedded
@@ -906,6 +908,9 @@ TagID:  foreach $tagID (@keys) {
                 @infoArray = GetTagInfoList($table,$tagID);
             }
             foreach $tagInfo (@infoArray) {
+                if ($binaryTable and $$tagInfo{Writable} and $$tagInfo{Writable} ne '1') {
+                    warn("$tableName $$tagInfo{Name} Writable should be 1, not $$tagInfo{Writable}\n");
+                }
                 my $name = $$tagInfo{Name};
                 if ($$tagInfo{WritePseudo}) {
                     push @writePseudo, $name;

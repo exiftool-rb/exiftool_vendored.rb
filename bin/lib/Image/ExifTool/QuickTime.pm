@@ -48,7 +48,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '2.97';
+$VERSION = '2.98';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -238,7 +238,11 @@ my %useExt = ( GLV => 'MP4' );
 
 # information for int32u date/time tags (time zero is Jan 1, 1904)
 my %timeInfo = (
-    Notes => 'converted from UTC to local time if the QuickTimeUTC option is set',
+    Notes => q{
+        converted from UTC to local time if the QuickTimeUTC option is set.  This
+        tag is part of a binary data structure so it may not be deleted -- instead
+        the value is set to zero if the tag is deleted individually
+    },
     Shift => 'Time',
     Writable => 1,
     Permanent => 1,
@@ -8988,12 +8992,20 @@ sub HandleItemInfo($)
                 if ($$item{Extents} and @{$$item{Extents}}) {
                     $len += $$_[2] foreach @{$$item{Extents}};
                 }
-                $et->VPrint(0, "$$et{INDENT}Item $id) '${type}' ($len bytes)\n");
+                my $enc = $$item{ContentEncoding} ? ", $$item{ContentEncoding} encoded" : '';
+                $et->VPrint(0, "$$et{INDENT}Item $id) '${type}' ($len bytes$enc)\n");
             }
             # get ExifTool name for this item
             my $name = { Exif => 'EXIF', 'application/rdf+xml' => 'XMP', jpeg => 'PreviewImage' }->{$type} || '';
             my ($warn, $extent);
-            $warn = "Can't currently decode encoded $type metadata" if $$item{ContentEncoding};
+            if ($$item{ContentEncoding}) {
+                if ($$item{ContentEncoding} ne 'deflate') {
+                    # (other possible values are 'gzip' and 'compress', but I don't have samples of these)
+                    $warn = "Can't currently decode $$item{ContentEncoding} encoded $type metadata";
+                } elsif (not eval { require Compress::Zlib }) {
+                    $warn = "Install Compress::Zlib to decode deflated $type metadata";
+                }
+            }
             $warn = "Can't currently decode protected $type metadata" if $$item{ProtectionIndex};
             $warn = "Can't currently extract $type with construction method $$item{ConstructionMethod}" if $$item{ConstructionMethod};
             $et->WarnOnce($warn) if $warn and $name;
@@ -9053,6 +9065,22 @@ sub HandleItemInfo($)
             next unless defined $buff;
             $buff = $val . $buff if length $val;
             next unless length $buff;   # ignore empty directories
+            if ($$item{ContentEncoding}) {
+                my ($v2, $stat);
+                my $inflate = Compress::Zlib::inflateInit();
+                $inflate and ($v2, $stat) = $inflate->inflate($buff);
+                if ($inflate and $stat == Compress::Zlib::Z_STREAM_END()) {
+                    $buff = $v2;
+                    my $len = length $buff;
+                    $et->VPrint(0, "$$et{INDENT}Inflated Item $id) '${type}' ($len bytes)\n");
+                    $et->VerboseDump(\$buff);
+                } else {
+                    $warn = "Error inflating $name metadata";
+                    $et->WarnOnce($warn);
+                    $et->VPrint(0, "$$et{INDENT}    [not extracted]  ($warn)\n") if $verbose > 2;
+                    next;
+                }
+            }
             my ($start, $subTable, $proc);
             my $pos = $$item{Extents}[0][1] + $base;
             if ($name eq 'EXIF' and length $buff >= 4) {
@@ -9488,7 +9516,8 @@ sub ProcessMOV($$;$)
     my $dataPt = $$dirInfo{DataPt};
     my $verbose = $et->Options('Verbose');
     my $validate = $$et{OPTIONS}{Validate};
-    my $dataPos = $$dirInfo{Base} || 0;
+    my $dirBase = $$dirInfo{Base} || 0;
+    my $dataPos = $dirBase;
     my $dirID = $$dirInfo{DirID} || '';
     my $charsetQuickTime = $et->Options('CharsetQuickTime');
     my ($buff, $tag, $size, $track, $isUserData, %triplet, $doDefaultLang, $index);
@@ -9573,6 +9602,7 @@ sub ProcessMOV($$;$)
         $atomCount = $$tagTablePtr{VARS}{ATOM_COUNT};
     }
     my $lastTag = '';
+    my $lastPos = 0;
     for (;;) {
         my ($eeTag, $ignore);
         last if defined $atomCount and --$atomCount < 0;
@@ -9611,6 +9641,8 @@ sub ProcessMOV($$;$)
                 } elsif (not $et->Options('LargeFileSupport')) {
                     $warnStr = 'End of processing at large atom (LargeFileSupport not enabled)';
                     last;
+                } elsif ($et->Options('LargeFileSupport') eq '2') {
+                    $et->WarnOnce('Processing large atom (LargeFileSupport is 2)');
                 }
             }
             $size = $hi * 4294967296 + $lo - 16;
@@ -10085,14 +10117,15 @@ ItemID:         foreach $id (reverse sort { $a <=> $b } keys %$items) {
             ) if $verbose;
             if ($size and (not $raf->Seek($size-1, 1) or $raf->Read($buff, 1) != 1)) {
                 my $t = PrintableTagID($tag,2);
-                $warnStr = "Truncated '${t}' data";
+                $warnStr = sprintf("Truncated '${t}' data at offset 0x%x", $lastPos);
                 last;
             }
         }
         $dataPos += $size + 8;  # point to start of next atom data
         last if $dirEnd and $dataPos >= $dirEnd; # (note: ignores last value if 0 bytes)
+        $lastPos = $raf->Tell() + $dirBase;
         $raf->Read($buff, 8) == 8 or last;
-        $lastTag = $tag if $$tagTablePtr{$tag};
+        $lastTag = $tag if $$tagTablePtr{$tag} and $tag ne 'free'; # (Insta360 sometimes puts free block before trailer)
         ($size, $tag) = unpack('Na4', $buff);
         ++$index if defined $index;
     }
@@ -10102,7 +10135,11 @@ ItemID:         foreach $id (reverse sort { $a <=> $b } keys %$items) {
         if (($lastTag eq 'mdat' or $lastTag eq 'moov') and (not $$tagTablePtr{$tag} or
             ref $$tagTablePtr{$tag} eq 'HASH' and $$tagTablePtr{$tag}{Unknown}))
         {
-            $et->Warn('Unknown trailer with '.lcfirst($warnStr));
+            if ($size == 0x1000000 - 8 and $tag =~ /^(\x94\xc0\x7e\0|\0\x02\0\0)/) {
+                $et->Warn(sprintf('Insta360 trailer at offset 0x%x', $lastPos), 1);
+            } else {
+                $et->Warn('Unknown trailer with '.lcfirst($warnStr));
+            }
         } else {
             $et->Warn($warnStr);
         }
