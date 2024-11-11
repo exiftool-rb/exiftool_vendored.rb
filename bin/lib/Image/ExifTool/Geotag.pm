@@ -31,7 +31,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:Public);
 use Image::ExifTool::GPS;
 
-$VERSION = '1.78';
+$VERSION = '1.80';
 
 sub JITTER() { return 2 }       # maximum time jitter
 
@@ -562,8 +562,8 @@ DoneFix:    $isDate = 1;
             next;
         } elsif ($format eq 'JSON') {
             # Google Takeout JSON format
-            if (/"(latitudeE7|longitudeE7|latE7|lngE7|timestamp|startTime|point|durationMinutesOffsetFromStartTime)"\s*:\s*"?(.*?)"?,?\s*[\x0d\x0a]/) {
-                if ($1 eq 'timestamp') {
+            if (/"(latitudeE7|longitudeE7|latE7|lngE7|timestamp|startTime|point|durationMinutesOffsetFromStartTime|time)"\s*:\s*"?(.*?)"?,?\s*[\x0d\x0a]/) {
+                if ($1 eq 'timestamp' or $1 eq 'time') {
                     $time = GetTime($2);
                     goto DoneFix if $time and $$fix{lat} and $$fix{lon};
                 } elsif ($1 eq 'startTime') { # (new format)
@@ -1127,8 +1127,9 @@ sub SetGeoValues($$;$)
                     $iExt = $i1;
                 }
                 if (abs($time - $tn) > $geoMaxExtSecs) {
-                    $err or $err = 'Time is too far from nearest GPS fix'.' '.abs($time-$tn).' > '.$geoMaxExtSecs;
-                    $et->VPrint(2, '  Nearest fix:     ', PrintFixTime($tn), "\n") if $verbose > 2;
+                    $err or $err = 'Time is too far from nearest GPS fix';
+                    $et->VPrint(2, '  Nearest fix:     ', PrintFixTime($tn), ' (',
+                                int(abs $time-$tn), " sec away)\n") if $verbose > 2;
                     $fix = { } if $$geotag{DateTimeOnly};
                 } else {
                     $fix = $$points{$tn};

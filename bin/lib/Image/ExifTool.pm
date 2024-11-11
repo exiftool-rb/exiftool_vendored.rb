@@ -29,7 +29,7 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %jpegMarker %specialTags %fileTypeLookup $testLen $exeDir
             %static_vars $advFmtSelf);
 
-$VERSION = '12.99';
+$VERSION = '13.02';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -126,6 +126,7 @@ sub MakeTiffHeader($$$$;$$);
 # other subroutine definitions
 sub SplitFileName($);
 sub EncodeFileName($$;$);
+sub WindowsLongPath($$);
 sub Open($*$;$);
 sub Exists($$;$);
 sub IsDirectory($$);
@@ -740,7 +741,7 @@ my %fileDescription = (
     OGV  => 'video/ogg',
     ONP  => 'application/on1',
     ORF  => 'image/x-olympus-orf',
-    OTF  => 'application/x-font-otf',
+    OTF  => 'application/font-otf',
     PAGES=> 'application/x-iwork-pages-sffpages',
     PBM  => 'image/x-portable-bitmap',
     PCD  => 'image/x-photo-cd',
@@ -798,8 +799,8 @@ my %fileDescription = (
     THMX => 'application/vnd.ms-officetheme',
     TIFF => 'image/tiff',
     Torrent => 'application/x-bittorrent',
-    TTC  => 'application/x-font-ttf',
-    TTF  => 'application/x-font-ttf',
+    TTC  => 'application/font-ttf',
+    TTF  => 'application/font-ttf',
     TXT  => 'text/plain',
     VCard=> 'text/vcard',
     VRD  => 'application/octet-stream', #PH (NC)
@@ -1081,6 +1082,7 @@ my %xmpShorthandOpt = ( 0 => 'None', 1 => 'Shorthand', 2 => ['Shorthand','OneDes
 # +-----------------------------------------------------+
 # (Note: All options must exist in this lookup, even if undefined,
 # to facilitate case-insensitive options. 'Group#' is handled specially)
+# (item 3 is a flag indicating the option is undocumented)
 my @availableOptions = (
     [ 'Binary',           undef,  'flag to extract binary values even if tag not specified' ],
     [ 'ByteOrder',        undef,  'default byte order when creating EXIF information' ],
@@ -1098,7 +1100,12 @@ my @availableOptions = (
     [ 'Compress',         undef,  'flag to write new values as compressed if possible' ],
     [ 'CoordFormat',      undef,  'GPS lat/long coordinate format' ],
     [ 'DateFormat',       undef,  'format for date/time' ],
+    [ 'Debug',            undef,  'enable debugging output', 1 ], # (undocumented)
     [ 'Duplicates',       1,      'flag to save duplicate tag values' ],
+    # ("require Encode" hangs on my Windows 10 virtual machine running under MacOS if
+    #  the current working directory has a long path name.  This problem hasn't been
+    #  seen on other Windows systems, so I'm leaving this option undocumented for now)
+    [ 'EncodeHangs',      undef,  'flag set to avoid using Encode if it hangs on your system', 1 ], # (undocumented)
     [ 'Escape',           undef,  'escape special characters' ],
     [ 'Exclude',          undef,  'tags to exclude' ],
     [ 'ExtendedXMP',      1,      'strategy for reading extended XMP' ],
@@ -1130,10 +1137,10 @@ my @availableOptions = (
     [ 'Lang',       $defaultLang, 'localized language for descriptions etc' ],
     [ 'LargeFileSupport', 1,      'flag indicating support of 64-bit file offsets' ],
     [ 'LimitLongValues',  60,     'length limit for long values' ],
-    [ 'List',             undef,  '[deprecated, use ListSplit and ListJoin instead]' ],
+    [ 'List',             undef,  '[deprecated, use ListSplit and ListJoin instead]', 1 ],
     [ 'ListItem',         undef,  'used to return a specific item from lists' ],
     [ 'ListJoin',         ', ',   'join lists together with this separator' ],
-    [ 'ListSep',          ', ',   '[deprecated, use ListSplit and ListJoin instead]' ],
+    [ 'ListSep',          ', ',   '[deprecated, use ListSplit and ListJoin instead]', 1 ],
     [ 'ListSplit',        undef,  'regex for splitting list-type tag values when writing' ],
     [ 'MakerNotes',       undef,  'extract maker notes as a block' ],
     [ 'MDItemTags',       undef,  'extract MacOS metadata item tags' ],
@@ -1150,6 +1157,7 @@ my @availableOptions = (
     [ 'QuickTimeUTC',     undef,  'assume that QuickTime date/time tags are stored as UTC' ],
     [ 'RequestAll',       undef,  'extract all tags that must be specifically requested' ],
     [ 'RequestTags',      undef,  'extra tags to request (on top of those in the tag list)' ],
+    [ 'SaveBin',          undef,  'save binary values of tags' ],
     [ 'SaveFormat',       undef,  'save family 6 tag TIFF format' ],
     [ 'SavePath',         undef,  'save family 5 location path' ],
     [ 'ScanForXMP',       undef,  'flag to scan for XMP information in all files' ],
@@ -1165,11 +1173,12 @@ my @availableOptions = (
     [ 'UserParam',        { },    'user parameters for additional user-defined tag values' ],
     [ 'Validate',         undef,  'perform additional validation' ],
     [ 'Verbose',          0,      'print verbose messages (0-5, higher # = more verbose)' ],
+    [ 'WindowsLongPath',  undef,  'enable support for long pathnames (enables WindowsWideFile)' ],
     [ 'WindowsWideFile',  undef,  'force the use of Windows wide-character file routines' ], # (see forum15208)
     [ 'WriteMode',        'wcg',  'enable all write modes by default' ],
     [ 'XAttrTags',        undef,  'extract MacOS extended attribute tags' ],
     [ 'XMPAutoConv',      1,      'automatic conversion of unknown XMP tag values' ],
-    [ 'XMPShorthand',     0,      '[deprecated, use Compact=Shorthand instead]' ],
+    [ 'XMPShorthand',     0,      '[deprecated, use Compact=Shorthand instead]', 1 ],
 );
 
 # default family 0 group priority for writing
@@ -3328,8 +3337,8 @@ sub GetRequestedTags($)
 # Inputs: 0) ExifTool object reference
 #         1) tag key or tag name with optional group names (case sensitive)
 #            (or flattened tagInfo for getting field values, not part of public API)
-#         2) [optional] Value type: PrintConv, ValueConv, Both, Raw or Rational, the default
-#            is PrintConv or ValueConv, depending on the PrintConv option setting
+#         2) [optional] Value type: PrintConv, ValueConv, Both, Raw, Bin or Rational, the
+#            default is PrintConv or ValueConv, depending on the PrintConv option setting
 #         3) raw field value (not part of public API)
 # Returns: Scalar context: tag value or undefined
 #          List context: list of values or empty list
@@ -3358,7 +3367,8 @@ sub GetValue($$;$)
     }
     # figure out what conversions to do
     if ($type) {
-        return $$self{RATIONAL}{$tag} if $type eq 'Rational';
+        return $$self{TAG_EXTRA}{$tag}{Rational} if $type eq 'Rational';
+        return $$self{TAG_EXTRA}{$tag}{BinVal} if $type eq 'Bin';
     } else {
         $type = $$self{OPTIONS}{PrintConv} ? 'PrintConv' : 'ValueConv';
     }
@@ -3702,9 +3712,10 @@ sub GetGroup($$;$)
         $tag = $$tagInfo{Name};
         # set flag so we don't get extra information for an extracted tag
         $byTagInfo = 1;
+        $ex = { };
     } else {
         $tagInfo = $$self{TAG_INFO}{$tag} || { };
-        $ex = $$self{TAG_EXTRA}{$tag};
+        $ex = $$self{TAG_EXTRA}{$tag} || { };
     }
     my $groups = $$tagInfo{Groups};
     # fill in default groups unless already done
@@ -3723,32 +3734,30 @@ sub GetGroup($$;$)
     if (defined $family and $family ne '-1') {
         if ($family =~ /[^\d]/) {
             @families = ($family =~ /\d+/g);
-            return(($ex && $$ex{G0}) || $$groups{0}) unless @families;
+            return($$ex{G0} || $$groups{0}) unless @families;
             $simplify = 1 unless $family =~ /^:/;
             undef $family;
             foreach (0..2) { $groups[$_] = $$groups{$_}; }
             $noID = 1 if @families == 1 and $families[0] != 7;
         } else {
-            return(($ex && $$ex{"G$family"}) || $$groups{$family}) if $family == 0 or $family == 2;
+            return($$ex{"G$family"} || $$groups{$family}) if $family == 0 or $family == 2;
             $groups[1] = $$groups{1};
         }
     } else {
-        return(($ex && $$ex{G0}) || $$groups{0}) unless wantarray;
+        return($$ex{G0} || $$groups{0}) unless wantarray;
         foreach (0..2) { $groups[$_] = $$groups{$_}; }
     }
     $groups[3] = 'Main';
-    $groups[4] = ($tag =~ /\((\d+)\)$/) ? "Copy$1" : '';
+    $groups[4] = ($tag =~ /\((\d+)\)$/ and $1 ne '0') ? "Copy$1" : '';
     # handle dynamic group names if necessary
     unless ($byTagInfo) {
-        if ($ex) {
-            $groups[0] = $$ex{G0} if $$ex{G0};
-            $groups[1] = $$ex{G1} =~ /^\+(.*)/ ? "$groups[1]$1" : $$ex{G1} if $$ex{G1};
-            $groups[3] = 'Doc' . $$ex{G3} if $$ex{G3};
-            $groups[5] = $$ex{G5} || $groups[1] if defined $$ex{G5};
-            if (defined $$ex{G6}) {
-                $groups[5] = '' unless defined $groups[5];  # (can't leave a hole in the array)
-                $groups[6] = $$ex{G6};
-            }
+        $groups[0] = $$ex{G0} if $$ex{G0};
+        $groups[1] = $$ex{G1} =~ /^\+(.*)/ ? "$groups[1]$1" : $$ex{G1} if $$ex{G1};
+        $groups[3] = 'Doc' . $$ex{G3} if $$ex{G3};
+        $groups[5] = $$ex{G5} || $groups[1] if defined $$ex{G5};
+        if (defined $$ex{G6}) {
+            $groups[5] = '' unless defined $groups[5];  # (can't leave a hole in the array)
+            $groups[6] = $$ex{G6};
         }
         if ($$ex{G8}) {
             $groups[7] = '';
@@ -3921,12 +3930,9 @@ COMPOSITE_TAG:
                                 $key = "$reqTag ($i)";
                             }
                             @keys = $self->GroupMatches($reqGroup, \@keys) if defined $reqGroup;
-                            if (@keys) {
-                                my $ex = $$self{TAG_EXTRA};
-                                # loop through tags in reverse order of precedence so the higher
-                                # priority tag will win in the case of duplicates within a doc
-                                $$cacheTag[$$ex{$_} ? $$ex{$_}{G3} || 0 : 0] = $_ foreach reverse @keys;
-                            }
+                            # loop through tags in reverse order of precedence so the higher
+                            # priority tag will win in the case of duplicates within a doc
+                            $$cacheTag[$$self{TAG_EXTRA}{$_}{G3} || 0] = $_ foreach reverse @keys;
                         }
                         # (set $reqTag to a bogus key if not found)
                         $reqTag = $$cacheTag[$doc] || "$reqTag (0)";
@@ -4218,9 +4224,7 @@ sub Init($)
     local $_;
     my $self = shift;
     # delete all DataMember variables (lower-case names)
-    foreach (keys %$self) {
-        /[a-z]/ and delete $$self{$_};
-    }
+    delete $$self{$_} foreach grep /[a-z]/, keys %$self;
     undef %static_vars;             # clear all static variables
     delete $$self{FOUND_TAGS};      # list of found tags
     delete $$self{EXIF_DATA};       # the EXIF data block
@@ -4235,7 +4239,6 @@ sub Init($)
     $$self{FILE_ORDER} = { };       # * hash of tag order in file ('*' = based on tag key)
     $$self{VALUE}      = { };       # * hash of raw tag values
     $$self{BOTH}       = { };       # * hash for Value/PrintConv values of Require'd tags
-    $$self{RATIONAL}   = { };       # * hash of original rational components
     $$self{TAG_INFO}   = { };       # * hash of tag information
     $$self{TAG_EXTRA}  = { };       # * hash of extra tag information (dynamic group names)
     $$self{PRIORITY}   = { };       # * priority of current tags
@@ -4468,11 +4471,7 @@ sub DoneExtract($)
         my $err = $$altExifTool{VALUE}{Error};
         $err and $self->Warn(qq{$err "$fileName"});
         # set family 8 group name for all tags
-        foreach (keys %{$$altExifTool{VALUE}}) {
-            my $ex = $$altExifTool{TAG_EXTRA}{$_};
-            $ex or $ex = $$altExifTool{TAG_EXTRA}{$_} = { };
-            $$ex{G8} = $g8;
-        }
+        $$altExifTool{TAG_EXTRA}{$_}{G8} = $g8 foreach keys %{$$altExifTool{VALUE}};
         # prepare our sorted list of found tags
         $$altExifTool{FoundTags} = [ reverse sort keys %{$$altExifTool{VALUE}} ];
         $$altExifTool{DID_EXTRACT} = 1;
@@ -4614,34 +4613,123 @@ sub SplitFileName($)
 
 #------------------------------------------------------------------------------
 # Encode file name for calls to system i/o routines
-# Inputs: 0) ExifTool ref, 1) file name in CharSetFileName, 2) flag to force conversion
+# Inputs: 0) ExifTool ref, 1) file name in CharsetFileName encoding, 2) flag to force conversion
 # Returns: true if Windows Unicode routines should be used (in which case
 #          the file name will be encoded as a null-terminated UTF-16LE string)
 sub EncodeFileName($$;$)
 {
     my ($self, $file, $force) = @_;
     my $enc = $$self{OPTIONS}{CharsetFileName};
-    $force = 1 if $$self{OPTIONS}{WindowsWideFile};
-    if ($enc) {
-        if ($file =~ /[\x80-\xff]/ or $force) {
-            # encode for use in Windows Unicode functions if necessary
-            if ($^O eq 'MSWin32') {
-                local $SIG{'__WARN__'} = \&SetWarning;
-                if (eval { require Win32API::File }) {
-                    # recode as UTF-16LE and add null terminator
-                    $_[1] = $self->Decode($file, $enc, undef, 'UTF16', 'II') . "\0\0";
-                    return 1;
-                }
-                $self->WarnOnce('Install Win32API::File for Windows Unicode file support');
+    my $hasSpecialChars;
+    if ($file =~ /[\x80-\xff]/) {
+        $hasSpecialChars = 1;
+        if (not $enc and $^O eq 'MSWin32') {
+            if (IsUTF8(\$file) < 0) {
+                $self->WarnOnce('FileName encoding must be specified') if not defined $enc;
+                return 0;
             } else {
-                # recode as UTF-8 for other platforms if necessary
-                $_[1] = $self->Decode($file, $enc, undef, 'UTF8') unless $enc eq 'UTF8';
+                $enc = 'UTF8';  # assume UTF8
             }
         }
-    } elsif ($^O eq 'MSWin32' and $file =~ /[\x80-\xff]/ and not defined $enc) {
-        $self->WarnOnce('FileName encoding not specified') if IsUTF8(\$file) < 0;
+    }
+    $force = 1 if $$self{OPTIONS}{WindowsWideFile} or $$self{OPTIONS}{WindowsLongPath};
+    if ($hasSpecialChars or $force) {
+        $enc or $enc = 'UTF8';
+        if ($^O eq 'MSWin32') {
+            local $SIG{'__WARN__'} = \&SetWarning;
+            if (eval { require Win32API::File }) {
+                $file = $self->WindowsLongPath($file) if $$self{OPTIONS}{WindowsLongPath};
+                # recode as UTF-16LE and add null terminator
+                $_[1] = $self->Decode($file, $enc, undef, 'UTF16', 'II') . "\0\0";
+                return 1;
+            }
+            $self->WarnOnce('Install Win32API::File for Windows wide/long file name support');
+        } elsif ($enc ne 'UTF8') {
+            # recode as UTF-8 for other platforms if necessary
+            $_[1] = $self->Decode($file, $enc, undef, 'UTF8');
+        }
     }
     return 0;
+}
+
+#------------------------------------------------------------------------------
+# Rebuild a path as an absolute long path to be usable in Windows system calls
+# Inputs: 0) ExifTool ref, 1) path string
+# Returns: normalized long path
+# Note: this should only be called for Windows systems
+# References:
+# - https://learn.microsoft.com/en-us/dotnet/standard/io/file-path-formats
+# - https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation
+sub WindowsLongPath($$)
+{
+    my ($self, $path) = @_;
+    my $debug = $$self{OPTIONS}{Debug};
+    my $out = $$self{OPTIONS}{TextOut};
+    my @fullParts;
+    my $prefixLen = 0;
+
+    $debug and print $out "WindowsLongPath input : $path\n";
+    $path =~ tr(/)(\\); # convert slashes to backslashes
+    my @pathParts = split /\\/, $path;
+
+    if ($path =~ /^\\\\\?\\/ or        # already a device path in the format we want
+        $path =~ s/^\\\\\.\\/\\\\?\\/) # convert //./ to //?/
+    {
+        # path is already long-path compatible
+        $prefixLen = 3; # path already contains prefix of 3 parts ('', '' and '?')
+    } elsif ($path =~ /[*?]/) {
+        return $path;   # do nothing because we don't support wildcards
+    } elsif ($path =~ /^\\\\/) {
+        # UNC path starts with two slashes change to "\\?\UNC\"
+        splice @pathParts, 2, 0, '?', 'UNC';
+        $prefixLen = (@pathParts > 6 ? 6 : @pathParts); # ('', '', '?', 'UNC', <server>, <share>)
+    } elsif ($path =~ /^[a-z]:\\/i) {
+        # path is already absolute but we need to add the device path prefix
+        unshift @pathParts, '', '', '?';
+        $prefixLen = 4;
+    } elsif ({ eval { require Cwd } }) {
+        my $drive;
+        $drive = $1 if $pathParts[0] =~ s/^([a-z]:)//;
+        my $cwd = Cwd::getdcwd($drive); # ($drive is undef for current working drive)
+        $debug and print $out "WindowsLongPath getcwd: $cwd\n";
+        @fullParts = split /[\\\/]/, $cwd;
+        # UNC path starts with "\\", so first 2 elements are empty
+        # --> shift and put UNC in first element.
+        if (@fullParts > 1 and $fullParts[0] eq '' and $fullParts[1] eq '') {
+            shift @fullParts;
+            $fullParts[0] = 'UNC';
+            unshift @fullParts, '', '', '?';
+            $prefixLen = (@fullParts > 6 ? 6 : @fullParts);
+        } else {
+            $prefixLen = 1; # drive designator only
+        }
+        # if absolute path on current drive starts with "\"
+        # just keep prefix and drop the rest of the cwd
+        $#fullParts = $prefixLen - 1 if $pathParts[0] eq '';
+    } else {
+        $prefixLen = @pathParts; # (nothing more we can do)
+    }
+    # remove "." and ".." from path (not handled for device paths)
+    my $part;
+    foreach $part (@pathParts) {
+        if ($part eq '.') {
+            next;
+        } elsif ($part eq '') {
+            # only allow double slashes at start of path name (max 2)
+            push @fullParts, $part if not @fullParts or (@fullParts == 1 and $fullParts[0] eq '');
+        } elsif ($part eq '..') {
+            # step up one directory, but not into the prefix
+            pop @fullParts if @fullParts > $prefixLen;
+        } else {
+            push @fullParts, $part;
+        }
+    }
+    $path = join '\\', @fullParts;
+    # add device path prefix ("\\?\") if path length near the limit (the most
+    # conservative limit I can find is 247, which is the limit on the directory name)
+    $path = '\\\\?\\' . $path unless $prefixLen > 1 or length($path) <= 247;
+    $debug and print $out "WindowsLongPath return: $path\n";
+    return $path;
 }
 
 #------------------------------------------------------------------------------
@@ -4910,11 +4998,13 @@ sub ParseArguments($;@)
                 next if defined $$self{RAF};
                 # convert image data from UTF-8 to character stream if necessary
                 # (patches RHEL 3 UTF8 LANG problem)
-                if (ref $arg eq 'SCALAR' and $] >= 5.006 and
-                    (eval { require Encode; Encode::is_utf8($$arg) } or $@))
+                if (ref $arg eq 'SCALAR' and $] >= 5.006 and ($$self{OPTIONS}{EncodeHangs} or
+                    eval { require Encode; Encode::is_utf8($$arg) } or $@))
                 {
+                    local $SIG{'__WARN__'} = \&SetWarning;
                     # repack by hand if Encode isn't available
-                    my $buff = $@ ? pack('C*',unpack($] < 5.010000 ? 'U0C*' : 'C0C*',$$arg)) : Encode::encode('utf8',$$arg);
+                    my $buff = ($$self{OPTIONS}{EncodeHangs} or $@) ? pack('C*',unpack($] < 5.010000 ?
+                                'U0C*' : 'C0C*', $$arg)) : Encode::encode('utf8', $$arg);
                     $arg = \$buff;
                 }
                 $$self{RAF} = File::RandomAccess->new($arg);
@@ -6322,10 +6412,12 @@ sub Filter($$$)
 # Return printable value
 # Inputs: 0) ExifTool object reference
 #         1) value to print, 2) line length limit (undef defaults to 60, 0=unlimited)
+# Returns: Printable string
 sub Printable($;$)
 {
     my ($self, $outStr, $maxLen) = @_;
     return '(undef)' unless defined $outStr;
+    ref $outStr eq 'SCALAR' and return '(Binary data '.length($$outStr).' bytes)';
     $outStr =~ tr/\x01-\x1f\x7f-\xff/./;
     $outStr =~ s/\x00//g;
     my $verbose = $$self{OPTIONS}{Verbose};
@@ -8924,7 +9016,7 @@ sub HandleTag($$$$;%)
     my $pfmt = $parms{Format};
     my $tagInfo = $parms{TagInfo} || $self->GetTagInfo($tagTablePtr, $tag, \$val, $pfmt, $parms{Count});
     my $dataPt = $parms{DataPt};
-    my ($subdir, $format, $noTagInfo, $rational);
+    my ($subdir, $format, $noTagInfo, $rational, $binVal);
 
     if ($tagInfo) {
         $subdir = $$tagInfo{SubDirectory};
@@ -8948,6 +9040,7 @@ sub HandleTag($$$$;%)
             } else {
                 $val = substr($$dataPt, $start, $size);
             }
+            $binVal = substr($$dataPt, $start, $size) if $$self{OPTIONS}{SaveBin};
         } else {
             $self->Warn("Error extracting value for $$tagInfo{Name}");
             return undef;
@@ -9030,8 +9123,11 @@ sub HandleTag($$$$;%)
             return undef unless $$tagInfo{Writable};
         }
         my $key = $self->FoundTag($tagInfo, $val);
-        # save original components of rational numbers
-        $$self{RATIONAL}{$key} = $rational if defined $rational and defined $key;
+        if (defined $key) {
+            # save original components of rational numbers and original binary value
+            $$self{TAG_EXTRA}{$key}{Rational} = $rational if defined $rational;
+            $$self{TAG_EXTRA}{$key}{BinVal} = $binVal if defined $binVal;
+        }
         return $key;
     }
     return undef;
@@ -9142,9 +9238,7 @@ sub FoundTag($$$;@)
         #  a Warning tag because they may be added by ValueConv, which could be confusing)
         my $oldPriority = $$self{PRIORITY}{$tag};
         unless ($oldPriority) {
-            if ($$self{DOC_NUM} or not $$self{TAG_EXTRA}{$tag} or $tag eq 'Warning' or
-                                   not $$self{TAG_EXTRA}{$tag}{G3})
-            {
+            if ($$self{DOC_NUM} or $tag eq 'Warning' or not $$self{TAG_EXTRA}{$tag}{G3}) {
                 $oldPriority = 1;
             } else {
                 $oldPriority = 0; # don't promote sub-document tag over main document
@@ -9162,8 +9256,7 @@ sub FoundTag($$$;@)
         } else {
             $priority = 1;  # the normal default
         }
-        if ($priority >= $oldPriority and (not $$self{DOC_NUM} or
-            ($$self{TAG_EXTRA}{$tag} and $$self{TAG_EXTRA}{$tag}{G3} and
+        if ($priority >= $oldPriority and (not $$self{DOC_NUM} or ($$self{TAG_EXTRA}{$tag}{G3} and
              $$self{DOC_NUM} eq $$self{TAG_EXTRA}{$tag}{G3})) and not $noListDel)
         {
             # move existing tag out of the way since this tag is higher priority
@@ -9172,12 +9265,8 @@ sub FoundTag($$$;@)
             $$valueHash{$nextTag} = $$valueHash{$tag};
             $$self{FILE_ORDER}{$nextTag} = $$self{FILE_ORDER}{$tag};
             my $oldInfo = $$self{TAG_INFO}{$nextTag} = $$self{TAG_INFO}{$tag};
-            foreach ('TAG_EXTRA','RATIONAL') {
-                if ($$self{$_}{$tag}) {
-                    $$self{$_}{$nextTag} = $$self{$_}{$tag};
-                    delete $$self{$_}{$tag};
-                }
-            }
+            $$self{TAG_EXTRA}{$nextTag} = $$self{TAG_EXTRA}{$tag};
+            $$self{TAG_EXTRA}{$tag} = { };
             delete $$self{BOTH}{$tag};
             # update tag key for list if necessary
             $$self{LIST_TAGS}{$oldInfo} = $nextTag if $$self{LIST_TAGS}{$oldInfo};
@@ -9202,6 +9291,7 @@ sub FoundTag($$$;@)
     $$valueHash{$tag} = $value;
     $$self{FILE_ORDER}{$tag} = ++$$self{NUM_FOUND};
     $$self{TAG_INFO}{$tag} = $tagInfo;
+    $$self{TAG_EXTRA}{$tag} = { } unless $$self{TAG_EXTRA}{$tag};
     # set dynamic groups 0, 1 and 3 if necessary
     $$self{TAG_EXTRA}{$tag}{G0} = $grps[0] if $grps[0];
     $$self{TAG_EXTRA}{$tag}{G1} = $grps[1] if $grps[1];
@@ -9260,7 +9350,6 @@ sub DeleteTag($$)
     delete $$self{TAG_INFO}{$tag};
     delete $$self{TAG_EXTRA}{$tag};
     delete $$self{PRIORITY}{$tag};
-    delete $$self{RATIONAL}{$tag};
     delete $$self{BOTH}{$tag};
 }
 
@@ -9496,7 +9585,7 @@ sub ProcessBinaryData($$$)
         $increment = $formatSize{$defaultFormat};
     }
     # prepare list of tag numbers to extract
-    my (@tags, $topIndex);
+    my (@tags, $topIndex, $binVal);
     if ($unknown > 1 and defined $$tagTablePtr{FIRST_ENTRY}) {
         # don't create a stupid number of tags if data is huge
         my $sizeLimit = $size < 65536 ? $size : 65536;
@@ -9636,6 +9725,7 @@ sub ProcessBinaryData($$$)
                     $val = $self->Decode($val, 'UCS2') if $format eq 'ustring' or $format eq 'ustr32';
                     $val =~ s/\0.*//s unless $format eq 'undef';  # truncate at null
                 }
+                $binVal = substr($$dataPt, $entry+$dirStart, $count) if $$self{OPTIONS}{SaveBin};
                 $wasVar = 1;
                 # save variable size data if required for writing
                 if ($$dirInfo{VarFormatData}) {
@@ -9757,7 +9847,8 @@ sub ProcessBinaryData($$$)
         my $key = $self->FoundTag($tagInfo,$val);
         $$self{BASE} = $oldBase if defined $oldBase;
         if ($key) {
-            $$self{RATIONAL}{$key} = $rational if defined $rational;
+            $$self{TAG_EXTRA}{$key}{Rational} = $rational if defined $rational;
+            $$self{TAG_EXTRA}{$key}{BinVal} = $binVal if defined $binVal;
         } else {
             # don't increment nextIndex if we didn't extract a tag
             $nextIndex = $saveNextIndex if defined $saveNextIndex;

@@ -50,7 +50,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 require Exporter;
 
-$VERSION = '3.67';
+$VERSION = '3.68';
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(EscapeXML UnescapeXML);
 
@@ -2016,6 +2016,7 @@ my %sPantryItem = (
         Writable => 'integer',
         List => 'Seq',
         AutoSplit => 1,
+        Notes => 'deprecated',
     },
     OECF => {
         Name => 'Opto-ElectricConvFactor',
@@ -2267,7 +2268,7 @@ my %sPantryItem = (
             3 => 'Distant',
         },
     },
-    ImageUniqueID   => { },
+    ImageUniqueID   => { Avoid => 1, Notes => 'moved to exifEX namespace in 2024 spec' },
     GPSVersionID    => { Groups => { 2 => 'Location' } },
     GPSLatitude     => { Groups => { 2 => 'Location' }, %latConv },
     GPSLongitude    => { Groups => { 2 => 'Location' }, %longConv },
@@ -2509,6 +2510,15 @@ my %sPantryItem = (
             Values =>   { List => 'Seq', Writable => 'rational' },
         },
     },
+    # new in Exif 3.0
+    ImageUniqueID   => { },
+    ImageTitle      => { },
+    ImageEditor     => { },
+    Photographer    => { Groups => { 2 => 'Author' } },
+    CameraFirmware  => { Groups => { 2 => 'Camera' } },
+    RAWDevelopingSoftware   => { },
+    ImageEditingSoftware    => { },
+    MetadataEditingSoftware => { },
 );
 
 # Auxiliary namespace properties (aux) - not fully documented (ref PH)
@@ -3616,7 +3626,7 @@ NoLoop:
     # store the value for this tag
     my $key = $et->FoundTag($tagInfo, $val) or return 0;
     # save original components of rational numbers (used when copying)
-    $$et{RATIONAL}{$key} = $rational if defined $rational;
+    $$et{TAG_EXTRA}{$key}{Rational} = $rational if defined $rational;
     # save structure/list information if necessary
     if (@structProps and (@structProps > 1 or defined $structProps[0][1]) and
         not $$et{NO_STRUCT})

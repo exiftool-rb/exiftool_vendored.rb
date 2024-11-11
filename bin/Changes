@@ -4,8 +4,61 @@ ExifTool Version History
 
 RSS feed: https://exiftool.org/rss.xml
 
-Note: The most recent production release is Version 12.76. (Other versions are
+Note: The most recent production release is Version 13.00. (Other versions are
 considered development releases, and are not uploaded to MetaCPAN.)
+
+Nov. 5, 2024 - Version 13.02
+
+  - Enhanced -j -l output to add optional "fmt" and "hex" fields
+  - Enhanced -geotag option to support Android "Export Timeline data" JSON
+    format
+  - Changed ProductVersion of Windows launcher to match ExifTool version
+  - Patched to use empty group name instead of "Copy0" for family 4 group name
+    of missing tag when the -f option is used
+  - Patched to avoid showing "Unknown" for group of primary tag when -g4 or -G4
+    was used with the -j or -csv option
+  - Patched to avoid using Encode module in Windows because it can hang if run
+    from a working directory with a long path name
+  - Patched to use -csv output if -j also used
+  - Fixed problem setting FileCreateDate on MacOS Sequoia if the date/time
+    contains a time zone
+  - Fixed problem in -csv output when combined with -g
+  - API Changes:
+      - Added BinVal option
+
+Nov. 1, 2024 - Version 13.01
+
+  - NOTE: Please test the new API WindowsLongPath option because the idea is to
+    enable this by default if everything works out well
+  - Fixed bug which could result in runtime warning if when API IgnoreTags
+    option is set to "all" when reading a TXT file format
+  - Fixed problem reading some information from LNK files
+  - Fixed verbose output to show "Binary data" message for SCALAR values
+  - Fixed bug where part of the hex dump from a -v3 output could go to stdout
+    instead of the file specified by a -w option
+  - API Changes:
+      - Added WindowsLongPath option for testing
+      - Changed CharsetFileName option to automatically assume UTF8 if the file
+        name contains special characters and is valid UTF8
+
+Oct. 29, 2024 - Version 13.00 (production release)
+
+  - Added support for reading GPS from Autel Evo II drone videos
+  - Added a new PhaseOne RawFormat value
+  - Updated XMP-exifEX tags, exif2xmp.args and xmp2exif.args according to the
+    2024 EXIF for XMP specification
+  - Updated Geolocation databases from current geonames.org files
+  - Updated the MIME types for a couple of font formats
+  - Enhanced -diff option to work with -ec (C-style escape of special chars)
+  - Changed name of EXIF Title tag to ImageTitle to correspond with specifiation
+  - Reverted a geotag warning message to remove debugging information that was
+    added in version 12.67 and moved this information into a -v3 verbose message
+  - Patched Perl bug which gave "Can't spawn" warning in Windows if control-C
+    was pressed while displaying the exiftool application help
+  - Fixed API StructFormat JSONQ setting to properly quote values in structures
+  - Fixed incorrect AudioStreamType for M2TS videos containing a PGS stream
+  - Fixed -diff option so "same tags" messages are only shown when -v is added
+    (as per the documentation)
 
 Oct. 18, 2024 - Version 12.99
 
@@ -23,8 +76,8 @@ Oct. 18, 2024 - Version 12.99
       - Structured values returned as HASH references with the Struct option may
         contain a new "_ordered_keys_" entry used to preserve the order of the
         entries
-      - Added the OrderedKeys method to
-        return the ordered or sorted keys from a returned structure value
+      - Added the OrderedKeys method to return the ordered or sorted keys from a
+        returned structure value
 
 Oct. 8, 2024 - Version 12.98
 
