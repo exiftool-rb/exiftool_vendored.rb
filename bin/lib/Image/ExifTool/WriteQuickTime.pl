@@ -482,23 +482,26 @@ sub WriteKeys($$$)
 sub WriteItemInfo($$$)
 {
     my ($et, $dirInfo, $outfile) = @_;
-    my $boxPos = $$dirInfo{BoxPos};     # hash of [length,position] for each box
+    my $boxPos = $$dirInfo{BoxPos}; # hash of [position,length,irefVer(iref only)] for box in $outfile
     my $raf = $$et{RAF};
     my $items = $$et{ItemInfo};
-    my (%did, @mdatEdit, $name);
+    my (%did, @mdatEdit, $name, $tmap);
 
     return () unless $items and $raf;
 
     # extract information from EXIF/XMP metadata items
     my $primary = $$et{PrimaryItem};
     my $curPos = $raf->Tell();
+    my $lastID = 0;
     my $id;
     foreach $id (sort { $a <=> $b } keys %$items) {
+        $lastID = $id;
         $primary = $id unless defined $primary; # assume primary is lowest-number item if pitm missing
         my $item = $$items{$id};
         # only edit primary EXIF/XMP metadata
         next unless $$item{RefersTo} and $$item{RefersTo}{$primary};
         my $type = $$item{ContentType} || $$item{Type} || next;
+        $tmap = $id if $type eq 'tmap'; # save ID of primary 'tmap' item (tone-mapped image)
         # get ExifTool name for this item
         $name = { Exif => 'EXIF', 'application/rdf+xml' => 'XMP' }->{$type};
         next unless $name;  # only care about EXIF and XMP
@@ -700,8 +703,10 @@ sub WriteItemInfo($$$)
                 $type = "Exif\0";
                 $mime = '';
             }
-            my $id = 1;
-            ++$id while $$items{$id} or $usedID{$id};   # find next unused item ID
+            my $id = ++$lastID; # use next highest available ID (so ID's in iinf are in order)
+            #[retracted] # create new item information hash to save infe box in case we need it for sorting
+            #[retracted] my $item = $$items{$id} = { };
+            # add new infe entry to iinf box
             my $n = length($type) + length($mime) + length($enc) + 16;
             if ($id < 0x10000) {
                 $add{iinf} .= pack('Na4CCCCnn', $n, 'infe', 2, 0, 0, 1, $id, 0) . $type . $mime . $enc;
@@ -709,11 +714,14 @@ sub WriteItemInfo($$$)
                 $n += 2;
                 $add{iinf} .= pack('Na4CCCCNn', $n, 'infe', 3, 0, 0, 1, $id, 0) . $type . $mime . $enc;
             }
-            # add new cdsc to iref
+            #[retracted] $add{iinf} .= $$item{infe};
+            # add new cdsc to iref (also refer to primary 'tmap' if it exists)
             if ($irefVer) {
-                $add{iref} .= pack('Na4NnN', 18, 'cdsc', $id, 1, $primary);
+                my ($fmt, $siz, $num) = defined $tmap ? ('N', 22, 2) : ('', 18, 1);
+                $add{iref} .= pack('Na4NnN'.$fmt, $siz, 'cdsc', $id, $num, $primary, $tmap);
             } else {
-                $add{iref} .= pack('Na4nnn', 14, 'cdsc', $id, 1, $primary);
+                my ($fmt, $siz, $num) = defined $tmap ? ('n', 16, 2) : ('', 14, 1);
+                $add{iref} .= pack('Na4nnn'.$fmt, $siz, 'cdsc', $id, $num, $primary, $tmap);
             }
             # add new entry to iloc table (see ISO14496-12:2015 pg.79)
             my $ilocVer = Get8u($outfile, $$boxPos{iloc}[0] + 8);
@@ -778,8 +786,9 @@ sub WriteItemInfo($$$)
         my $added = 0;
         my $tag;
         foreach $tag (sort { $$boxPos{$a}[0] <=> $$boxPos{$b}[0] } keys %$boxPos) {
+            $$boxPos{$tag}[0] += $added;
             next unless $add{$tag};
-            my $pos = $$boxPos{$tag}[0] + $added;
+            my $pos = $$boxPos{$tag}[0];
             unless ($$boxPos{$tag}[1]) {
                 $tag eq 'iref' or $et->Error('Internal error adding iref box'), last;
                 # create new iref box
@@ -826,9 +835,34 @@ sub WriteItemInfo($$$)
             }
             # add new entries to this box (or add pitm after hdlr)
             substr($$outfile, $pos + $$boxPos{$tag}[1], 0) = $add{$tag};
+            $$boxPos{$tag}[1] += length $add{$tag};
             $added += length $add{$tag};    # positions are shifted by length of new entries
         }
     }
+    #[This sorting idea was retracted because just sorting 'iinf' wasn't sufficient to
+    # repair the problem where an out-of-order ID was added -- Apple Preview still
+    # ignores the gain-map image.  It looks like either or both 'iref' and 'iloc' must
+    # also be sorted by ID, although the spec doesn't mention this]
+    #[retracted] # sort infe entries in iinf box if necessary
+    #[retracted] if ($$et{ItemsNotSorted}) {
+    #[retracted]     if ($$boxPos{iinf}) {
+    #[retracted]         my $iinfVer = Get8u($outfile, $$boxPos{iinf}[0] + 8);
+    #[retracted]         my $off = $iinfVer == 0 ? 14 : 16;  # offset to first infe item
+    #[retracted]         my $sorted = '';    # sorted iinf payload
+    #[retracted]         $sorted .= $$items{$_}{infe} || '' foreach sort { $a <=> $b } keys %$items;
+    #[retracted]         if (length $sorted == $$boxPos{iinf}[1]-$off) {
+    #[retracted]             # replace with sorted infe entries
+    #[retracted]             substr($$outfile, $$boxPos{iinf}[0] + $off, length $sorted) = $sorted;
+    #[retracted]             $et->Warn('Item info entries are out of order. Fixed.');
+    #[retracted]             ++$$et{CHANGED};
+    #[retracted]         } else {
+    #[retracted]             $et->Warn('Error sorting item info entries');
+    #[retracted]         }
+    #[retracted]     } else {
+    #[retracted]         $et->Warn('Item info entries are out of order');
+    #[retracted]     }
+    #[retracted]     delete $$et{ItemsNotSorted};
+    #[retracted] }
     delete $$et{ItemInfo};
     return @mdatEdit ? \@mdatEdit : undef;
 }
@@ -1129,7 +1163,7 @@ sub WriteQuickTime($$$)
                 next;
             }
         }
-        undef $tagInfo if $tagInfo and $$tagInfo{Unknown};
+        undef $tagInfo if $tagInfo and $$tagInfo{AddedUnknown};
 
         if ($tagInfo and (not defined $$tagInfo{Writable} or $$tagInfo{Writable})) {
             my $subdir = $$tagInfo{SubDirectory};
