@@ -8,7 +8,7 @@
 # Revisions:    Nov. 12/2003 - P. Harvey Created
 #               (See html/history.html for revision history)
 #
-# Legal:        Copyright (c) 2003-2024, Phil Harvey (philharvey66 at gmail.com)
+# Legal:        Copyright (c) 2003-2025, Phil Harvey (philharvey66 at gmail.com)
 #               This library is free software; you can redistribute it and/or
 #               modify it under the same terms as Perl itself.
 #------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %jpegMarker %specialTags %fileTypeLookup $testLen $exeDir
             %static_vars $advFmtSelf);
 
-$VERSION = '13.10';
+$VERSION = '13.12';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -154,10 +154,10 @@ sub ReadValue($$$;$$$);
     Matroska::StdTag MOI MXF DV Flash Flash::FLV Real::Media Real::Audio
     Real::Metafile Red RIFF AIFF ASF WTV DICOM FITS XISF MIE JSON HTML XMP::SVG
     Palm Palm::MOBI Palm::EXTH Torrent EXE EXE::PEVersion EXE::PEString
-    EXE::MachO EXE::PEF EXE::ELF EXE::AR EXE::CHM LNK Font VCard Text
-    VCard::VCalendar VCard::VNote RSRC Rawzor ZIP ZIP::GZIP ZIP::RAR ZIP::RAR5
-    RTF OOXML iWork ISO FLIR::AFF FLIR::FPF MacOS MacOS::MDItem
-    FlashPix::DocTable
+    EXE::DebugRSDS EXE::DebugNB10 EXE::Misc EXE::MachO EXE::PEF EXE::ELF EXE::AR
+    EXE::CHM LNK Font VCard Text VCard::VCalendar VCard::VNote RSRC Rawzor ZIP
+    ZIP::GZIP ZIP::RAR ZIP::RAR5 RTF OOXML iWork ISO FLIR::AFF FLIR::FPF MacOS
+    MacOS::MDItem FlashPix::DocTable
 );
 
 # alphabetical list of current Lang modules
@@ -1126,6 +1126,7 @@ my @availableOptions = (
     [ 'GeoMinSats',       undef,  'geotag minimum satellites' ],
     [ 'GeoSpeedRef',      undef,  'geotag GPSSpeedRef' ],
     [ 'GlobalTimeShift',  undef,  'apply time shift to all extracted date/time values' ],
+    [ 'GPSQuadrant',      undef,  'quadrant for GPS if not otherwise known' ],
     [ 'Group#',           undef,  'return tags for specified groups in family #' ],
     [ 'HexTagIDs',        0,      'use hex tag ID\'s in family 7 group names' ],
     [ 'HtmlDump',         0,      'HTML dump (0-3, higher # = bigger limit)' ],
@@ -2500,6 +2501,7 @@ sub Options($$;@)
             }
         } elsif ($param =~ /^(IgnoreTags|IgnoreGroups)$/) {
             if (defined $newVal) {
+                ref $newVal eq 'HASH' and $$options{$param} = $newVal, next;
                 # parse list from delimited string if necessary
                 my @ignoreList = (ref $newVal eq 'ARRAY') ? @$newVal : ($newVal =~ /[-\w?*:#]+/g);
                 ExpandShortcuts(\@ignoreList) if $param eq 'IgnoreTags';
@@ -8376,7 +8378,11 @@ sub DoProcessTIFF($$;$)
         # save a copy of the EXIF data
         my $dirStart = $$dirInfo{DirStart} || 0;
         my $dirLen = $$dirInfo{DirLen} || (length($$dataPt) - $dirStart);
-        $$self{EXIF_DATA} = substr($$dataPt, $dirStart, $dirLen);
+        if ($dirLen > 0 or not $outfile) {
+            $$self{EXIF_DATA} = substr($$dataPt, $dirStart, $dirLen);
+        } else {
+            delete $$self{EXIF_DATA}; # create from scratch;
+        }
         $self->VerboseDir('TIFF') if $$self{OPTIONS}{Verbose} and length($$self{INDENT}) > 2;
     } elsif ($outfile) {
         delete $$self{EXIF_DATA};  # create from scratch
