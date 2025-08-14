@@ -35,7 +35,7 @@ jobs:
       - name: Run tests
         run: bundle exec rake
       - name: Test & publish code coverage
-      - uses: qltysh/qlty-action/coverage@v2
+        uses: qltysh/qlty-action/coverage@v2
         with:
           token: {{secrets.QLTY_COVERAGE_TOKEN}}
           files: coverage/.resultset.json
