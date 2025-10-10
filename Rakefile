@@ -31,7 +31,7 @@ task :update_exiftool do
 
   doc = Nokogiri::HTML(URI.parse('https://exiftool.org/rss.xml').open)
   latest = doc.xpath('//rss/channel/item/enclosure').select do |ea|
-    ea[:url]&.end_with?('.tar.gz')
+    ea[:url]&.end_with?('.tar.gz/download')
   end.min
   raise 'Failed to parse the exiftool/rss.xml' if latest.nil?
 
