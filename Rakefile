@@ -36,7 +36,7 @@ task :update_exiftool do
   raise 'Failed to parse the exiftool/rss.xml' if latest.nil?
 
   latest_url = latest[:url]
-  basename = latest_url.split('/').last
+  basename = latest_url.split('/')[-2]
 
   tgz = Pathname.new(File.expand_path("../downloads/#{basename}", __FILE__))
   tgz.parent.mkpath
