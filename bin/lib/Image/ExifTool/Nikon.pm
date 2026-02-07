@@ -65,7 +65,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 use Image::ExifTool::XMP;
 
-$VERSION = '4.52';
+$VERSION = '4.55';
 
 sub LensIDConv($$$);
 sub ProcessNikonAVI($$$);
@@ -576,6 +576,7 @@ sub GetAFPointGrid($$;$);
     '00 40 2D 88 2C 40 00 06' => 'Tamron AF 18-250mm f/3.5-6.3 Di II LD Aspherical (IF) Macro (A18NII)', #JD
     'F5 40 2C 8A 2C 40 40 0E' => 'Tamron AF 18-270mm f/3.5-6.3 Di II VC LD Aspherical (IF) Macro (B003)',
     'F0 3F 2D 8A 2C 40 DF 0E' => 'Tamron AF 18-270mm f/3.5-6.3 Di II VC PZD (B008)',
+    'E0 40 2D 98 2C 41 DF 0E' => 'Tamron 18-400mm f/3.5-6.3 Di II VC HLD (B028)', #github385 (D90)
     'E0 40 2D 98 2C 41 DF 4E' => 'Tamron 18-400mm f/3.5-6.3 Di II VC HLD (B028)', # (removed AF designation, ref 37)
     '07 40 2F 44 2C 34 03 02' => 'Tamron AF 19-35mm f/3.5-4.5 (A10)',
     '07 40 30 45 2D 35 03 02.1' => 'Tamron AF 19-35mm f/3.5-4.5 (A10)',
@@ -2191,7 +2192,7 @@ my %base64coord = (
     0x0051 => { #28 (Z9)
         Name => 'MakerNotes0x51',
         Writable => 'undef',
-        Hidden => 1,
+        #Hidden => 1,
         Permanent => 0,
         Flags => [ 'Binary', 'Protected' ],
         SubDirectory => { TagTable => 'Image::ExifTool::Nikon::MakerNotes0x51' },
@@ -2200,7 +2201,7 @@ my %base64coord = (
     0x0056 => { #28 (Z9)
         Name => 'MakerNotes0x56',
         Writable => 'undef',
-        Hidden => 1,
+        #Hidden => 1,
         Permanent => 0,
         Flags => [ 'Binary', 'Protected' ],
         SubDirectory => { TagTable => 'Image::ExifTool::Nikon::MakerNotes0x56' },
@@ -4166,7 +4167,7 @@ my %base64coord = (
     6 => {
         Name => 'FocusPointSchema',
         RawConv => '$$self{FocusPointSchema} = $val',
-        Hidden => 1,
+        #Hidden => 1,
         PrintConv => {
             0 => 'Off',       # LiveView or manual focus or no focus
             1 => '51-point',  # (D3/D3S/D3X/D4/D4S/D300/D300S/D700/D750/D800/D800E/D810/D7100/D7200)
@@ -4381,7 +4382,7 @@ my %base64coord = (
     6 => {
         Name => 'FocusPointSchema',
         RawConv => '$$self{FocusPointSchema} = $val',
-        Hidden => 1,
+        #Hidden => 1,
         PrintConv => {
             0 => 'Off',        # LiveView or manual focus or no focus
             1 => '51-point',   # (D7500)
@@ -4759,7 +4760,7 @@ my %base64coord = (
     6 => {
         Name => 'FocusPointSchema',
         RawConv => '$$self{FocusPointSchema} = $val',
-        Hidden => 1,
+        #Hidden => 1,
         PrintConv => {
             0 => 'Off',       # LiveView or manual focus or no focus
             1 => '51-point',  # (D780)    51 points through the viewfinder, 81/273 points in LiveView
@@ -5725,7 +5726,7 @@ my %nikonFocalConversions = (
         Name => 'OldLensData',
         Format => 'undef[17]',
         RawConv => '$$self{OldLensData} = 1 unless $val =~ /^.\0+$/s; undef',
-        Hidden => 1,
+        #Hidden => 1,
     },
     0x04 => {
         Name => 'ExitPupilPosition',
@@ -5812,7 +5813,7 @@ my %nikonFocalConversions = (
         Name => 'NewLensData',
         Format => 'undef[17]',
         RawConv => '$$self{NewLensData} = 1 unless $val =~ /^.\0+$/s; undef',
-        #Hidden => 1,
+        ##Hidden => 1,
     },
     0x30 => { #PH
         Name => 'LensID',
@@ -7679,7 +7680,7 @@ my %nikonFocalConversions = (
         Name => 'NumberOffsets', # (number of entries in offset table.  offsets are from start of ShotInfo data)
         Format => 'int32u',
         Writable => 0,
-        Hidden => 1,
+        #Hidden => 1,
     },
     0x30 => {
         Name => 'SequenceOffset',
@@ -7728,7 +7729,7 @@ my %nikonFocalConversions = (
         RawConv => '$$self{IntervalFrame} = $val',
         Condition => '$$self{IntervalShooting} > 0',
         Format => 'int16u',
-        Hidden => 1,
+        #Hidden => 1,
     },
     0x2b => {
         Name => 'ImageArea',
@@ -8644,19 +8645,19 @@ my %nikonFocalConversions = (
         Name => 'FirmwareVersion2',
         Format => 'string[8]',
         Writable => 0,
-        Hidden => 1,
+        #Hidden => 1,
     },
     0x18 => {
         Name => 'FirmwareVersion3',
         Format => 'string[8]',
         Writable => 0,
-        Hidden => 1,
+        #Hidden => 1,
     },
     0x24 => {
         Name => 'NumberOffsets', # number of entries in offset table.  offsets are from start of ShotInfo data.
         Format => 'int32u',
         Writable => 0,
-        Hidden => 1,
+        #Hidden => 1,
     },
     #0x28 Offset1 - non-zero for NEF only
     #0x2c Offset2 - non-zero for NEF only
@@ -8672,8 +8673,9 @@ my %nikonFocalConversions = (
     },
     0x90 => {
         Name => 'MenuOffset',
-        Condition => '$$self{Model} =~ /^NIKON Z6_3\b/i',
+        Condition => '$$self{Model} =~ /^NIKON Z6_3\b/i and $$self{FirmwareVersion} and $$self{FirmwareVersion} lt "02.00"',
         Format => 'int32u',
+        AlwaysDecrypt => 1, # (necessary because FirmwareVersion is extracted after decryption time)
         SubDirectory => {
             TagTable => 'Image::ExifTool::Nikon::MenuSettingsZ6III',
             Start => '$val',
@@ -8708,19 +8710,19 @@ my %nikonFocalConversions = (
         Name => 'FirmwareVersion2',
         Format => 'string[8]',
         Writable => 0,
-        Hidden => 1,
+        #Hidden => 1,
     },
     0x18 => {
         Name => 'FirmwareVersion3',
         Format => 'string[8]',
         Writable => 0,
-        Hidden => 1,
+        #Hidden => 1,
     },
     0x24 => {
         Name => 'NumberOffsets', # number of entries in offset table.  offsets are from start of ShotInfo data.
         Format => 'int32u',
         Writable => 0,
-        Hidden => 1,
+        #Hidden => 1,
     },
     0x30 => {
         Name => 'IntervalOffset',
@@ -8787,7 +8789,7 @@ my %nikonFocalConversions = (
         RawConv => '$$self{IntervalFrame} = $val',
         Condition => '$$self{IntervalShooting} > 0',
         Format => 'int16u',
-        Hidden => 1,
+        #Hidden => 1,
     },
     0x2b => {
         Name => 'ImageArea',
@@ -8857,19 +8859,19 @@ my %nikonFocalConversions = (
         Name => 'FirmwareVersion2',
         Format => 'string[8]',
         Writable => 0,
-        Hidden => 1,
+        #Hidden => 1,
     },
     0x18 => {
         Name => 'FirmwareVersion3',
         Format => 'string[8]',
         Writable => 0,
-        Hidden => 1,
+        #Hidden => 1,
     },
     0x24 => {
         Name => 'NumberOffsets', # number of entries in offset table.  offsets are from start of ShotInfo data.
         Format => 'int32u',
         Writable => 0,
-        Hidden => 1,
+        #Hidden => 1,
     },
     # subdirectories, referenced by offsets (not processed if offset is zero)
     0x30 => {
@@ -8936,19 +8938,19 @@ my %nikonFocalConversions = (
         Name => 'FirmwareVersion2',
         Format => 'string[8]',
         Writable => 0,
-        Hidden => 1,
+        #Hidden => 1,
     },
     0x18 => {
         Name => 'FirmwareVersion3',
         Format => 'string[8]',
         Writable => 0,
-        Hidden => 1,
+        #Hidden => 1,
     },
     0x24 => {
         Name => 'NumberOffsets', # number of entries in offset table.  offsets are from start of ShotInfo data.
         Format => 'int32u',
         Writable => 0,
-        Hidden => 1,
+        #Hidden => 1,
     },
     # subdirectories, referenced by offsets (not processed if offset is zero)
     0x30 => {
@@ -9038,7 +9040,7 @@ my %nikonFocalConversions = (
         RawConv => '$$self{IntervalFrame} = $val',
         Condition => '$$self{ShutterMode} and $$self{ShutterMode} ne 96 and $$self{IntervalShooting} > 0',     #not valid for C30/C60/C120
         Format => 'int16u',
-        Hidden => 1,
+        #Hidden => 1,
     },
 );
 
@@ -9393,7 +9395,7 @@ my %nikonFocalConversions = (
     IS_SUBDIR => [ 1255 ],
     360 => {
         Name => 'SingleFrame',    #0=> Single Frame 1=> one of the continuous modes
-        Hidden => 1,
+        #Hidden => 1,
         RawConv => '$$self{SingleFrame} = $val',
     },
     364 => {
@@ -9590,7 +9592,7 @@ my %nikonFocalConversions = (
     #48 SelfTimer'   #0=> no 1=> yes    works for Z7II firmware 1.40, but not 1.30.  Follow-up required.
     90 => {
         Name => 'SingleFrame',    #0=> Single Frame 1=> one of the continuous modes
-        Hidden => 1,
+        #Hidden => 1,
         RawConv => '$$self{SingleFrame} = $val',
     },
     92 => {
@@ -12098,7 +12100,7 @@ my %nikonFocalConversions = (
     12 => {
         Name => 'PixelShiftID',    # 1 => Pixel shift enabled (either directly or thru Focus Shift Shooting with Z8 fw 3.0)
         RawConv => '$$self{PixelShiftActive} = $val',
-        Hidden => 1
+        #Hidden => 1
     },
 );
 

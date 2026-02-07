@@ -49,7 +49,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '3.27';
+$VERSION = '3.29';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -972,6 +972,7 @@ my %userDefined = (
         Binary => 1,
         # note that this may be written and/or deleted, but can't currently be added back again
         Writable => 'undef',
+        WriteLast => 1, # (must come after mdat according to https://developer.android.com/media/platform/motion-photo-format)
     },
     # '35AX'? - seen "AT" (Yada RoadCam Pro 4K dashcam)
     cust => 'CustomInfo', # 70mai A810
@@ -6925,17 +6926,17 @@ my %userDefined = (
         # the 'Triplet' flag tells ProcessMOV() to generate
         # a single tag from the mean/name/data triplet
         Triplet => 1,
-        Hidden => 1,
+        Hidden => 2,
     },
     name => {
         Name => 'Name',
         Triplet => 1,
-        Hidden => 1,
+        Hidden => 2,
     },
     data => {
         Name => 'Data',
         Triplet => 1,
-        Hidden => 1,
+        Hidden => 2,
     },
     # the tag ID's below are composed from "mean/name",
     # but "mean/" is omitted if it is "com.apple.iTunes/":
@@ -10325,7 +10326,7 @@ ItemID:         foreach $id (reverse sort { $a <=> $b } keys %$items) {
                         if ($tag eq 'ipco' and not $$et{IsItemProperty}) {
                             $$et{ItemPropertyContainer} = [ \%dirInfo, $subTable, $proc ];
                             $et->VPrint(0,"$$et{INDENT}\[Process ipco box later]");
-                        } else {
+                        } elsif ($fast < 2 or not $$tagInfo{MakerNotes}) {
                             $et->ProcessDirectory(\%dirInfo, $subTable, $proc);
                         }
                     }
