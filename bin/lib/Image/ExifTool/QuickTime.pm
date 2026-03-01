@@ -49,7 +49,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '3.29';
+$VERSION = '3.31';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -1762,7 +1762,7 @@ my %userDefined = (
                 my $len = Get8u(\$val, $pos++);
                 last if $pos + $len > length $val;
                 my $v = substr($val, $pos, $len);
-                $v = $self->Decode($v, 'UCS2') if $v =~ /^\xfe\xff/;
+                $v = $self->Decode($v, 'UTF16') if $v =~ /^\xfe\xff/;
                 push @vals, $v;
                 $pos += $len;
             }
@@ -1786,7 +1786,7 @@ my %userDefined = (
             my $str;
             if ($val =~ /^\xfe\xff/) {
                 $val =~ s/^(\xfe\xff(.{2})*?)\0\0//s or return '<err>';
-                $str = $self->Decode($1, 'UCS2');
+                $str = $self->Decode($1, 'UTF16');
             } else {
                 $val =~ s/^(.*?)\0//s or return '<err>';
                 $str = $self->Decode($1, 'UTF8');
@@ -1802,12 +1802,12 @@ my %userDefined = (
             $str .= sprintf(' Lat=%.5f Lon=%.5f Alt=%.2f', $lat, $lon, $alt);
             $val = substr($val, 13);
             if ($val =~ s/^(\xfe\xff(.{2})*?)\0\0//s) {
-                $str .= ' Body=' . $self->Decode($1, 'UCS2');
+                $str .= ' Body=' . $self->Decode($1, 'UTF16');
             } elsif ($val =~ s/^(.*?)\0//s) {
                 $str .= ' Body=' . $self->Decode($1, 'UTF8');
             }
             if ($val =~ s/^(\xfe\xff(.{2})*?)\0\0//s) {
-                $str .= ' Notes=' . $self->Decode($1, 'UCS2');
+                $str .= ' Notes=' . $self->Decode($1, 'UTF16');
             } elsif ($val =~ s/^(.*?)\0//s) {
                 $str .= ' Notes=' . $self->Decode($1, 'UTF8');
             }
@@ -8664,28 +8664,28 @@ my %userDefined = (
         Name => 'GPSLatitude',
         Require => 'QuickTime:LocationInformation',
         Groups => { 2 => 'Location' },
-        ValueConv => '$val =~ /Lat=([-+.\d]+)/; $1',
+        ValueConv => '$val =~ /Lat=([-+.\d]+)/ ? $1 : undef',
         PrintConv => 'Image::ExifTool::GPS::ToDMS($self, $val, 1, "N")',
     },
     GPSLongitude2 => {
         Name => 'GPSLongitude',
         Require => 'QuickTime:LocationInformation',
         Groups => { 2 => 'Location' },
-        ValueConv => '$val =~ /Lon=([-+.\d]+)/; $1',
+        ValueConv => '$val =~ /Lon=([-+.\d]+)/ ? $1 : undef',
         PrintConv => 'Image::ExifTool::GPS::ToDMS($self, $val, 1, "E")',
     },
     GPSAltitude2 => {
         Name => 'GPSAltitude',
         Require => 'QuickTime:LocationInformation',
         Groups => { 2 => 'Location' },
-        ValueConv => '$val =~ /Alt=([-+.\d]+)/; abs($1)',
+        ValueConv => '$val =~ /Alt=([-+.\d]+)/ ? abs($1) : undef',
         PrintConv => '"$val m"',
     },
     GPSAltitudeRef2  => {
         Name => 'GPSAltitudeRef',
         Require => 'QuickTime:LocationInformation',
         Groups => { 2 => 'Location' },
-        ValueConv => '$val =~ /Alt=([-+.\d]+)/; $1 < 0 ? 1 : 0',
+        ValueConv => '$val =~ /Alt=([-+.\d]+)/ ? ($1 < 0 ? 1 : 0) : undef',
         PrintConv => {
             0 => 'Above Sea Level',
             1 => 'Below Sea Level',
@@ -9573,7 +9573,7 @@ sub ProcessMetaData($$$)
                 Size   => $size - 10,
             );
             # convert from UTF-16 BE if necessary
-            $val = $et->Decode($val, 'UCS2') if $enc == 1;
+            $val = $et->Decode($val, 'UTF16') if $enc == 1;
             if ($enc == 0 and $$tagInfo{Unknown}) {
                 # binary data
                 $et->FoundTag($tagInfo, \$val);
@@ -10602,7 +10602,10 @@ QTLang: foreach $tag (@{$$et{QTLang}}) {
             for ($i=0, $key=$name; $$infoHash{$key}; ++$i, $key="$name ($i)") {
                 next QTLang if $et->GetGroup($key, 0) eq 'QuickTime';
             }
+            my $oldRawConv = $$tagInfo{RawConv};
+            delete $$tagInfo{RawConv} if defined $oldRawConv; # (avoid doing RawConv twice)
             $key = $et->FoundTag($tagInfo, $$et{VALUE}{$tag});
+            $$tagInfo{RawConv} = $oldRawConv if defined $oldRawConv;
             # copy extra tag information (groups, etc) to the synthetic tag
             $$et{TAG_EXTRA}{$key} = $$et{TAG_EXTRA}{$tag};
             $et->VPrint(0, "(synthesized default-language tag for QuickTime:$$tagInfo{Name})");

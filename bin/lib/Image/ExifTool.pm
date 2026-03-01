@@ -29,7 +29,7 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %jpegMarker %specialTags %fileTypeLookup $testLen $exeDir
             %static_vars $advFmtSelf $configFile @configFiles $noConfig);
 
-$VERSION = '13.50';
+$VERSION = '13.52';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -1202,7 +1202,7 @@ my @availableOptions = (
     [ 'UserParam',        { },    'user parameters for additional user-defined tag values' ],
     [ 'Validate',         undef,  'perform additional validation' ],
     [ 'Verbose',          0,      'print verbose messages (0-5, higher # = more verbose)' ],
-    [ 'WindowsLongPath',  1,      'enable support for long pathnames (enables WindowsWideFile)' ],
+    [ 'WindowsLongPath',  0,      'enable support for long pathnames (enables WindowsWideFile)' ],
     [ 'WindowsWideFile',  undef,  'force the use of Windows wide-character file routines' ], # (see forum15208)
     [ 'WriteMode',        'wcg',  'enable all write modes by default' ],
     [ 'XAttrTags',        undef,  'extract MacOS extended attribute tags' ],
@@ -2674,11 +2674,13 @@ sub ClearOptions($)
 {
     local $_;
     my $self = shift;
-
-    $$self{OPTIONS} = { };  # clear all options
+    my $opts = $$self{OPTIONS} = { };  # clear all options
 
     # load default options
-    $$self{OPTIONS}{$$_[0]} = $$_[1] foreach @availableOptions;
+    $$opts{$$_[0]} = $$_[1] foreach @availableOptions;
+
+    # enable WindowsLongPath if Win32::API is available
+    $$opts{WindowsLongPath} = 1 if $^O eq 'MSWin32' and eval { require Win32::API };
 
     # keep necessary member variables in sync with options
     delete $$self{CUR_LANG};
@@ -8223,7 +8225,7 @@ sub ProcessJPEG($$;$)
         } elsif ($marker == 0xea) {         # APP10 (PhotoStudio Unicode comments, HDR gain curve)
             if ($$segDataPt =~ /^UNICODE\0/) {
                 $dumpType = 'PhotoStudio';
-                my $comment = $self->Decode(substr($$segDataPt,8), 'UCS2', 'MM');
+                my $comment = $self->Decode(substr($$segDataPt,8), 'UTF16', 'MM');
                 $self->FoundTag('Comment', $comment);
             } elsif ($$segDataPt =~ /^AROT\0\0.{4}/s) {
                 $dumpType = 'AROT', # (HDR gain curve? PH guess)
@@ -9864,7 +9866,7 @@ sub ProcessBinaryData($$$)
     my $nextIndex = 0;
     my $varSize = 0;
     foreach $index (@tags) {
-        my ($tagInfo, $val, $saveNextIndex, $len, $mask, $wasVar, $rational);
+        my ($tagInfo, $val, $saveNextIndex, $len, $mask, $wasVar, $rational, $offAdj);
         if ($$tagTablePtr{$index}) {
             $tagInfo = $self->GetTagInfo($tagTablePtr, $index);
             unless ($tagInfo) {
@@ -9974,7 +9976,7 @@ sub ProcessBinaryData($$$)
                 $varSize += $count; # shift subsequent indices
                 unless (defined $val) {
                     $val = substr($$dataPt, $entry+$dirStart, $count);
-                    $val = $self->Decode($val, 'UCS2') if $format eq 'ustring' or $format eq 'ustr32';
+                    $val = $self->Decode($val, 'UTF16') if $format eq 'ustring' or $format eq 'ustr32';
                     $val =~ s/\0.*//s unless $format eq 'undef';  # truncate at null
                 }
                 $binVal = substr($$dataPt, $entry+$dirStart, $count) if $$self{OPTIONS}{SaveBin};
@@ -9998,7 +10000,7 @@ sub ProcessBinaryData($$$)
             } elsif ($varSize != $oldVarSize and $verbose > 2) {
                 my ($tmp, $sign) = ($varSize, '+');
                 $tmp < 0 and $tmp = -$tmp, $sign = '-';
-                $self->VPrint(2, sprintf("$$self{INDENT}\[offsets adjusted by ${sign}0x%.4x after 0x%.4x $$tagInfo{Name}]\n", $tmp, $index));
+                $offAdj = sprintf("$$self{INDENT}\[offsets adjusted by ${sign}0x%.4x after 0x%.4x $$tagInfo{Name}]\n", $tmp, $index);
             }
         }
         if ($unknown > 1) {
@@ -10037,6 +10039,7 @@ sub ProcessBinaryData($$$)
                 Extra  => $mask ? sprintf(', mask 0x%.2x',$mask) : undef,
             );
         }
+        $offAdj and $self->VPrint(2, $offAdj);
         # parse nested BinaryData directories
         if ($$tagInfo{SubDirectory}) {
             my $subdir = $$tagInfo{SubDirectory};
