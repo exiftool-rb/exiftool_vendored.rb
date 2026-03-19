@@ -5,7 +5,7 @@
 #
 # URL:          https://exiftool.org/
 #
-# Legal:        Copyright (c) 2003-2025, Phil Harvey (philharvey66 at gmail.com)
+# Legal:        Copyright (c) 2003-2026, Phil Harvey (philharvey66 at gmail.com)
 #               This library is free software; you can redistribute it and/or
 #               modify it under the same terms as Perl itself.
 #------------------------------------------------------------------------------
@@ -815,6 +815,16 @@ Reference units for writing GPSSpeed when geotagging:
     'M', 'm' or 'mph'   - mph
     <anything else>     - knots (default undef)
 
+=item GeoUserTag
+
+Additional user-defined tags to write when geotagging from GPX or CSV files.
+Format is 'I<TAG>=I<TOKEN>,...' where I<TAG> is an ExifTool tag name (with
+optional group name), and I<TOKEN> is is the GPX property name or CSV column
+name.  eg) C<Location=desc> will write the Location tag based on the value
+of 'desc' in the GPS log file.  The tag value is taken from the nearest fix
+in time.  Multiple tags may be specified using comma separators. Default is
+undef.
+
 =item GlobalTimeShift
 
 Time shift to apply to all extracted date/time PrintConv values.  Does not
@@ -1268,7 +1278,8 @@ on tag values and JPEG segment data respectively.
 =item WindowsLongPath
 
 Support long path names in Windows.  Enabling this option automatically
-enables the WindowsWideFile feature.  Default is 1.
+enables the WindowsWideFile feature.  Default is 1 if Win32::API is
+available, or 0 otherwise.
 
 =item WindowsWideFile
 
@@ -2869,7 +2880,7 @@ Win32API::File is available.
 
 Note that setting the L</WindowsWideFile> or L</WindowsLongPath> option
 causes L</CharsetFileName> to default to 'UTF8' in Windows if not defined,
-and L</WindowsLongPath> is set by default in ExifTool 13.07 and later.
+and L</WindowsLongPath> is set by default if Win32::API is available.
 
 =item Internal Character Sets:
 
@@ -3054,7 +3065,7 @@ specified by the L</Charset> option.
 
 =head1 AUTHOR
 
-Copyright 2003-2025, Phil Harvey
+Copyright 2003-2026, Phil Harvey
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

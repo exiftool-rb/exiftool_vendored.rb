@@ -39,9 +39,9 @@
 :canon_image_size: Large
 :easy_mode: Manual
 :digital_zoom: Unknown (-1)
-:contrast: "+1"
-:saturation: "+1"
-:sharpness: "+1"
+:contrast: '+1'
+:saturation: '+1'
+:sharpness: '+1'
 :camera_iso: n/a
 :metering_mode: Center-weighted average
 :focus_range: Not Known
@@ -50,8 +50,8 @@
 :focal_units: 1/mm
 :max_aperture: 4
 :min_aperture: 27
-:flash_activity: 0
-:flash_bits: "(none)"
+:flash_model: 'n/a'
+:flash_bits: '(none)'
 :zoom_source_width: 3072
 :zoom_target_width: 3072
 :manual_flash_output: n/a
@@ -113,7 +113,7 @@
 :af_area_height: 151
 :af_area_x_positions: 1014 608 0 0 0 -608 -1014
 :af_area_y_positions: 0 0 -506 0 506 0 0
-:af_points_in_focus: "(none)"
+:af_points_in_focus: '(none)'
 :thumbnail_image_valid_area: 0 159 7 112
 :user_comment: ''
 :flashpix_version: '0100'
