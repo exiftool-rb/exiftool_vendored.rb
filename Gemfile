@@ -8,7 +8,6 @@ gemspec
 group :development do
   gem 'bundler'
   gem 'minitest'
-  gem 'minitest-great_expectations'
   gem 'minitest-reporters' unless ENV['CI']
   gem 'nokogiri'
   gem 'rake'
