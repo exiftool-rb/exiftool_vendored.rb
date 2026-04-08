@@ -49,7 +49,7 @@ use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 
-$VERSION = '3.31';
+$VERSION = '3.33';
 
 sub ProcessMOV($$;$);
 sub ProcessKeys($$$);
@@ -503,8 +503,8 @@ my %qtFlags = ( #12
 # tags that may be duplicated and directories that may contain duplicate tags
 # (used only to avoid warnings when Validate-ing)
 my %dupTagOK = ( mdat => 1, trak => 1, free => 1, infe => 1, sgpd => 1, dimg => 1, CCDT => 1,
-                 sbgp => 1, csgm => 1, uuid => 1, cdsc => 1, maxr => 1, '----' => 1 );
-my %dupDirOK = ( ipco => 1, iref => 1, '----' => 1 );
+                 sbgp => 1, csgm => 1, uuid => 1, cdsc => 1, maxr => 1, moof => 1, '----' => 1 );
+my %dupDirOK = ( ipco => 1, iref => 1, sdpd => 1, moof => 1, traf => 1, '----' => 1 );
 
 # the usual atoms required to decode timed metadata with the ExtractEmbedded option
 my %eeStd = ( stco => 'stbl', co64 => 'stbl', stsz => 'stbl', stz2 => 'stbl',
@@ -6649,7 +6649,7 @@ my %userDefined = (
     PROCESS_PROC => \&ProcessKeys,
     WRITE_PROC => \&WriteKeys,
     CHECK_PROC => \&CheckQTValue,
-    VARS => { LONG_TAGS => 8 },
+    VARS => { LONG_TAGS => 9 },
     WRITABLE => 1,
     # (not PREFERRED when writing)
     GROUPS => { 1 => 'Keys' },
@@ -6790,6 +6790,8 @@ my %userDefined = (
         # (ignore the fact that the "f" and "l" unpacks won't work on a big-endian machine)
         ValueConv => 'join " ",unpack "VfVVf6c4lCCcclf4Vvv", $val',
     },
+    # (mdta)live-photo-still-image-transform mdta (dtyp=com.apple.quicktime.live-photo-still-image-transform)
+    # (mdta)live-photo-still-image-transform-reference-dimensions (dtyp=com.apple.quicktime.live-photo-still-image-transform-reference-dimensions)
     # (mdta)com.apple.quicktime.still-image-time (dtyp=65, int8s)
     'still-image-time' => { # (found in live photo)
         Name => 'StillImageTime',
@@ -6839,6 +6841,36 @@ my %userDefined = (
         Writable => 0, # (don't make this writable because it is found in timed metadata)
     },
     'full-frame-rate-playback-intent' => 'FullFrameRatePlaybackIntent', #forum16824
+    'smartstyle-info' => {
+        Name => 'SmartStyleInfo',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::PLIST::Main',
+            ProcessProc => 'Image::ExifTool::PLIST::ProcessBinaryPLIST',
+        },
+    },
+    # (mdta) com.apple.quicktime.smartstyle.rendering-version
+    'smartstyle.rendering-version' => { Name => 'SmartstyleRenderingVersion', Writable => 0 },
+    # (mdta) com.apple.quicktime.smartstyle.tone
+    'smartstyle.tone'       => { Name => 'SmartstyleTone',      Writable => 0 },
+    # (mdta) com.apple.quicktime.smartstyle.color
+    'smartstyle.color'      => { Name => 'SmartstyleColor',     Writable => 0 },
+    # (mdta) com.apple.quicktime.smartstyle.intensity
+    'smartstyle.intensity'  => { Name => 'SmartstyleIntensity', Writable => 0 },
+    # (mdta) com.apple.quicktime.smartstyle.bypassed
+    'smartstyle.bypassed'   => { Name => 'SmartstyleBypassed',  Writable => 0 },
+    # (mdta) com.apple.quicktime.smartstyle.cast
+    'smartstyle.cast'       => { Name => 'SmartstyleCast',      Writable => 0 },
+#
+# tags stored directly in the mdta Keys atom
+#
+    setu => {
+        Name => 'SETU',
+        SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::setu' },
+    },
+    sdpd => {
+        Name => 'SDPD',
+        SubDirectory => { TagTable => 'Image::ExifTool::QuickTime::sdpd' },
+    },
 #
 # seen in Apple ProRes RAW file
 #
@@ -10049,7 +10081,8 @@ sub ProcessMOV($$;$)
             if ($$et{ValidatePath}{$path} and not $dupTagOK{$tag} and not $dupDirOK{$dirID}) {
                 my $i = Get32u(\$tag,0);
                 my $str = $i < 255 ? "index $i" : "tag '" . PrintableTagID($tag,2) . "'";
-                $et->Warn("Duplicate $str at " . join('-', @{$$et{PATH}}));
+                $path =~ s/-[^-+]$//;   # remove tag name
+                $et->Warn("Duplicate $str at $path");
                 $$et{ValidatePath} = { } if $path eq 'MOV-moov'; # avoid warnings for all contained dups
             }
             $$et{ValidatePath}{$path} = 1;

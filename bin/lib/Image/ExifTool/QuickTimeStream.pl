@@ -111,7 +111,7 @@ my %insvLimit = (
         The tags below are extracted from timed metadata in QuickTime and other
         formats of video files when the ExtractEmbedded option is used.  Although
         most of these tags are combined into the single table below, ExifTool
-        currently reads 121 different types of timed GPS metadata from video files.
+        currently reads 122 different types of timed GPS metadata from video files.
     },
     GPSLatitude  => { PrintConv => 'Image::ExifTool::GPS::ToDMS($self, $val, 1, "N")', RawConv => '$$self{FoundGPSLatitude} = 1; $val' },
     GPSLongitude => { PrintConv => 'Image::ExifTool::GPS::ToDMS($self, $val, 1, "E")' },
@@ -830,6 +830,34 @@ my %insvLimit = (
     10 => { Name => 'FusionYPR', Format => 'float[3]' },
 );
 
+# found in live photo .mov files
+%Image::ExifTool::QuickTime::setu = (
+    PROCESS_PROC => \&Image::ExifTool::QuickTime::ProcessMOV,
+    cfgv => {
+        Name => 'CFGV',
+        SubDirectory => {
+            TagTable => 'Image::ExifTool::PLIST::Main',
+            ProcessProc => 'Image::ExifTool::PLIST::ProcessBinaryPLIST',
+        },
+    },
+    dims => {
+        Name => 'Dimensions',
+        Format => 'int32u',
+        Count => 2,
+        PrintConv => '$val =~ tr/ /x/; $val',
+    },
+);
+
+# found in live photo .mov files
+%Image::ExifTool::QuickTime::sdpd = (
+    PROCESS_PROC => \&Image::ExifTool::QuickTime::ProcessMOV,
+    sdpi => {
+        Name => 'SDPI',
+        Unknown => 1,
+        Format => 'int32u',
+    },
+);
+
 #------------------------------------------------------------------------------
 # Convert unsigned 32-bit integer to signed
 # Inputs: <none> (uses value in $_)
@@ -879,6 +907,7 @@ sub SaveMetaKeys($$$)
             last if $len < 8 or $pos + $len > $end;
             my $tag = substr($$dataPt, $pos + 4, 4);
             $pos += 8;  $len -= 8;
+            my $base = $$dirInfo{Base} + $pos;
             my $val = substr($$dataPt, $pos, $len);
             $pos += $len;
             my $str;
@@ -902,6 +931,12 @@ sub SaveMetaKeys($$$)
                     }
                     $str .= " ($format)" if $verbose and defined $str;
                 }
+            } else {
+                $et->HandleTag($tagTbl, $tag, undef,
+                    DataPt => \$val,
+                    Base => $base,
+                );
+                next;
             }
             if ($verbose > 1) {
                 if (defined $str) {
@@ -911,7 +946,7 @@ sub SaveMetaKeys($$$)
                     $str = '';
                 }
                 $et->VPrint(1, $$et{INDENT}."- Tag '".PrintableTagID($tag,2)."' ($len bytes)$str\n");
-                $et->VerboseDump(\$val);
+                $et->VerboseDump(\$val, Base => $base);
             }
         }
         if (defined $tagID and defined $format) {
