@@ -58,7 +58,7 @@ describe ExiftoolVendored do
   it 'no-ops with no files' do
     e = Exiftool.new([])
 
-    value(e.errors?).must_be_false
+    refute_predicate e, :errors?
   end
 
   it 'has no errors with files without EXIF headers' do
@@ -100,7 +100,7 @@ describe ExiftoolVendored do
                end
     expected.delete_if { |k, _v| ignorable_key?(k) }
 
-    _(actual).must_equal_hash(expected)
+    assert_equal expected, actual
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
