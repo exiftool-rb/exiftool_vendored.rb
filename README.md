@@ -23,6 +23,9 @@ Ruby Versions due to their [End Of Life](https://www.ruby-lang.org/en/downloads/
 - Ruby 2.6 (EOL 2022-04-12)
 - Ruby 2.7 (EOL 2023-03-31)
 - Ruby 3.0 (EOL 2024-04-23)
+- Ruby 3.1 (EOL 2025-03-26)
+
+Ruby 3.2 reached EOL on 2026-04-01, but it remains supported for now.
 
 ## Installation
 
