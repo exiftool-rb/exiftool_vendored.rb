@@ -111,8 +111,8 @@ your home directory, then you would type the following commands in a
 terminal window to extract and run ExifTool:
 
   cd ~/Desktop
-  gzip -dc Image-ExifTool-13.58.tar.gz | tar -xf -
-  cd Image-ExifTool-13.58
+  gzip -dc Image-ExifTool-13.59.tar.gz | tar -xf -
+  cd Image-ExifTool-13.59
   ./exiftool t/images/ExifTool.jpg
 
 Note:  These commands extract meta information from one of the test images. 
@@ -213,6 +213,7 @@ distribution package:
     guano.config              - Decode individual tags from Guano metadata
     local_time.config         - Determine local time from GPS information
     nksc.config               - Decode tags in Nikon ViewNX NKSC files
+    novelty.config            - Definitions for XMP Novelty Theory tags
     onone.config              - Definitions for writing On1 XMP tags
     photoshop_paths.config    - For extracting or copying Photoshop paths
     picasa_faces.config       - Convert from Picasa to MWG/MP face regions

@@ -4930,6 +4930,18 @@ sub NewGUID()
 }
 
 #------------------------------------------------------------------------------
+# Generate a version 4 ("random"), variant 1 UUID (RFC 9562, Section 5.4) (github #421)
+# Inputs: <none>
+# Returns: UUID string
+sub NewUUID()
+{
+    my @rnd = map {int(rand(256))} 1 .. 16;
+    $rnd[6] = ($rnd[6] & 0x0f) | 0x40;
+    $rnd[8] = ($rnd[8] & 0x3f) | 0x80;
+    return uc scalar unpack('H32', join '', map {chr} @rnd);
+}
+
+#------------------------------------------------------------------------------
 # Make TIFF header for raw data
 # Inputs: 0) width, 1) height, 2) num colour components, 3) bits, 4) resolution
 #         5) color-map data for palette-color image (8 or 16 bit)

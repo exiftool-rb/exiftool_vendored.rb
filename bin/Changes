@@ -7,6 +7,28 @@ RSS feed: https://exiftool.org/rss.xml
 Note: The most recent production release is Version 13.55. (Other versions are
 considered development releases, and are not uploaded to MetaCPAN.)
 
+May 27, 2026 - Version 13.59
+
+  - Security update
+  - Added NewUUID Extra tag (thanks Daniel Dumitriu, github #421)
+  - Added a new Canon RF lens (thanks Norbert Wasser)
+  - Added config_files/novelty.config to the distribution (github #422)
+  - Decode tags from the Sony ILCE-7RM6 (thanks Jos Roost)
+  - Decode a new FujiFilm tag (thanks Iliah Borg)
+  - Decode a few more DJI protobuf tags
+  - Decode a new Ricoh Pentax tag
+  - Issue Error instead of Warning when writing XMP with some problems which
+    could cause loss of data
+  - Improved error message when reading wrongly encoded CSV or JSON file
+  - Enhanced -config option to allow piped input with "-config -"
+  - Enhanced -validate option to do more strict checking of EXIF-for-XMP tags
+  - Patched -sort option avoid inconsistent output ordering of same-named tags
+  - Patched Composite SubSec date/time tags to specify the EXIF group for the
+    SubSec and OffsetTime tags upon which they are based (avoids non-standard
+    XMP tags from being incorrectly used here)
+  - Fixed bug in -diff feature when finding differences for specific tags and a
+    specified tag was missing from the source file
+
 May 5, 2026 - Version 13.58
 
   - Added a few new Nikon Z lenses (thanks Warren Hatch)
@@ -105,7 +127,7 @@ Feb. 19, 2026 - Version 13.51
 
 Feb. 7, 2026 - Version 13.50 (production release)
 
-  - Security update (MacOS only, thanks Tay Kiat Loong)
+  - Security update (MacOS only)
   - Added a few new Sony lenses (thanks Jos Roost)
   - Added a couple of new Canon lenses (thanks Norbert Wasser)
   - Decode another Samsung trailer tag

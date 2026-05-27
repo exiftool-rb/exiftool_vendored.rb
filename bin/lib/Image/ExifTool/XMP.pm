@@ -3774,6 +3774,7 @@ sub ParseXMPElement($$$;$$$$)
     my $isSVG = $$et{XMP_IS_SVG};
     my $saveNS;     # save xlatNS lookup if changed for the scope of this element
     my (%definedNS, %usedNS);  # namespaces defined and used in this scope
+    my $err;
 
     # get our parse procs
     my ($attrProc, $foundProc);
@@ -3810,7 +3811,7 @@ sub ParseXMPElement($$$;$$$$)
         next if $1;
         if ($4) { # skip CDATA
             next if $$dataPt =~ /\]\]>/sg and pos($$dataPt) <= $end;
-            $et->Warn("Missing CDATA terminator");
+            $err = "Missing CDATA terminator";
             last Element;
         }
         my ($prop, $attrs) = ($2, $3);
@@ -3835,17 +3836,17 @@ sub ParseXMPElement($$$;$$$$)
                 if ($$dataPt !~ m{<(?:(/?)\Q$prop\E([-\w:.\x80-\xff]*)(.*?(/?))>|(!\[CDATA\[|!--))}sg or
                     pos($$dataPt) > $end)
                 {
-                    $et->Warn("XMP format error (no closing tag for $prop)");
+                    $err = "XMP format error (no closing tag for $prop)";
                     last Element;
                 }
                 if ($5) { # find end of CDATA or comment section
                     if ($5 eq '![CDATA[') {
                         next if $$dataPt =~ /\]\]>/sg and pos($$dataPt) <= $end;
-                        $et->Warn('Missing CDATA terminator');
+                        $err = 'Missing CDATA terminator';
                         last Element;
                     } else {
                         $$dataPt =~ /-->/sg and pos($$dataPt) <= $end and $wasComment = 1, next;
-                        $et->Warn('Missing comment terminator');
+                        $err = 'Missing comment terminator';
                         last Element;
                     }
                 }
@@ -4232,6 +4233,8 @@ sub ParseXMPElement($$$;$$$$)
         pos($$dataPt) = $start;
         $$dataPt =~ /\G\s+/gc;  # skip white space after closing token
     }
+    # handle any error which aborted processing
+    $isWriting ? $et->Error($err) : $et->Warn($err) if $err;
 #
 # process resources referenced by blank nodeID's
 #

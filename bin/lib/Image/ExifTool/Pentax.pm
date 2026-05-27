@@ -59,7 +59,7 @@ use Image::ExifTool::Exif;
 use Image::ExifTool::GPS;
 use Image::ExifTool::HP;
 
-$VERSION = '3.62';
+$VERSION = '3.63';
 
 sub CryptShutterCount($$);
 sub PrintFilter($$$);
@@ -2742,6 +2742,11 @@ my %binaryDataAttrs = (
                 }
             },
         },
+    },
+    0x009e => { #https://www.dpreview.com/forums/threads/gr-iv-hdf-dng-exif-data.4837151/#post-68693164
+        Name => 'HDF', # (Highlight Diffusion Filter)
+        Writable => 'int8u',
+        PrintConv => { 0 => 'Off', 1 => 'On' },
     },
     0x0200 => { #5
         Name => 'BlackPoint',

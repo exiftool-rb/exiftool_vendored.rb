@@ -646,9 +646,10 @@ $VERSION = '5.07';
    '61182.63' => 'Canon RF 24mm F1.4 L VCM', #42
    '61182.64' => 'Canon RF 20mm F1.4 L VCM', #42
    '61182.65' => 'Canon RF 85mm F1.4 L VCM', #github350
-   '61182.66' => 'Canon RF 45mm F1.2 STM', #42
-   '61182.67' => 'Canon RF 7-14mm F2.8-3.5 L FISHEYE STM', #42
-   '61182.68' => 'Canon RF 14mm F1.4 L VCM', #42
+   '61182.66' => 'Canon RF 20-50mm F4 L IS USM PZ', #42
+   '61182.67' => 'Canon RF 45mm F1.2 STM', #42
+   '61182.68' => 'Canon RF 7-14mm F2.8-3.5 L FISHEYE STM', #42
+   '61182.69' => 'Canon RF 14mm F1.4 L VCM', #42
     65535 => 'n/a',
 );
 
@@ -7132,6 +7133,7 @@ my %ciMaxFocal = (
             326 => 'Canon RF 24mm F1.4 L VCM', #42
             327 => 'Canon RF 20mm F1.4 L VCM', #42
             328 => 'Canon RF 85mm F1.4 L VCM', #42/github350
+            329 => 'Canon RF 20-50mm F4 L IS USM PZ', #42
             330 => 'Canon RF 45mm F1.2 STM', #42
             331 => 'Canon RF 7-14mm F2.8-3.5 L FISHEYE STM', #42
             332 => 'Canon RF 14mm F1.4 L VCM', #42

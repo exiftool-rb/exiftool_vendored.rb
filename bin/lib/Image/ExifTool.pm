@@ -29,7 +29,7 @@ use vars qw($VERSION $RELEASE @ISA @EXPORT_OK %EXPORT_TAGS $AUTOLOAD @fileTypes
             %jpegMarker %specialTags %fileTypeLookup $testLen $exeDir
             %static_vars $advFmtSelf $configFile @configFiles $noConfig);
 
-$VERSION = '13.58';
+$VERSION = '13.59';
 $RELEASE = '';
 @ISA = qw(Exporter);
 %EXPORT_TAGS = (
@@ -121,6 +121,7 @@ sub CopyFileAttrs($$$);
 sub TimeNow(;$$);
 sub InverseDateTime($$;$$);
 sub NewGUID();
+sub NewUUID();
 sub MakeTiffHeader($$$$;$$);
 
 # other subroutine definitions
@@ -1919,6 +1920,15 @@ my %systemTagsNotes = (
         },
         PrintConv => '$val =~ s/(.{8})(.{4})(.{4})(.{4})/$1-$2-$3-$4-/; $val',
     },
+    NewUUID => {
+        Groups => { 0 => 'ExifTool', 1 => 'ExifTool', 2 => 'Other' },
+        Notes => q{
+            generates a version 4 ("random"), variant 1 UUID as per RFC 9562, Section
+            5.4.  Not generated unless specifically requested or the API L<RequestAll|../ExifTool.html#RequestAll>
+            option is set
+        },
+        PrintConv => '$val =~ s/(.{8})(.{4})(.{4})(.{4})/$1-$2-$3-$4-/; $val',
+    },
     ID3Size     => { Notes => 'size of the ID3 data block' },
     Geotag => {
         Writable => 1,
@@ -2769,6 +2779,7 @@ sub ExtractInfo($;@)
         $self->FoundTag('ExifToolVersion', "$VERSION$RELEASE");
         $self->FoundTag('Now', $self->TimeNow()) if $$req{now} or $reqAll;
         $self->FoundTag('NewGUID', NewGUID()) if $$req{newguid} or $reqAll;
+        $self->FoundTag('NewUUID', NewUUID()) if $$req{newuuid} or $reqAll;
         # generate sequence number if necessary
         $self->FoundTag('FileSequence', $$self{FILE_SEQUENCE}) if $$req{filesequence} or $reqAll;
 
@@ -3386,7 +3397,7 @@ sub GetTagList($;$$$)
                       $$fileOrder{$a} <=> $$fileOrder{$b} } @$foundTags;
     } elsif ($sort eq 'Descr') {
         my $desc = $self->GetDescriptions($foundTags);
-        return sort { $$desc{$a} cmp $$desc{$b} } @$foundTags;
+        return sort { $$desc{$a} cmp $$desc{$b} or $a cmp $b } @$foundTags;
     } else {
         return sort { $$fileOrder{$a} <=> $$fileOrder{$b} } @$foundTags;
     }
@@ -5409,7 +5420,7 @@ sub SetFoundTags($)
                 # put entry in return list even without value (value is undef)
                 $matches[0] = $byValue ? "$tag #(0)" : "$tag (0)";
                 # bogus file order entry to avoid warning if sorting in file order
-                $$self{FILE_ORDER}{$matches[0]} = 9999;
+                $$self{FILE_ORDER}{$matches[0]} = 999999999;
             }
             # copy over necessary information for tags from alternate files
             if ($g8) {
@@ -10169,7 +10180,7 @@ sub ProcessBinaryData($$$)
 push @configFiles, $configFile if defined $configFile;
 until ($noConfig) {
     my $config = shift @configFiles;
-    my $file;
+    my ($file, $wasConfig);
     if (not defined $config) {
         $config = '.ExifTool_config';
         # get our home directory (HOMEDRIVE and HOMEPATH are used in Windows cmd shell)
@@ -10180,17 +10191,34 @@ until ($noConfig) {
     } else {
         length $config or last; # filename of "" disables configuration
         $file = $config;
+        $wasConfig = 1;
     }
-    # also check executable directory unless path is absolute
-    $exeDir = ($0 =~ /(.*)[\\\/]/) ? $1 : '.' unless defined $exeDir;
-    -r $file or $config =~ /^\// or $file = "$exeDir/$config";
-    unless (-r $file) {
-        warn("Config file not found\n") if defined $Image::ExifTool::configFile;
-        last;
+    if ($file eq '-') {
+        local *FH;
+        if (open(\*FH, '<-')) {
+            my $buff;
+            my $n = read(\*FH, $buff, 100000000);
+            close \*FH;
+            if ($n == 100000000) {
+                warn("Piped config file is too large\n");
+            } elsif ($n) {
+                eval $buff;
+            } else {
+                undef $@;
+            }
+        }
+    } else {
+        # also check executable directory unless path is absolute
+        $exeDir = ($0 =~ /(.*)[\\\/]/) ? $1 : '.' unless defined $exeDir;
+        -r $file or $config =~ /^\// or $file = "$exeDir/$config";
+        unless (-r $file) {
+            warn("Config file not found\n") if $wasConfig;
+            last;
+        }
+        unshift @INC, '.';      # look in current directory first
+        eval { require $file }; # load the config file
+        shift @INC;
     }
-    unshift @INC, '.';      # look in current directory first
-    eval { require $file }; # load the config file
-    shift @INC;
     # print warning (minus "Compilation failed" part)
     $@ and $_=$@, s/Compilation failed.*//s, warn $_;
     last unless @configFiles;

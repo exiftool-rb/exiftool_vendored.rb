@@ -31,7 +31,7 @@ use vars qw($VERSION);
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::Exif;
 
-$VERSION = '2.01';
+$VERSION = '2.02';
 
 sub ProcessFujiDir($$$);
 sub ProcessFaceRec($$$);
@@ -1373,37 +1373,37 @@ my %faceCategories = (
         Count => 4, # (ignore the duplicate values)
     },
     0x2100 => { #IB
-        Name => 'WB_GRGBLevelsDaylight',
+        Name => 'WB_GRGBLevelsDaylight', # (EXIF Fine Weather)
         Format => 'int16u',
         Count => 4,
     },
     0x2200 => { #IB
-        Name => 'WB_GRGBLevelsCloudy',
+        Name => 'WB_GRGBLevelsCloudy', # (EXIF Shade)
         Format => 'int16u',
         Count => 4,
     },
     0x2300 => { #IB
-        Name => 'WB_GRGBLevelsDaylightFluor',
+        Name => 'WB_GRGBLevelsDaylightFluor', # (EXIF FL_D)
         Format => 'int16u',
         Count => 4,
     },
     0x2301 => { #IB
-        Name => 'WB_GRGBLevelsDayWhiteFluor',
+        Name => 'WB_GRGBLevelsDayWhiteFluor', # (EXIF FL_N)
         Format => 'int16u',
         Count => 4,
     },
     0x2302 => { #IB
-        Name => 'WB_GRGBLevelsWhiteFluorescent',
+        Name => 'WB_GRGBLevelsWhiteFluorescent', # (EXIF FL_W)
         Format => 'int16u',
         Count => 4,
     },
     0x2310 => { #IB
-        Name => 'WB_GRGBLevelsWarmWhiteFluor',
+        Name => 'WB_GRGBLevelsWarmWhiteFluor', # (EXIF FL_WW)
         Format => 'int16u',
         Count => 4,
     },
     0x2311 => { #IB
-        Name => 'WB_GRGBLevelsLivingRoomWarmWhiteFluor',
+        Name => 'WB_GRGBLevelsLivingRoomWarmWhiteFluor', # (EXIF FL_L)
         Format => 'int16u',
         Count => 4,
     },
@@ -1412,9 +1412,14 @@ my %faceCategories = (
         Format => 'int16u',
         Count => 4,
     },
+    0x2410 => { #IB
+        Name => 'WB_GRGBLevelsFlash',
+        Format => 'int16u',
+        Count => 4,
+    },
     # 0x2f00 => WB_GRGBLevelsCustom: int32u count, then count * (int16u GRGBGRGB), ref IB
     0x2ff0 => {
-        Name => 'WB_GRGBLevels',
+        Name => 'WB_GRGBLevels', # (as shot)
         Format => 'int16u',
         Count => 4,
     },

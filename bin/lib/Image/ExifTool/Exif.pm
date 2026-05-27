@@ -57,7 +57,7 @@ use vars qw($VERSION $AUTOLOAD @formatSize @formatName %formatNumber %intFormat
 use Image::ExifTool qw(:DataAccess :Utils);
 use Image::ExifTool::MakerNotes;
 
-$VERSION = '4.64';
+$VERSION = '4.65';
 
 sub ProcessExif($$$);
 sub WriteExif($$$);
@@ -5170,8 +5170,8 @@ my %subSecConv = (
             0 => 'EXIF:DateTimeOriginal',
         },
         Desire => {
-            1 => 'SubSecTimeOriginal',
-            2 => 'OffsetTimeOriginal',
+            1 => 'EXIF:SubSecTimeOriginal',
+            2 => 'EXIF:OffsetTimeOriginal',
         },
         WriteAlso => {
             'EXIF:DateTimeOriginal' => '($val and $val=~/^(\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2})/) ? $1 : undef',
@@ -5189,8 +5189,8 @@ my %subSecConv = (
             0 => 'EXIF:CreateDate',
         },
         Desire => {
-            1 => 'SubSecTimeDigitized',
-            2 => 'OffsetTimeDigitized',
+            1 => 'EXIF:SubSecTimeDigitized',
+            2 => 'EXIF:OffsetTimeDigitized',
         },
         WriteAlso => {
             'EXIF:CreateDate' => '($val and $val=~/^(\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2})/) ? $1 : undef',
@@ -5208,8 +5208,8 @@ my %subSecConv = (
             0 => 'EXIF:ModifyDate',
         },
         Desire => {
-            1 => 'SubSecTime',
-            2 => 'OffsetTime',
+            1 => 'EXIF:SubSecTime',
+            2 => 'EXIF:OffsetTime',
         },
         WriteAlso => {
             'EXIF:ModifyDate' => '($val and $val=~/^(\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2})/) ? $1 : undef',

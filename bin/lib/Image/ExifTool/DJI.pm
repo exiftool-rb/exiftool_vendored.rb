@@ -18,7 +18,7 @@ use Image::ExifTool::XMP;
 use Image::ExifTool::GPS;
 use Image::ExifTool::Protobuf;
 
-$VERSION = '1.18';
+$VERSION = '1.19';
 
 sub ProcessDJIInfo($$$);
 sub ProcessSettings($$$);
@@ -275,7 +275,9 @@ my %convFloat2 = (
         Name => 'FrameInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::FrameInfo' },
     },
-    'dvtm_ac203_3-2-2-1' => { Name => 'ISO', Format => 'float' },
+    #WRONG (forum17996) 'dvtm_ac203_3-2-2-1' => { Name => 'ISO', Format => 'float' },
+    'dvtm_ac203_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' }, #forum17996
+    'dvtm_ac203_3-2-3-1' => { Name => 'ISO', Format => 'float' }, #forum17996
     'dvtm_ac203_3-2-4-1' => { # (NC)
         Name => 'ShutterSpeed',
         Format => 'rational',
@@ -315,6 +317,8 @@ my %convFloat2 = (
         Name => 'FrameInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::FrameInfo' },
     },
+    'dvtm_ac204_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' }, #forum17996
+    'dvtm_ac204_3-2-3-1' => { Name => 'ISO', Format => 'float' }, #forum17996
     'dvtm_ac204_3-2-4-1' => { # (NC)
         Name => 'ShutterSpeed',
         Format => 'rational',
@@ -354,6 +358,8 @@ my %convFloat2 = (
         Name => 'FrameInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::FrameInfo' },
     },
+    'dvtm_ac206_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' }, #forum17996
+    'dvtm_ac206_3-2-3-1' => { Name => 'ISO', Format => 'float' }, #forum17996
     'dvtm_ac206_3-2-4-1' => { # (NC)
         Name => 'ShutterSpeed',
         Format => 'rational',
@@ -395,7 +401,7 @@ my %convFloat2 = (
         Name => 'FrameInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::FrameInfo' },
     },
-   # dvtm_AVATA2_3-1-1 - frame number (starting at 1)
+    'dvtm_AVATA2_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' },
     'dvtm_AVATA2_3-1-2' => { # (also 3-2-1-6 and 3-4-1-6)
         Name => 'TimeStamp',
         Groups => { 2 => 'Time' },
@@ -437,6 +443,7 @@ my %convFloat2 = (
         Name => 'FrameInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::FrameInfo' },
     },
+    'dvtm_wm265e_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' },
    # dvtm_wm265e_3-2-1-4 - model code?
     'dvtm_wm265e_3-2-2-1' => { Name => 'ISO', Format => 'float' },
     'dvtm_wm265e_3-2-3-1' => {
@@ -469,6 +476,7 @@ my %convFloat2 = (
         Name => 'FrameInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::FrameInfo' },
     },
+    'dvtm_pm320_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' },
     'dvtm_pm320_3-2-2-1' => { Name => 'ISO', Format => 'float' },
     'dvtm_pm320_3-2-3-1' => {
         Name => 'ShutterSpeed',
@@ -504,6 +512,7 @@ my %convFloat2 = (
         Name => 'FrameInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::FrameInfo' },
     },
+    'dvtm_Mini4_Pro_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' },
     'dvtm_Mini4_Pro_3-2-7-1' => { Name => 'ISO', Format => 'float' },
     'dvtm_Mini4_Pro_3-2-10-1' => {
         Name => 'ShutterSpeed',
@@ -546,7 +555,7 @@ my %convFloat2 = (
         Name => 'FrameInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::FrameInfo' },
     },
-   # dvtm_dji_neo_3-1-1 - frame number (starting at 1)
+    'dvtm_dji_neo_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' },
     'dvtm_dji_neo_3-1-2' => { # (also 3-2-1-6 and 3-4-1-6)
         Name => 'TimeStamp',
         Groups => { 2 => 'Time' },
@@ -586,6 +595,7 @@ my %convFloat2 = (
         Name => 'FrameInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::FrameInfo' },
     },
+    'dvtm_Air3_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' }, # (NC)
     'dvtm_Air3_3-1-2' => {
         Name => 'TimeStamp',
         Groups => { 2 => 'Time' },
@@ -626,6 +636,7 @@ my %convFloat2 = (
         Name => 'FrameInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::FrameInfo' },
     },
+    'dvtm_Air3s_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' }, # (NC)
     'dvtm_Air3s_3-1-2' => {
         Name => 'TimeStamp',
         Groups => { 2 => 'Time' },
@@ -659,10 +670,11 @@ my %convFloat2 = (
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::GimbalInfo' },
     },
 #
-# Osmo 360 (similar to Action 4/5)
+# Osmo 360 (similar to Action 4/5/6)
 #
     'dvtm_oq101_1-1-5' => { Name => 'SerialNumber', Notes => 'Osmo 360' },
     'dvtm_oq101_1-1-10' => 'Model',
+    'dvtm_oq101_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' },
     'dvtm_oq101_3-1-2' => {
         Name => 'TimeStamp',
         Groups => { 2 => 'Time' },
@@ -706,6 +718,7 @@ my %convFloat2 = (
         Name => 'FrameInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::FrameInfo' },
     },
+    'dvtm_PP-101_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' },
     'dvtm_PP-101_3-1-2' => {
         Name => 'TimeStamp',
         Groups => { 2 => 'Time' },
@@ -728,6 +741,7 @@ my %convFloat2 = (
         Name => 'FrameInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::FrameInfo' },
     },
+    'dvtm_wa345e_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' },
     'dvtm_wa345e_3-1-2' => {
         Name => 'TimeStamp',
         Groups => { 2 => 'Time' },
@@ -765,6 +779,7 @@ my %convFloat2 = (
         Name => 'FrameInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::FrameInfo' },
     },
+    'dvtm_wm261_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' },
     'dvtm_wm261_3-1-2' => {
         Name => 'TimeStamp',
         Groups => { 2 => 'Time' },
@@ -815,6 +830,7 @@ my %convFloat2 = (
         Name => 'FrameInfo',
         SubDirectory => { TagTable => 'Image::ExifTool::DJI::FrameInfo' },
     },
+    'dvtm_Mavic4_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' },
     'dvtm_Mavic4_3-1-2' => {
         Name => 'TimeStamp',
         Groups => { 2 => 'Time' },
@@ -849,6 +865,7 @@ my %convFloat2 = (
 #
     'dvtm_Mini5Pro_1-1-5' => { Name => 'SerialNumber', Notes => 'Mini 5 Pro' }, # (NC)
     'dvtm_Mini5Pro_1-1-10' => 'Model', # (NC)
+    'dvtm_Mini5Pro_3-1-1' => { Name => 'FrameNumber', Format => 'unsigned' }, # (NC)
     'dvtm_Mini5Pro_3-2-37-1' => { Name => 'Temperature', Format => 'float' }, # (NC)
     'dvtm_Mini5Pro_3-3-4-1' => {
         Name => 'GPSInfo',
